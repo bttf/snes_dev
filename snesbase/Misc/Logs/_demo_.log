@@ -1,0 +1,385 @@
+
+*** Log file opened: 6/23/97 6:50:58 PM
+<_Demo_> i'm kinda one
+<_Demo_> i'm an emu coauthor
+LordBane is on IRC
+LordBane has left IRC
+<Qwertie> hello
+<Qwertie> u still there?
+RelliK is on IRC
+RelliK has left IRC
+<Qwertie> aren't u the one working on the grfx for GrimSNES?
+RelliK is on IRC
+<Qwertie> I rule
+<Garian> bye
+*** Log file closed: 6/23/97 8:24:15 PM
+
+*** Log file opened: 7/2/97 8:26:17 PM
+<_Demo_> what do you want?
+<Qwertie> um
+<Qwertie> hey, you're working on GrimSNES
+<Qwertie> right?
+*** Log file closed: 7/2/97 8:34:24 PM
+
+*** Log file opened: 7/2/97 8:42:58 PM
+<_Demo_> what do you want to know about the snes?
+<Qwertie> yup
+<_Demo_> yup?
+<Qwertie> yep
+<Qwertie> did you read my !sneswish?
+<_Demo_> you want to know yep?
+<_Demo_> interesting
+<_Demo_> i read it
+<_Demo_> i can answer what you want, just ask
+<Qwertie> ok. Question 1.
+<Qwertie> The VRAM is the stuff that holds graphics, right? How is it accessed? How much of it is there?
+RelliK is on IRC
+_Demo_: DCC Chat (207.96.207.199)
+*** Log file closed: 7/2/97 8:47:21 PM
+
+*** Log file opened: 7/11/97 8:07:13 AM
+<_Demo_> what do you want to know?
+<Qwertie> oh hi demo
+<Qwertie> remember me?
+<_Demo_> hi
+<_Demo_> yes
+<Qwertie> My damn Aunt turned off my computer that one day... I lost the DCC log hehe
+<_Demo_> btw erase all this highrom thing i said you from your memory it was almost 100% false
+Nuxx has left IRC
+<_Demo_> ok
+<_Demo_> what do you want to know today?
+<Qwertie> uhm
+<Qwertie> the opcode format I think
+<Qwertie> and, is there an equivalent IN/OUT command for 65c816?
+<Qwertie> or do you just write to certain mem. locations?
+<_Demo_> you just write to certain mem locations
+<Qwertie> ok
+<Qwertie> now the opcode format..?
+<_Demo_> the opcode format?
+<Qwertie> yes... how are the machine language instructions formatted?
+<_Demo_> well every opcode is one byte
+<Qwertie> I'm particularly interested in wtf those addressing modes are/mean
+<_Demo_> and the operand depands of the addressing mode
+<_Demo_> well they are how you get the operand
+<Qwertie> ok... for example?
+<Qwertie> lesse...
+<_Demo_> huh
+<_Demo_> i don't have my 65816 docs handy
+<_Demo_> but if you have let say MOV A,ABS
+<_Demo_> then you know by the opcode IT'S MOV A,
+<_Demo_> ABS
+<_Demo_> and absolute is an addressing mode
+*** Log file closed: 7/11/97 8:23:47 AM
+
+*** Log file opened: 7/11/97 8:27:33 AM
+<Qwertie> hi again
+<Qwertie> had  a problem
+<Qwertie> now then is ADC the only add instruction?
+<_Demo_> yes
+<Qwertie> anyways... how is this instruction manual formatted?
+<Qwertie> er why did I put that word "manual" in that sentence? hehe nm that
+<_Demo_> well adc is a byte wich represents what to add and where to add it
+<Qwertie> this doc is not very explanitory... hehe
+<Qwertie> monicM/XE=1 orE = 0 and               dir, dir, (dir) (dir, (dir) [dir] abs abs, abs, absl absl d,s (d,s)E=0 and M/X=1M/X = 0Immed Accu dir   x    y          x)   ,y               x    y        ,x        ,yN V M X D I Z CADCPmAL + B + Pc -> ALA + W + Pc -> A 69        65   75         72    61   71    67    6D  7D   79   6F   7F   
+<Qwertie> ^ ???
+<_Demo_> well when you understand it, it is enough...
+<Qwertie> so in a asm program, how would you use it?
+<_Demo_> adc?
+<_Demo_> adc A,10 
+<_Demo_> for example
+<Qwertie> adc #$01
+<Qwertie> that's from a source file....
+<Qwertie> so it can have 1 or 2 operands?
+<_Demo_> huh, i don't remember
+<_Demo_> i think the first is alway A
+<Qwertie> so its optional eh?
+<Qwertie> can't you add with X&Y?
+<_Demo_> yeah
+<_Demo_> i don't think so..
+<_Demo_> (i'm not sure, i'm more in spc things now...)
+<Qwertie> ok... well, so how is it formatted in machine bytes?
+<_Demo_> well something LIKE AB 01 00 
+<_Demo_> for adc 01
+<Qwertie> the first byte is an opcode.... lesse...
+<Qwertie> dang this doc doesn't explain it?
+<Qwertie> what are these columns in this table?
+<Qwertie> Immed Accu dir <--- ???
+<Qwertie> uh what is the 00? MSB of the word?
+<_Demo_> Immediate, Accumulator direct
+<Qwertie> what's that mean?
+<Qwertie> does this ADC instruction have an addressing mode btw?
+<_Demo_> ok
+<_Demo_> what are your docs?
+<Qwertie> I'm looking at 85c816.txt now
+<Qwertie> it's the ONLY CPU doc i have
+<Qwertie> all the rest are SPC, memory map and PPU docs
+<_Demo_> i hope it's 65c816.txt
+<Qwertie> uh yes
+<Qwertie> it is
+<_Demo_> ok
+<Qwertie> didn't i just say that?
+<_Demo_> 85c816.txt
+<_Demo_> ...
+<_Demo_> ok
+<_Demo_> there are 256 opcodes
+<Qwertie> yup
+<_Demo_> 80 or so instructions
+<Qwertie> are they all used?
+<_Demo_> and 21 addressing mode
+<_Demo_> no, 2 are not...
+<Qwertie> wait... there are 254 opcodes and only 80 instructions ?
+<_Demo_> and 21 addressing mdoes
+<_Demo_> modes
+<Qwertie> uh... welll, if there's only 80 instructions, then what are the other 174 opcodes?
+<_Demo_> they are the same instructions with different addressing modes
+<Qwertie> ohhhhk
+<Qwertie> so each opcode (1 byte) tells both the opcode and addressing mode
+<Qwertie> which means... the each of the instructions has only a few addressing modes?
+<Qwertie> because 80 x 24 is a lot more than 256
+<_Demo_> yes
+<_Demo_> that's it
+<_Demo_> some instructions like brk have only one addressing mode but other can have more than 10...
+<Qwertie> what does BRK do?
+<Qwertie> it's mentioned a lot hehe
+<_Demo_> it stop 
+<Qwertie> it what? and what is the operand?
+<_Demo_> i don't know but it has a one byte operand
+<_Demo_> i think it's not used
+<Qwertie> if it doesn't have a used operand.. then doesn't thsat mean it has 0 addressing moes?
+<_Demo_> well something like that...
+<Qwertie> now this add instruction.... you gave the example of adding a constant... can't it also add registers?
+<Qwertie> what about mem locations?
+<_Demo_> it can
+<_Demo_> this is why there are addressing modes..
+<Qwertie> if you add a register instead of a constant, then it would use a different opcode right?
+<_Demo_> yes
+<Qwertie> and for adding mem locations there would be several opcodes
+<Qwertie> one for each addressing mode that is supported right?
+<_Demo_> yes
+<_Demo_> that's it
+<Qwertie> uh ok.  now about "emulation mode"?
+<Qwertie> do I have to worry about that?
+<_Demo_> yes
+<_Demo_> it changes the size of the A,X,Y
+<Qwertie> and it would also change instruction size right?
+<Qwertie> like ADC would be like AB 01 now
+<_Demo_> yes
+<Qwertie> would it be a good idea to write a separate emulation routines for the emulation/native modes?
+<Qwertie> and, is there a way to access 8 bits in native mode like on the x86? (eg AL/AH)
+<_Demo_> yes it would be a good idea
+<_Demo_> no
+<Qwertie> hmm. what if you want to add a byte to a 16-bit register? how would u do that?
+<_Demo_> you can't 
+<Qwertie> dang
+<Qwertie> it sounds like certain things are....difficult on the SNES
+<Qwertie> to program that is
+<_Demo_> well, not that hard
+<Qwertie> and can you move bytes around in memory in native moed?
+<_Demo_> yes
+<Qwertie> can you move words around in emulation mode?
+<Qwertie> and is there direct memory transfers on the snes or do u have do like MOV A, mem1  ... MOV mem2, A like on the x86?
+<_Demo_> huh
+<_Demo_> you can use DMA
+<_Demo_> but i don't think there are opcodes for moving 2 memory..
+<Qwertie> isn't DMA for moving large blocks?
+<Qwertie> and.. what is the mnemonic for the mov-type instruction?
+<_Demo_> well there is no mov
+<_Demo_> there are LDA STA,LDX STX,LDY STY ...
+<Qwertie> yikes
+<Qwertie> uhm... how did u learn 65c816 asm?
+<Qwertie> I would like a book... but can't find 1
+<_Demo_> i learned by looking at docs, experimenting and what ready helped was some 6502 knowledge that i got on the C64...
+<_Demo_> ready =realy
+<Qwertie> oh..
+<Qwertie> well I don't have 6502 knowledge either...
+<_Demo_> have you tryed MI .20?
+<Qwertie> what?
+<Qwertie> what's that
+<_Demo_> Mario Improvement
+<Qwertie> like i said um... whats that?
+<_Demo_> http://www.goecities.com/SiliconValley/Bay/2628
+<Qwertie> spelled wrong...hehe
+<Qwertie> editor? hehe kewl
+*** Log file closed: 7/11/97 9:40:33 AM
+
+*** Log file opened: 10/5/97 9:20:20 AM
+<_Demo_> what is the real address of the site?
+<Qwerty> ]http://www.geocities.com/TimesSquare/Arcade/4777/snesbase.html
+<Qwerty> er, http://www.geocities.com/TimesSquare/Arcade/4777/snesbase.html
+<Qwerty> having trouble accessing it?
+<_Demo_> yep
+<_Demo_> i can't access it with the other address...
+<Qwerty> ml.org sux
+<_Demo_> wow, my name is on the page
+<Qwerty> =)
+<Qwerty> can you answer any of those q's I got there?
+<_Demo_> sure, let me check
+<_Demo_> ok, first i don't have a tutorial, sorry
+<_Demo_> VRAM is 64k, it is accessed with snes ports
+<Qwerty> thats why I'm looking for people to write some..
+<Qwerty> ok... what sorts of things are the vram used for
+<_Demo_> Addressing modes are the way for an opcodes to know where to read or write the data
+<Qwerty> for example?
+<_Demo_> opcodes are composed of instructions and addressing modes
+<Qwerty> ok..
+<_Demo_> the vram is used to display all you see on the screen
+<Qwerty> so, the snes has just 64K video ram?
+<_Demo_> yep
+<Qwerty> but this video ram isn't the same as on a PC right
+<Qwerty> I mean, its not just a grid of pixels
+<_Demo_> well, the way it is used, no
+<_Demo_> no, it
+<_Demo_> 's not a grid of pixels
+<_Demo_> the pictures are in tiles
+<Qwerty> I understand there can be different sizes of tiles...?
+<_Demo_> yep, that's it, the size can be set by some other ports..
+<Qwerty> are there different color depths for tiles?
+<_Demo_> yes
+<Qwerty> like what? I think there's 2-bit, 4-bit
+<Qwerty> and 8-bit only in mode 7..?
+<_Demo_> yep
+<Qwerty> okay, is there a monochrome depth?
+<_Demo_> i don't think so
+<Qwerty> ok.. now, can you organise the VRAM any way you want? or do you have to put the color tables, tiles, etc. in specific locations
+<_Demo_> you specify the locations with your program..
+<Qwerty> ok.. now there are 4 'layers' right? the BGs?
+<Qwerty> and 8 video modes?
+<_Demo_> yes
+*** Log file closed: 10/5/97 9:36:51 AM
+
+*** Log file opened: 10/5/97 9:37:46 AM
+<QwertPing> hello?
+<QwertPing> I always get disconnected just when things get interesting..
+<QwertPing> I am no longer Qwerty...hes a dead connection
+<QwertPing> ???
+<_Demo_> ok sorry, i was away..
+<QwertPing> oh... whew
+<Qwerty> ok..got my name back
+<_Demo_> ok, what's you next question? (please go fast, i must go soon...
+<_Demo_> )
+<Qwerty> um..
+<Qwerty> okay, about the video modes
+<Qwerty> whats the differences between them
+<Qwerty> (dont tell me about mode 7 just yet :)
+<_Demo_> i'm not very good in snes graphics, sorry.. i can't help you with them
+<Qwerty> darnit.. ok what is OAM?
+<_Demo_> it has something to do with sprites... sorry, can't help you much with those too
+<Qwerty> what about CGRAM?
+<_Demo_> it's where the tile are stored...
+<_Demo_> i must go now.. cya later
+<Qwerty> I thought CGRAM was in the VRAM..
+<Qwerty> oh one more
+<_Demo_> yep, it is in vram
+<Qwerty> ... Who else can I solicit for information?
+<_Demo_> hum, i don't know
+<_Demo_> i should connect back in one hour or less...
+<Qwerty> Y0shi? MrGrim? The_Teach?
+<_Demo_> i'll be able to answer some questions
+<Qwerty> ok.. cya..
+<_Demo_> cya
+<Qwerty> thanku for helkping..
+<_Demo_> np
+*** Log file closed: 10/5/97 9:50:55 AM
+
+*** Log file opened: 10/5/97 12:42:47 PM
+<_Demo_> hello
+<_Demo_> boo
+<Qwerty> hello
+<Qwerty> was eating
+<_Demo_> hello
+<Qwerty> is that #coders channel good
+<_Demo_> want to know some other things? (btw, i'm working at the same time so it may take some time before answers..)
+<_Demo_> coders is, well, not too bad but not console related..
+<Qwerty> yeps...
+<Qwerty> um... ok, how is LoROM organised?
+<Qwerty> and HiROM?
+<_Demo_> well, low rom is from 00-3f in 32k banks
+<_Demo_> starting at 8000h
+<Qwerty> so ROM address 0-32K at 008000-00FFFF?
+<Qwerty> and ROM address 32-64K at 018000-01FFFF etc?
+<_Demo_> yep
+<Qwerty> what about HiROM?
+<Qwerty> ahem?
+<_Demo_> it starts at bank 40 and use all the mem
+<Qwerty> um... 400000-40FFFF=0-64K, 410000-41FFFF=64-128K ?
+<Qwerty> so you would have maximum ROM space of 4 MB??
+*** Log file closed: 10/5/97 1:32:27 PM
+
+*** Log file opened: 10/5/97 1:33:28 PM
+<QwertPing> Got disconnected again!
+<QwertPing> anyway, so about HiROM?
+<_Demo_> you were right about it..
+<QwertPing> I had thought HiROM was used in the large games because it allowed more storage space... but LoROM would have a max of 4 MB also, wouldn't it?
+<QwertPing> (32K * 128 banks)
+<_Demo_> *64 banks not 128
+<QwertPing> oh? so you can't use banks 40-80 in LoROM? do ya know why not?
+<_Demo_> you can't use them
+<QwertPing> darn, gotta go.. church :)
+<QwertPing> cya
+*** Log file closed: 10/5/97 1:45:41 PM
+
+*** Log file opened: 10/5/97 5:33:01 PM
+<QwertPing> hello?
+<Qwerty> oops.. my old nick stuck..
+<_Demo_> hello
+<Qwerty> Question about FastROM: do banks 80-FF exactly mirror 00-7F?
+<_Demo_> hello?
+<Qwerty> yep
+<Qwerty> hi
+<_Demo_> i think so
+<Qwerty> how come the emunews guy will announce everything except my news?
+<_Demo_> [Qwerty PING reply]: 247 sec(s)
+<Qwerty> DAMN
+<Qwerty> I havent seen lag like this for a long time..
+<Qwerty> this is odd, when i first logged on my ping for DaddyBear was 5sex
+<Qwerty> now I havent got a reply after a minute
+<Qwerty> the same thing mustve happened 4 u
+*** Log file closed: 10/5/97 6:11:07 PM
+
+*** Log file opened: 10/6/97 5:02:02 PM
+<_Qwertie> hello?
+<_Demo_> hello
+<_Qwertie> I've been emailing somebody named Jason about snes info...
+<_Qwertie> who's working with savory snax who's doing sneese...
+<_Demo_> ok
+<_Qwertie> Oh ah... yes, it runs from ROM, and the program, unless specified
+<_Qwertie> otherwise by the "reset vector" in the game header (not the SMC
+<_Qwertie> header, but the game header which comprises the last 64 bytes of the
+<_Qwertie> first bank of the ROM), starts execution at 0x8000 in bank 0x00. Both
+<_Qwertie> in LoROM and in HiROM
+<_Qwertie> (a bit of info I got from him)
+<_Qwertie> anyway, does that look right?
+<_Demo_> yes, it is right
+<_Qwertie> because if HiROM starts in bank 0x40, there's no ROM at 0x00-8000..
+<_Qwertie> therefore execution cant start there eh?
+<_Demo_> well, maybe it can but i have never seen a game starting there
+<_Qwertie> um...well where does it start
+<_Demo_> it starts in bank 40 i think, but i'm not sure about that
+<_Qwertie> so what this would mean is, it always starts at the first available ROM address?
+<_Demo_> no, it starts at the reset vector address
+<_Qwertie> oh..er..yeah
+<_Qwertie> ok nm then
+<_Qwertie> do you know what the interval (# of clock cycles) between IRQs, NMIs etc is? or where I can find out?
+<_Demo_> hmm, i don't know the values exactly
+Herbman is on IRC
+<_Demo_> need something else?
+<_Qwertie> oh, if you want I can think of lots of stuff
+<_Qwertie> such as, how the joypad gets read..
+<_Demo_> it is read via a register
+Herbman has left IRC
+Herbman is on IRC
+Herbman has left IRC
+<_Qwertie> How does a game tell if it's running on a PAL/NTSC NES?
+<_Qwertie> er SNES
+Herbman is on IRC
+<_Qwertie> or how does it tell if its on a Japanese one or NA
+<_Demo_> hmm, i don't remember
+<_Qwertie> this makes me remember a quote from some movies... "You have outlasted your usefulness to me" Gun raises.... ptewy! ugnh.
+<_Demo_> hmmm
+<_Qwertie> =)
+<_Qwertie> I heard there was a 48 MBit game somewhere.  Heard anything about it?
+<_Demo_> yes, i heard about it
+<_Demo_> do you have djgpp on your hd?
+<_Qwertie> nope, I went to this distro site... couldnt figure out which files to get and how the heck to use the thing
+<_Qwertie> so instead I bought Watcom
+*** Log file closed: 10/6/97 8:17:46 PM

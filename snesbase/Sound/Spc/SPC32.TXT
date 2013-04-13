@@ -1,0 +1,38 @@
+
+7.2. MEMORY SPACE.
+
+It is possible for the Sound-CPU to address 64K bytes of memory.
+Memory space is divide up according to purpose. From address
+0000, 512 bytes are divided into two pages of 256-bytes units,
+called zero page and page one. It is possible to access data
+within these regions by means of numerous address modes, such
+as direct page addresing, etc.
+Page one is taken up by the stack.
+
+
+7.2.1. Direct Pages (Zero Page, Page One)
+
+By means of setting or resetting the direct page (P) flag
+within the program status ward. it is possible to disignate 
+whether zero page or page one is to be made the direct page.
+it is set up such that the data within this page can be treated
+with fewer bytes, at highter speed and with more numerous types
+of commands and addressing modes.
+
+   Stack Area
+   ----------
+
+   The stack region is established in the RAM region within page
+   one. The uppermost byte of the stack address is fixed at 01.
+   The lowermost byte of the stack address must be given its
+   initial setting by the program.
+
+7.2.2. Uppermost Page
+
+Internal ROM Region
+
+A mask ROM is installed within the Sound-CPU from FFC0H- FFFF. There
+is a program in it which transmits data from the ROM cassette to the
+256K bit RAM throuh the SCPU. This region is used by means of reset.
+
+

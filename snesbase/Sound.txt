@@ -1,0 +1,62 @@
+Please put notepad in Word-Wrap mode...
+
+Here's a bit of info I've tried to compile which will help you interpret the large SPCTodo.txt document, which is a text-file version of the SPC700's technical manual.  Unfortunately, this file is full of minor errors, such as spelling, terms and numbers.  It's not a tutorial at all, and lacks explanation of many of the terms and abbreviations.
+
+Terms
+
+APU - Audio processing unit i.e. the SPC700.
+SCPU and SPCU - seem to be the same thing: The main CPU, the 65c816.
+Sound-CPU - the SPC700
+SPX and SPX bus - ?
+Ports - Special memory locations that cause something to happen
+Register - Depending on context this refers to either a port or a internal CPU register
+"W" and "R" - usually refer to whether a register is readable or writable
+Indeterminate - might contain any value
+
+
+2.2 - This section basically explains that when the SPC700 writes to $F4-$F7, the byte at that location is NOT changed, but rather that the 65c816 memory space at $xx.2140 to $xx.2143 is changed (xx being one of the register banks i.e. $00-$3F or $80-$BF).  Likewise, when you write to address $2140-$2143, only the value of SPC memory at $F4-F7 is modified.  It also tells that a reset causes $F4-$F7 and $2140-$2143 to be cleared to 0.
+
+3.1 - talks about clearing with the control register and the potential screwyness thereof
+Terms: 
+PC32, PC10, ST2, ST1, ST0 - Seem to be alternate names for some of the bits of the control register
+Dn (0<=n<=7) - Refers to a bit of a memory-mapped register
+
+4.1 - Keep the info here in mind even if you don't understand it.
+Terms: T0, T1, T2 - Refers to the 8-bit write-only timer registers
+up counter - Counter which gets incremented by the timer?
+Timer - may refer to the actual circuit that handles updating the timer
+
+4.2 - Basically explains (I'm not sure about this):
+Counter 0 does not count when ST0 is 0.  When you set ST0 to 1, this causes two things to happen: All 12 bits of timer 0 are cleared to 0, and then the timer then starts counting.  Setting ST1 to 1 _again_ will NOT clear the counters a second time; You must first set ST0 to 0 (stopping the timer), then set it to 1 again to reset.  CN0, which was never mentioned before in the document, refers to Counter-0 (0FDH).  Although the table in section 2.1 specifies that CN0 is write-only, this part of the document says that it can be read from.  Note that CN0 is a 4-bit register; when reading it you will have to mask out the upper 4 bits which are undeterminate.  Also, apparently reading CN0 also causes it to be cleared to 0.  So if you read in that the value of the register was '11', then tried to read it again, it would be '0' (theoretically it might also be 1, methinks).  Now I am VERY unsure about this part: Writing a value to the Timer register (the write-only 8-bit part) does not really change the value of the timer.  Instead, it sets the "resolution" of the timer.  At a rate of 8KHz (T0 and T1) or 64KHz (T2), the timer is incremented.  If, after the timer is incremented, it EQUALS the value that you have written to the timer register, the timer will be set to 0 and the 4-bit counter is incremented.  If, after incrementing, it does NOT equal the value you have specified, then the 4-bit counter is NOT incremented.  To sum it up, here's some pseudocode for the timing system:
+
+timer program
+var timer_register, timer_8bit, timer_4bit: integer
+    timer_stopped: boolean
+
+repeat forever:
+	repeat
+		if ST0 == 1 and timer_stopped then
+			timer_stopped = false
+			timer_8bit = 0
+			timer_4bit = 0
+		if ST0 == 0 then
+			timer_stopped = true
+	until one 8KHz interval is over and not timer_stopped
+	increment timer_8bit
+	if timer_8bit == timer_register then
+		timer_8bit = 0
+		increment timer_4bit
+goto repeat_forever
+
+Terms: lower-level, TNx, timer register: Seems to refer to the low-order 8 bits of the timer which the program cannot read.
+upper-level, CNx counter register: The high-order 4 bits of the timer
+
+5. Registers withing the DSP - Programming the DSP "registers" is like programming VGA registers. (I'm sure all of you know how to do that, right?)  There are two ports directly accessable by the SPC program, 0F2H and 0F3H, which index a whole bunch of registers which are _NOT_ directly accessable by your program.  To choose which DSP register you want to look at, write its index to 0F2H, and then you can access that register by reading or writing to 0F3H.
+
+6. Okay kiddies, have fun figuring this out.  It's even more complicated than section 4.
+
+7. Except for the usual batch of grammar and punctuation errors in here, I don't think I can clarify this section very much. If you can't understand something in this section, rest assured that I probably don't either. :/  Hmm, this instruction set looks like a combination of 6502 and x86...
+
+8. Guess what?  There is no section 8!
+
+9. Opcode tables... no, _I_ can't figure them out either.

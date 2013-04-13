@@ -1,0 +1,251 @@
+Subject: 
+        In your docs
+   Date: 
+        Thu, 4 Jun 1998 11:34:07 -0700
+   From: 
+        "Rob" <plord@pacificnet.net>
+     To: 
+        <Qwertie@sixtyfour.com>
+
+Rob wrote:
+
+   
+  you mention that you might offer a technical description on how "partial dynamic recompilation" works. 
+   
+  I'd like to see it!
+   
+  -- Rob
+   
+
+
+Hahahaha, I thought no one would ever ask.  Why would you want to know anyway?  Oh well, I'll document it in case anyone else asks...
+
+In a normal emulator, the logic works something like:
+
+while (cycles_left) {
+    load several bytes of memory at PC;
+    increase program counter according to size of instruction;
+    decrease cycles_left according to number of cycles used by instruction;
+    switch (opcode) {  // Opcode
+    case 0x00:
+        emulate instruction opcode zero;
+        /* This includes decoding the addressing mode and performing the operation.  This may mean calling two functions, but in most emulators, two macros are used instead.  There are, of course, exceptions where some opcodes have special functions. */
+        break;
+    case 0x01:
+        emulate instruction opcode one;
+        break;
+    }
+}
+
+Notice the variable cycles_left: when this reaches 0, the loop breaks so that the CPU can do other things, such as rendering a line of the graphics screen or doing operations in a coprocessor.  It is important to realize that cycles_left is often not very large.  For example, in a SNES emulator it is typically about 170, and each instruction takes from 2 to 7 cycles, so there are about 50 instructions before the loop breaks.  This limits the length of the recompiled sequences you create to about, say, 10 instructions, to avoid running the cycles_left counter TOO far below zero.  (A little bit is O.K.)
+
+The task is then to convert whatever gets emulated to something approximating code executable on the target processor.  This is rather tricky, but here's what a top-level loop MIGHT look like:
+
+byte *recompiled_vectors [number of possible entry points];
+
+while (cycles_left) {
+	// PC means program counter
+	if (recompiled_vectors[PC] == NULL) {
+		allocate memory for a new recompiled sequence
+		translate a sequence of code starting at PC into native assembly
+	}
+	call recompiled_vectors [PC/Entry_point_granularity]
+}
+
+First notice that big array at the top.  This is simply an array of pointers to recompiled sequences of code.  If the system has 4 MB of memory, for example, and instructions may start on any byte boundary and be as small as one byte, then this array will have an entry for every byte.  On 32-bit x86 machines, this array would therefore be 16MB (4MB * 4 bytes per pointer).  Obviously this is a gigantic waste of memory, since about 98% of this array would be end up unused.
+
+The problem is that you need a pointer to point to every sequence of recompiled code, and you need to be able to access this array as fast as possible.  Since the CPU can evaluate an expression like recompiled_vectors[PC] very fast (except for possible problems with cache misses and page faults), using a giant array for this purpose is quite efficient.  Other methods of storing the pointers require search algorithms etc. which I imagine can be very slow.  In order to have the pointers readily available without using a gigantic array, really complex algorithms might be required.
+
+One of the central ideas behind dynamic recompilation is that most programs execute the same sequences of code hundreds or sometimes millions of times.  The first time the code is executed, then, it is okay if the process of recompiling is very CPU-intensive because the recompiling is done only once.  Therefore, with dynamic recompilation, the first time emulating the code it executes very slowly, and on successive runs it is lightning fast.
+
+If it is found that a sequence of code has not been recompiled before, it is compiled.  How do you compile the code?  I won't spell it out--the algorithm can be very large--but here's an example.  The INC (add 1 to a memory location) instruction on the 65c816 looks like this:
+
+INC <address or immediate value>
+
+let's focus in on just one version of this instruction: Absolute addresing at $1234 when the processor is in 8-bit mode (M=1):
+
+INC $1234
+
+The process used to emulate this instruction using my current SNEqr CPU core is like this (don't complain about my code, I haven't fully optimized it yet):
+
+loop_m1x1:
+	mov ebx, edx        ; Memory at PC
+	convert_snesptr ebx
+	mov ebx, [ebx]      ; Load bytes at PC:   6D 34 12 xx
+	movzx eax, bl
+	lea eax, [opcodetable_m1x1+eax*4]
+	call [eax]          ; Emu code for opcode 6D
+	jc  looptop_check
+	test esi, 80000000h
+	jz loop_m1x1
+
+opEEm1x0:
+opEEm1x1:
+	load_abs         ; Set EBX to pointer to whatever is stored at $1234
+	docount 3, 6     ; add 3 to PC (EDX) and subtract 6 from cycle count
+	inc8
+	dobreak
+
+With macros expanded:
+
+op6Dm1x0:
+op6Dm1x1:
+; convert_abs_data macro        ; Converts OPDATA (EBX) to SNES 24bit address
+	; value returned in EBX   ; For absolute addressing modes
+	shr ebx, 8
+	and ebx, 0FFFFh
+	or  ebx, dword [_reg.DBR_2less]
+; convert_snesptr macro snesaddr  <---ebx
+	; Takes snes address and converts it to a PC pointer.  reg is 32-bit.
+	; EAX destroyed.
+	mov eax, ebx
+	shr eax, 11
+	and ebx, 01FFFh     ; offset
+	and al, 0FCh
+	mov eax, [_startaddr+eax] ; base pointer
+	add ebx, eax        ; add 'em
+; docount macro addtopc, subfromcycles  <---3, 6
+	add edx, 3
+	sub esi, 6
+; inc8 macro
+	mov edi, ebx     ; remember address
+; trapandread8 ebx ; read memory byte
+; trapandread8 macro pcptr     EXPANDED BELOW
+	; Traps the read of a PC pointer pointing to a part of SNES address space
+	local notrap
+	cmp pcptr, offset _registers
+	jb notrap
+	cmp pcptr, offset _registers + 4000h
+	jae notrap
+	mov byte  [_reg.P], cl
+	mov dword [_reg.PC], edx
+	mov dword [_scan_cycles], esi
+	push eax
+	push edx
+	push ecx
+	push dword 0
+	push pcptr
+	call _trapregread
+	pop eax  ; arg 1
+	pop edx  ; arg 2
+	pop ecx
+	pop edx
+	pop eax
+notrap:
+	mov pcptr, [pcptr]
+; End of expanded macro
+	movzx ebx, bl
+	and cl, 0FFh-FNEGATIVE-FZERO  ; clear flags affected
+	inc bl
+	or cl, [nz_8bit + ebx]
+;	trapandwrite8 edi, bl
+; trapandwrite8 macro pcptr, reg EXPANDED BELOW
+	; Takes data from reg and puts it in "snesaddr" and traps the write
+	local notrom, notrap, isrom
+	cmp pcptr, [_rom]
+	jb notrom
+	cmp pcptr, [_rom] + 300000h
+	jb isrom
+notrom:
+	mov [pcptr], reg
+	cmp pcptr, offset _registers
+	jb notrap
+	cmp pcptr, offset _registers + 4000h
+	jae notrap
+	mov byte  [_reg.P], cl
+	mov dword [_reg.PC], edx
+	mov dword [_scan_cycles], esi
+	push eax
+	push edx
+	push ecx
+	push dword 0
+	push pcptr
+	call _trapregwrite
+	pop eax
+	pop edx
+	pop ecx
+	pop edx
+	pop eax
+notrap:
+isrom:
+	; End of INC macro
+; dobreak macro
+	clc
+	ret
+
+Whew.  That's all the code required to emulate INC!  Now, there were a lot of redundant
+checks and loading done in the above instruction, which is one reason why dynamic recompilation can be so fast.  Now, let's take a look at what a compiled version could look like:
+
+(Assume ESI is the cycle count, EDX is the PC and CL is the processor status flags P, as before.)
+
+op6Dm1x0:
+op6Dm1x1:
+
+In the previous emulated version, a process converted from the absolute address ($1234) to a full 24-bit snes address ($DB1234), where DB is the contents of the data bank register.  The recompiled version is only slightly shorter:
+
+	mov ebx, dword [_reg.DBR_2less]
+	or  ebx, 00001234h			; Load $DB1234
+
+Then it must be converted to a x86 pointer and loaded (no real change here):
+
+	mov eax, ebx
+	shr eax, 11
+	and ebx, 01FFFh     ; offset
+	and al, 0FCh
+	mov eax, [_startaddr+eax] ; base pointer
+	add ebx, eax        ; add 'em
+
+EBX now contains pointer to data at $1234.
+Then do the cycle and byte count:
+
+	add edx, 3
+	sub esi, 6
+
+Now, in the interpretive emulator, a check was made to see whether the read was from a MMIO register.  Because of the address ($1234) it is already known that the address CANNOT access MMIO; therefore, the check is omitted and the memory is loaded directly.
+
+	mov edi, ebx     ; remember address
+; Macro for reading memory is now only one line:
+	mov ebx, [ebx]
+
+	movzx ebx, bl
+	and cl, 0FFh-FNEGATIVE-FZERO  ; clear flags affected
+	inc bl
+	or cl, [nz_8bit + ebx]
+
+Again, upon writing to the memory, the MMIO check is ommitted, but this time another check is ommitted: the write check.  $1234 cannot be a ROM address, so that check is redundant, and again the macro is only one line!
+	mov [edi], bl
+
+	ret
+
+Whew.  Some instructions and operands can be optimized more than others when compiling.  Notice, in the previous code sequence, that I have left out some obvious optimizations such as instruction scheduling and maybe incrementing the memory directly.  Remember that dynamic recompilation uses a COMPILER, and unless you're willing to go a few extra miles, optimizations are not possible.
+
+Now then, extra benefits can be had by dynamic recompilation when you go from emulating just one instruction in a sequence to many.
+
+Take a 65816 code sequence like this:
+
+Code_seq_start:
+	SEP #$30         ; 8-bit mode
+	LDX #$00         ; For X = 0...
+Loop_start:
+	DEC $1234,X      ; (*((byte*)0x1234+X))--;
+	INX              ; X++
+	CPX #$10         ; X != 10?
+	BNE Loop_start   ; Loop again
+
+Assume this is the first time executing this part of code, so the dynamic recompiler kicks in.
+
+A recompilation algorithm would write a routine that emulates ALL of these instructions, up to and including the BNE.  The following optimizations could be done in the process:
+
+* Since these instructions are done one after the other, there is no call/return/loop overhead except at the very beginning and end of the sequence.
+* This is a big one: Flags don't always have to be set.  For example, the DEC instruction sets the 65816 ZERO and NEGATIVE flags, but so does the instruction after it, INX.  Therefore, the flags don't have to be set when DEC is executed because their values will be overwritten anyway.  Likewise, CPX also sets the ZERO and NEGATIVE flags, so the emulation code for INX doesn't have to set the flag.  The only instruction that really has to set the flags is CPX.
+* The PC and cycle count don't have to be updated after every instruction, but can be updated as a lump (there may be exceptions to this rule, but I won't go over them here.)  For example, the first instruction is 2 bytes, the next is 2 bytes, then 3 bytes, 1 byte, 2 bytes and 2 bytes.  In a normal interpretive emulator, this would mean doing 6 separate ADD instructions, but with recompilation we can do it with just one: ADD EDX, 12.
+
+Now you may wonder why compilation stops at BNE.  This is because BNE may branch to another part of code, and the dynamic recompiler doesn't know whether it will or not, so it just breaks off.  If the branch is not taken, then recompilation will restart at the instruction after BNE.  If the branch IS taken, note that there is no easy way to branch into the middle of the already-compiled sequence.  If you'll remember, way back at the top of this document, there was an array of pointers--one pointer for each recompiled entry point.  The only entry point that exists for this sequence of code is at Code_seq_start.  The pointer for Loop_start will be NULL, so the recompiler must compile the four instructions at Loop_start *AGAIN*.  This should not cause any significant code slowdown or other problems, though.
+
+If there is a really long sequence of code without any branches, the compiler must break off sometime.  10 instructions seems to me like a reasonable maximum recompiled code sequence length.
+
+So there you go.  That's the basic idea of dynamic recompilation.
+
+There are a few problems to keep in mind with dynamic recompilation.  Firstly, some programs have self-modifying code, which can be a big problem!  Secondly, as well as being hard to write, a dynamic recompiler can be very hard to debug.  If you have used the zSNES debugger etc., you know that you can trace one instruction at a time.  With dynamic recompilation, you loose that ability and must trace 10 or so instructions at once, without knowing the exact state of the flags between instructions!
+
+This doc should scare off potential users of dynamic recompilation, I guess.  Mail me if you can think of some improvements.

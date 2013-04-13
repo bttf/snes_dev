@@ -1,0 +1,10 @@
+data = `{echo *.dat}
+
+all:V: phoenix.smc
+clean:V:
+	rm -f phoenix.smc
+test:V: all
+	bsnes phoenix.smc
+
+phoenix.smc: $data phoenix.asm
+	65816a phoenix.asm

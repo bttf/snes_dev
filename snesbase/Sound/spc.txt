@@ -1,0 +1,51 @@
+From:     D Burton Technician <D.Burton@teesside.ac.uk>
+To:       "Super Famicom Development Group" <famidev@busop.cit.wayne.edu>
+Subject:  Re: sound
+Date:     Fri, 17 Dec 93 09:37:41 GMT
+
+> Any info on the structure & size of the header block?
+> 
+
+the header is as follows :-
+
+	dw length_of_block,transfer_address
+	
+	db start_of_data
+	.....
+	db end_of_data
+
+this is repeated for however many blocks u wanna load into the spc(often just
+one big block)
+then the final header reads:-
+
+	dw $0000,program_execution_address
+
+the zero length field tells it to get ready to run the module..
+
+> So the data is broken up into 9 byte blocks then. How is this 1 byte range
+> related to the data that follows? Is it a multiplier or, exponent or
+> value from a table? The 4 bit data an 'error' relative to the range?
+> Any other info on the samples?
+> 
+the first byte contains :-
+	bit 0   - last block of sample
+	bit 1   - loop block  flag
+	bit 2,3 - the filter number used
+	bit 4-7 - the range value (only 0-12 used)..
+
+the big question is how is the data compressed - the manual diagram simply
+shows the 4 bit data being shifted right by the range number of places, and
+then talks of the number being in the range -7 to +8.. I have been simply
+dividing the 16 bit numbers down and rounding up where necessary and this
+gives a quite accurate conversion, the problem I seem to be having is
+generating the range values from the 16 values I have..
+
+> I checked out hbt-fasm, which someone described as bad. Does bad refer to
+> its interface or the fact that it doesn't disassemble things correctly?
+> I do not have access to the spc-700 instruction set, or an amiga on a
+> regular basis and will build an opcode matrix from it and convert it to
+> the pc (providied that it disassembles correctly). Does it?.
+> 
+I have not had much to do with hbt-fasm so dont really know what is wrong 
+with it, my own SPC dissassembler has no real super duper i/face, but
+it does what I wanted it to.

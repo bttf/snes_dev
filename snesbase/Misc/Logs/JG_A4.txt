@@ -1,0 +1,112 @@
+> that was a good memory doc! I think I'll email some q's to that author 
+> too :^P
+
+Hehe.
+
+> >I usually just toss it all into a directory and point Dev. Studio at 
+> it,
+> >that way I can do all the powerful search/sort shit much easier.
+> since I don't have Devstudio, there does that idea...
+> I think I'll write some little VB program to do it... I only got an old 
+> pir8 copy of VB3.0 tho..hehe..
+
+Oh, well. You could always d/l some warez-ed VC5. It's a pretty cool
+proggy. 8-)
+
+> Uh, ok I remember there being two different interrupt types in the GTE 
+> doc (maybe more, but I can't decipher that thing very well), one called 
+> NMI (and VBL would be another name for exactly the same thing?) 
+
+Yeah basically... what happens is that the SNES does the Vertical
+Refresh during the NMI... or really close to it, or right after it, or
+whatever... that's why the two terms are used interchangeably. 
+
+> and another 'input', simply called IRQ. What's the IRQ? 
+
+IRQ is an interrupt that CAN be shut off and can be set by the
+programmer. The chip allows for a whole bunch of IRQ requests to be
+stacked on top of each other... I need to talk to Snax to find out how
+the SNES deals with this.
+
+> And, what is the interrupt rate for the NMIs? my guess is 60Hz,
+> which would be a period of 44666 cycles for SlowROM and 59666 cycles
+> for FastROM, and 6/5ths of that on a PAL...?
+
+?? Yet another good question.
+ 
+> By the way (this might be related...) how does a game tell whether it's 
+> running on a PAL or NTSC SNES, and what is the difference(s)?
+> (When I ran Mario Allstars on Nlksnes it claimed that 'it isn't designed 
+> for your SNES'. hmmm)
+
+OK, this is also in the header, basically USA and Japan are NTSC,
+everybody else is PAL... so look at the country code.
+
+> I would like to know what the GTE doc is talking about when it refers to 
+> the other slash thingies (/SO, /RES etc) but maybe I'll just wait for 
+> that other SNES doc you were talking about...
+
+/RES is "reset", /SO is (I think) "stop" or something like that. There
+are several cpu-input signals that need to be dealt with externally to
+the opcode processing code in an emulator.
+
+> what, are you saying all this header junk is actually part of the ROM 
+> image?
+
+Not the ".smc" crap, but from bytes 513 of a .smc file onward to the
+end is ALL image, even the header info.
+
+> Ya, we better stick to separate projects.  I'm not ready for Mutex's 
+> just yet... =)
+
+Hehe. Ya pansy! (Switching to Monty Python mode!)
+
+> well, you're probably right, I'm sure it's optimised to hell and gone, 
+> but then again, a DOS program is only ONE thread... (isn't it?)
+
+Yeah, with everything else switching around behind it... like all the
+system tasks and everything... BUT if your emulator does scheduling of
+events (like now we do a CPU cycle and now we do a gfx cycle) then
+you're essentially writing ugly tasking code... now ain'tcha?
+
+> Maybe this is the devil's advocate point of view, but I figured the more 
+> people you have working on it (more than, say, 5 people) the more 
+> inefficient it gets...
+
+Or you could say that the more people you have working on it the more
+refined it gets. Yes, that's the Devil's Advocate point of view... but
+hey.
+
+> ah. mutexing.  A couple years ago I read a book on operating design, I 
+> think it talked about those... and I was confused as hell.
+
+Basically it adds a cycle to memory reads and writes... code like:
+
+if (mutex_free) {
+        mutex_free = 0;
+        do_write();
+        mutex_free = 1;
+}
+else {
+        wait_for_mutex_free();
+}
+
+OK, I know I did that wrong, should have used a do whie, but
+hey... cope.
+
+> Well, I paid $250 US for Watcom 10.6, because a couple months before I'd 
+> read a review showing that WC++ on average generates the fastest code... 
+> although I don't think it was 30% faster... perhaps VC and WC are on a 
+> par by now?
+
+Probably. Watcom used to be tops. Probably still is for DOS and
+Win16... but MSVC5 is pretty damn tight... kinda has to be since
+they're building the whole Win95 thing on speed.
+
+> >Anyway, here - have a memory doc, I still have to dredge up the CPU 
+> doc.
+> CPU doc, come to papa!
+
+Hehe. Patience.
+
+        - Jason

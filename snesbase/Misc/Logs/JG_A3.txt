@@ -1,0 +1,167 @@
+Hmm, ok in order:
+
+>By the way, do you know where I can get a good GREP type thing with a
+>text file viewer, so I can search the docs for stuff easier?  It's not
+>so easy finding stuff in my collection...
+
+I usually just toss it all into a directory and point Dev. Studio at it,
+that way I can do all the powerful search/sort shit much easier.
+
+>But wait a minute... 0x00-8000 is not a ROM address in LoROM, is it?  I
+>thought it was a RAM address, because HiROM starts at bank 0x40 doesn't
+>it?
+
+Hmm, see my doc. Yes, 0x00.8000-0x00.FFFF is ROM no matter which mode you're
+in, it's just a matter of which rom and how much of it.
+
+>>128k. However, it can have some expansion RAM, which is mapped at
+>>locations 0x6000-0x7FFF in LoROM mode in banks 0x00-0x39. I'm not,
+>>however, sure if it's a whole 64 banks of 8k (or is that 16k) or if
+>>it's just one bank mapped 64 times... like the "shadow" ram at
+>>0x0000-0x1fff, which is shadowed from bank 0x7e.
+>Oh boy, I think I need your memory doc badly!  As long as it covers both
+>HiROM and LoROM...
+
+Yup. It's attached to the end of this.
+
+>are these "vectors" simply memory addresses?
+
+Yes. In the 0x00 bank, I believe.
+
+>I rummaged through the
+>sneskart doc, which says that the NMI/VBL vector (what's VBL?)
+
+Vertical Blank, usually what the NMI is timed to. It's when the scanlines
+retrace the screen vertically, which is a good safe time to update the
+screen, since it won't flicker when you do it.
+
+>and the
+>Reset vector are only two bytes... uh oh, a SNES address is 3 bytes!
+
+It's probably (note my non-100% certainty) in 0x00.
+
+>Maybe, do you think, it is a ROM address (when I say ROM address I mean
+>eg 0x0105 = real address 0x00-8105 in LoROM or 0x40-0105 in HiROM) and
+>the code has to start in the first 64K?
+
+The code always gets loaded first 32k at 0x00.8000, USUALLY it starts
+execution right at 8000, sometimes the reset vector gets set a little
+differently.
+
+>>This is basic Assembly language stuff, and you'd need to get a
+>>reference for it.
+>Well, I've never found one...
+
+I don't know where to point you here, my 65816 documentation (which my wife
+long ago threw out since it got soaked in an accident) was left over from
+when I owned a IIgs... 8-)
+
+
+>Hmm... <please wait an hour while I check out these DOCs>...
+>I count that there are 36 bytes of "real" header data starting at 32704
+>or 65472...
+
+Do math. Size of 32k is: 32768, 32768-32704 = 64 bytes. That's all header,
+although it's not all strictly used.
+
+>BUT!! Then it says that the reset vector is at 33276 (and is
+>2 bytes, so must end at 33277) or 66042 (to 66043).
+>And, 33277-32704=573?! And for HiROM, 66043-65472=571.  Uh-oh, there has
+>GOT to be something wrong here... BUT WAIT! It looks like the 66042 in
+>HiROM must be a TYPO because it is in the same position as the NMI
+>vector....which means the position is actually 66044, making the size
+>573... okay.  Does 573 bytes sound right?
+
+Nah, 512 at the beginning and 64 at the end of the first block, and it's
+PART of the first block - which means it gets loaded into memory just like
+everything else.
+
+>Yeah, that will work "most" of the time cuz anything over 16mbit MUST be
+>HiROM.  On the other hand if it is <= 16Mb it could be either type.
+>I also read somewhere that several ROMs have bad checksums...whoa, that
+>could be a problem...
+
+Yes. I know. It's a bitch. That's why the UCON authors spent like... YEARS
+refining their code. I looked at it and it's a whole SHITLOAD of special
+cases. Grr. Plus there's something messed up with the country and author
+codes, like open up a ROM from Squaresoft, and I'll guarantee you it doesn't
+say "Square", it says "Nintendo"... hmm. But when UCON opens it it says
+"Square", so there's gotta be either title recognition going on or
+something. Your best bet would be to generalize and document it and wait for
+somebody to demand a fix for some ROM that doesn't get correctly identified.
+
+>>OK, there's a whole lot more, if you want to join up with the team and
+>Which team? I take it your emu is separate from Snax's because SNEeSe is
+>for DOS and yours is for Windows...?
+
+Well, I'm using a lot of Snax's code, so we may end up calling ours (SNaFu)
+"SNEeSe Win"...
+
+>um... last time I checked SNEeSE was so utterly SLOW!! I mean uh..
+>unoptimised!
+
+Yes, the second word is better. What you're not seeing also is that he's
+really emulating sound with no sound output right now, I believe. He's
+coming right along. Plus he has new CPU code that isn't in the release yet
+and is all in 100% ASM... which I hate as a bragging point but is necessary
+in MSDOS.
+
+>>right now, the portable one sucked to try to use (too many levels of
+>>MACRO indirection! BLEAH!)
+>well, I would like to partner up to share the workload, but I don't know
+>the way the Win32 threads and stuff work... also, I thought multiple
+>threads are inefficient in emu's because of the "syncing" problems.
+>Plus you have to worry about ... oh what was it called ... something to
+>do with mutual exclusivity ... Then there's the horrible Win32 overhead
+>for the task-switching... eww...
+
+Um, ok. Let's see. I don't care whether you want to join up or not, but some
+myths about Win32...
+
+1. Overhead for task-switching... is running anyway if you have Win95, even
+inside a dos-box. AND it's way more optimized than any programmer could get
+theirs (and you'll need some, even just a baby form, to run your DOS emu) in
+a million years, since Microsoft has oh, a couple hundred people working
+full-time on it.
+
+2. Syncing - is much better than it used to be.
+
+3. Exclusivity is only a problem for the ROM addresses, which yes I have to
+mutex to hell.
+
+>Um, and what is your compiler? I bought Watcom C++, still looking for
+>some good use for the thing... And where do you live?  Discussing code
+>over the phone would be a lot easier, if it's affordable.
+
+I use MS Visual C++ 5, Developer's Studio 97. Very tight code, probably
+outperforms all previous compilers (including MSVC4.2) by about 30%. Course
+it also costs a couple hundred bucks... unless your employer buys it for
+you... hehe.
+
+>final thoughts...
+>
+>I've been thinking how there's all these emu authors who say they just
+>"hacked" their emulator to make it run correctly.  But when you are just
+>starting an emu, how do you test if you've done something right? I mean,
+>if all the ROMs you try just freeze/crash on startup, how can you
+>possibly tell what you've done wrong?  I just got a new emulator source
+>code which emulates the CPU - the entire instruction set - yet doesn't
+>display ANYTHING on the screen.  What?  how did this author know it
+>worked?!
+
+The do and don't - see below.
+
+>This was after I thought to myself, "gee, why am I pestering these poor
+>emu authors, instead of hacking it up myself."  Well... because if I
+>don't have a good idea of how the system works it won't run anything!
+>Which then got me to wondering... how did people like Y0shi and
+>The_Brain do their emu's?
+
+When they say they "hacked" it... you have to remember that Yoshi and the
+Brain (early emu authors) had copiers and a SNES in pieces in their living
+rooms... and they poked and prodded inside the machine, and wrote some demo
+code to test an opcode and uploaded it to the copier to see if it worked...
+
+Anyway, here - have a memory doc, I still have to dredge up the CPU doc.
+
+    - Jason

@@ -1,0 +1,497 @@
+<HTML>
+<HEAD>
+<TITLE>HOWTO: Writing a computer emulator</TITLE>
+</HEAD>
+
+<BODY BGCOLOR=#FFFFFF LINK=#006000 VLINK=#006000>
+
+<CENTER>
+<H1><FONT COLOR=#FF0000>How To Write a Computer Emulator</FONT></H1>
+<H3>by <A HREF="../">Marat Fayzullin</A></H3>
+</CENTER>
+<P>
+
+  I wrote this document after receiving large amount of email from people
+who would like to write an emulator of one or another computer, but do not
+know where to start. Any opinions and advices contained in the following
+text are mine alone and should not be taken for an absolute truth. The
+document mainly covers so-called "interpreting" emulators, as opposed to
+"compiling" ones, because I do not have much experience with recompilation
+techniques. It does have a pointer or two to the places where you can find
+information on these techniques.
+<P>
+  If you feel that this document is missing something or want to make a
+correction, feel free to <A HREF="mailto:fms@freeflight.com">email me</A>
+your comments. I <B>do not</B> answer to flames, idiocy, and requests for
+ROM images though. I'm badly missing some important FTP/WWW addresses
+in the end of this document, so if you know any worth putting there, tell
+me about it. Same goes for any frequently asked questions you may have, 
+that are not in this document.
+<HR>
+
+<H3>Contents</H3>
+  So, you decided to write a software emulator? Very well, then this
+document may be of some help to you. It covers some common technical
+questions people ask about writing emulators. 
+<UL>
+<LI><A HREF="#LABA">What can be emulated?</A>
+<LI><A HREF="#LABB">What is "emulation" and how does it differ from "simulation"?</A>
+<LI><A HREF="#LABC">Is it legal to emulate the proprietary hardware?</A>
+<LI><A HREF="#LABD">What is "interpreting emulator" and how does it differ from "recompiling emulator"?</A>
+<LI><A HREF="#LABE">I want to write an emulator. Where should I start?</A>
+<LI><A HREF="#LABF">Which programming language should I use?</A>
+<LI><A HREF="#LABH">Where do I get information on the emulated hardware?</A>
+<LI><A HREF="#LABG">How do I emulate a CPU?</A>
+<LI><A HREF="#LABI">How do I optimize my C code?</A>
+<LI><I>More to come here</I>
+</UL>
+<HR>
+
+<A NAME="LABA"></A>
+<H3>What can be emulated?</H3>
+  Basically, anything which has a microprocessor inside. Of course,
+only devices running a more or less flexible program are interesting
+to emulate. Those include:
+<P>
+<UL>
+<LI>Computers
+<LI>Calculators
+<LI>Videogame Consoles
+<LI>Arcade Videogames
+<LI>etc.
+</UL>
+<P>
+  It is necessary to note that you can emulate <B>any</B> computer system,
+even if it is very complex (such as Commodore Amiga computer, for
+example). The perfomance of such an emulation may be very low though. 
+<HR>
+
+<A NAME="LABB"></A>
+<H3>What is "emulation" and how does it differ from "simulation"?</H3>
+  Emulation is an attempt to imitate the internal design of a device.
+Simulation is an attempt to imitate functions of a device. For example, a
+program imitating the Pacman arcade hardware and running real Pacman ROM
+on it is an emulator. A Pacman game written for your computer but using
+graphics similar to a real arcade is a simulator. 
+<HR>
+
+<A NAME="LABC"></A>
+<H3>Is it legal to emulate the proprietary hardware?</H3>
+  Although the matter lies in the "gray" area, it appears to be legal
+to emulate proprietary hardware, as long as the information on it
+hasn't been obtained by illegal means. You should also be aware of the
+fact that it is illegal to distribute the system ROMs (BIOS, etc.)
+with the emulator if the are copyrighted.
+<HR>
+
+<A NAME="LABD"></A>
+<H3>
+What is "interpreting emulator" and how does it differ from
+"recompiling emulator"?
+</H3>
+  There are three basic schemes which can be used for an emulator. They
+can be combined for the best result. 
+<P>
+<UL>
+<LI><B>Interpretation</B><BR>
+  The emulator reads emulated code from the memory byte-by-byte, decodes
+it, and performs the appropriate commands on the emulated registers,
+memory, and I/O. The general algorithm of such an emulator is following: 
+<FONT COLOR=#000080>
+<PRE>
+while(CPUIsRunning)
+{
+  Fetch OpCode
+  Interpret OpCode
+}
+</PRE>
+</FONT>
+  The pluses of such code include ease of debugging, portability, and ease
+of synchronization (you can simply count the clock cycles passed and tie
+the rest of your emulation to the cycle count). 
+<P>
+  The single, big, and obvious minus is perfomance. The interpretation
+takes a lot of CPU time, and you may require pretty fast computer to run
+your code at the decent speed. 
+<P>
+<LI><B>Static Recompilation</B><BR>
+  In this technique, you take a program written in the emulated code
+and attempt to translate it into the assembly code of your computer.
+The result will be usual executable file which you can run on your
+computer without any special tools. While static recompilation sounds
+very nice, it is not always possible. For example, you can not
+statically recompile the self-modifying code, as there is no way to
+tell what it will become without running it. To avoid such situations,
+you may try combining static recompiler with an interpreter or a dynamic
+recompiler.
+<P>
+<LI><B>Dynamic Recompilation</B><BR>
+  Dynamic recompilation is essentially the same thing as the static one,
+but it occurs during program execution. Instead of trying to recompile
+all the code at once, do it on the fly when you encounter CALL or JUMP
+instructions. To increase speed, this technique can be combined with the
+static recompilation. You can read more on dynamic recompilation in the
+<A HREF="http://www.ardi.com/MacHack/machack.html">white paper by Ardi</A>,
+creators of the recompiling Macintosh emulator.
+</UL>
+<HR>
+
+<A NAME="LABE"></A>
+<H3>I want to write an emulator. Where should I start?</H3>
+  In order to write an emulator, you must have a good general knowledge
+of computer programming and digital electronics. Experience in assembly
+programming comes very handy too.
+<P>
+<OL>
+<LI><A HREF="#LABF">
+    Select a programming language to use.
+    </A>
+<LI><A HREF="#LABH">
+    Find all available information about the emulated hardware.
+    </A>
+<LI><A HREF="#LABG">
+    Write CPU emulation or get existing code for the CPU emulation.
+    </A>
+<LI>Write some draft code to emulate the rest of the hardware, at
+    least partially.
+<LI>At this point, it is useful to write a little built-in debugger
+    which allows to stop emulation and see what the program is doing.
+    You may also need a disassembler of the emulated system assembly
+    language. Write your own if none exist.
+<LI>Try running programs on your emulator.
+<LI>Use disassembler and debugger to see how programs use the hardware
+    and adjust your code appropriately.
+</OL>
+<HR>
+
+<A NAME="LABF"></A>
+<H3>Which programming language should I use?</H3>
+  The most obvious alternatives are C and Assembly. Here are pros and
+cons of each of them:
+<P>
+<UL>
+<LI><B>Assembly Languages</B>
+<PRE>
++ Generally, allow to produce faster code.
++ The emulating CPU registers can be used to directly
+  store the registers of the emulated CPU.
++ Many opcodes can be emulated with the similar
+  opcodes of the emulating CPU.
+- The code is not portable, i.e. it can not be run on
+  a computer with different architecture.
+- It is difficult to debug and maintain the code.
+</PRE>
+<LI><B>C</B>
+<PRE>
++ The code can be made portable so that it works on
+  different computers and operating systems.
++ It is relatively easy to debug and maintain the
+  code.
++ Different hypothesis of how real hardware works
+  can be tested quickly.
+- C is generally slower than pure assembly code.
+</PRE>
+</UL>
+<P>
+  Good knowledge of the chosen language is an absolute necessity for
+writing a working emulator, as it is quite complex project, and your
+code should be optimized to run as fast as possible. Computer emulation
+is definitely <B>not</B> one of the projects on which you learn a
+programming language.
+<HR>
+
+<A NAME="LABH"></A>
+<H3>Where do I get information on the emulated hardware?</H3>
+  Following is a list of places where you may want to look.
+<P>
+
+<H3>Newsgroups</H3>
+<UL>
+<LI><B>comp.emulators.misc</B><BR>
+  This is a newsgroup for the general discussion about computer emulation.
+Many emulator authors read it, although the noise level is somewhat high.
+Read the
+<A HREF="http://www.why.net/home/adam/cem/">c.e.m FAQ</A>
+before posting to this newsgroup.
+<LI><B>comp.emulators.game-consoles</B><BR>
+  Same as comp.emulators.misc, but specifically dealing with videogame
+console emulators. Read the
+<A HREF="http://www.why.net/home/adam/cem/">c.e.m FAQ</A>
+before posting to this newsgroup.
+<LI><B>comp.sys./emulated-system/</B><BR>
+  The comp.sys.* hierarchy contains newsgroups dedicated to specific
+computers. You may obtain a lot of useful technical information by reading
+these newsgroups. Typical examples: 
+<PRE>
+comp.sys.msx       MSX/MSX2/MSX2+/TurboR computers
+comp.sys.sinclair  Sinclair ZX80/ZX81/ZXSpectrum/QL
+comp.sys.apple2    Apple ][
+etc.
+</PRE>
+  Please, check the appropriate FAQs before posting to these newsgroups. 
+<LI><B>alt.folklore.computers</B><BR>
+<LI><B>rec.games.video.classic</B><BR>
+</UL>
+<P>
+
+<H3>FTP</H3>
+<IMG ALT="[#]" ALIGN=MIDDLE SRC="../icons/folder.xbm">
+<A HREF="ftp://x2ftp.oulu.fi/">
+Console and Game Programming
+</A> site in Oulu, Finland
+<BR>
+<IMG ALT="[#]" ALIGN=MIDDLE SRC="../icons/folder.xbm">
+<A HREF="ftp://ftp.spies.com/">
+Arcade Videogame Hardware
+</A> archive at ftp.spies.com
+<BR>
+<IMG ALT="[#]" ALIGN=MIDDLE SRC="../icons/folder.xbm">
+<A HREF="ftp://ftp.komkon.org/pub/EMUL8/">
+Computer History and Emulation
+</A> archive at KOMKON
+<P>
+
+<H3>WWW</H3>
+<IMG ALT="[#]" ALIGN=MIDDLE SRC="../icons/unknown.xbm">
+<A HREF="http://www.why.net/home/adam/cem/">comp.emulators.misc FAQ</A>
+<BR>
+<IMG ALT="[#]" ALIGN=MIDDLE SRC="../icons/unknown.xbm">
+<A HREF="http://www.freeflight.com/fms/">My Homepage</A>
+<BR>
+<IMG ALT="[#]" ALIGN=MIDDLE SRC="../icons/unknown.xbm">
+<A HREF="http://valhalla.ph.tn.tudelft.nl/emul8/arcade.html">
+Arcade Emulation Programming Repository
+</A>
+<BR>
+<HR>
+
+<A NAME="LABG"></A>
+<H3>How do I emulate a CPU?</H3>
+First of all, if you only need to emulate a standard Z80 or 6502 CPU, you 
+can use one of the
+<A HREF="http://www.freeflight.com/fms/EMUL8/">CPU emulators I wrote</A>.
+Certain conditions apply to their usage though.
+<P>
+For those who want to write their own CPU emulation core or interested to
+know how it works, I provide a skeleton of a typical CPU emulator in C
+below. In the real emulator, you may want to skip some parts of it and add
+some others on your own. 
+<FONT COLOR=#000080>
+<PRE>
+Counter=InterruptPeriod;
+PC=InitialPC;
+
+for(;;)
+{
+  OpCode=Memory[PC++];
+  Counter-=Cycles[OpCode];
+
+  switch(OpCode)
+  {
+    case OpCode1:
+    case OpCode2:
+    ...
+  }
+
+  if(Counter<=0)
+  {
+    /* Check for interrupts and do other hardware emulation here */
+    ...
+    Counter+=InterruptPeriod;
+    if(ExitRequired) break;
+  }
+}
+</PRE>
+</FONT>
+First, we assign initial values to the CPU cycle counter 
+(<CODE>Counter</CODE>), and the program counter (<CODE>PC</CODE>):
+<FONT COLOR=#000080>
+<PRE>
+Counter=InterruptPeriod;
+PC=InitialPC;
+</PRE>
+</FONT>
+The <CODE>Counter</CODE> contains the number of CPU cycles left to the
+next suspected interrupt. Note that interrupt should not necessarily
+occur when this counter expires: you can use it for many other purposes,
+such as synchronizing timers, or updating scanlines on the screen. More on
+this later. The <CODE>PC</CODE> contains the memory address from which our
+emulated CPU will read its next opcode. 
+<P>
+After initial values are assigned, we start the main loop:
+<FONT COLOR=#000080>
+<PRE>
+for(;;)
+{
+</PRE>
+</FONT>
+Note that this loop can also be implemented as
+<FONT COLOR=#000080>
+<PRE>
+while(CPUIsRunning)
+{
+</PRE>
+</FONT>
+where <CODE>CPUIsRunning</CODE> is a boolean variable. This has certain
+advantages, as you can terminate the loop at any moment by setting
+<CODE>CPUIsRunning=0</CODE>. Unfortunately, checking this variable on
+every pass takes quite a lot of CPU time, and should be avoided if
+possible. Also, <B>do not</B> implement this loop as
+<FONT COLOR=#000080>
+<PRE>
+while(1)
+{
+</PRE>
+</FONT>
+because in this case, some compilers will generate code checking whether 
+<CODE>1</CODE> is true or not. You certainly don't want the compiler to 
+do this unnecessary work on every pass of a loop.
+<P>
+Now, when we are in the loop, the first thing is to read the next opcode, 
+and modify the program counter:
+<FONT COLOR=#000080><PRE>OpCode=Memory[PC++];</PRE></FONT>
+While this is the simplest and fastest way to read from the emulated
+memory, it is not always possible for following reasons:
+<UL>
+<LI>Memory may be fragmented into switchable pages (aka banks)
+<LI>There may be memory-mapped I/O devices in the system
+</UL>
+In these cases, we can read the emulated memory via
+<CODE>ReadMemory()</CODE> function: 
+<FONT COLOR=#000080><PRE>OpCode=ReadMemory(PC++);</PRE></FONT>
+There should also be a <CODE>WriteMemory()</CODE> function to write into
+emulated memory. Besides handling memory-mapped I/O and pages,
+<CODE>WriteMemory()</CODE> should also do the following:
+<UL>
+<LI><B>Protect ROM from writing</B><BR>
+Some cartridge-based software (such as MSX games, for example) tries to
+write into their own ROM and refuses to work if writing succeeds. This is
+often done for copy protection.
+<LI><B>Handle mirrored memory</B><BR>
+An area of memory may be accessible at several different addresses. For
+example, the data you write into location $4000 will also appear at $6000
+and $8000. While this situation can be handled in the
+<CODE>ReadMemory()</CODE>, it is usually not desirable, as
+<CODE>ReadMemory()</CODE> gets called much more frequently than
+<CODE>WriteMemory()</CODE>. Therefore, the more efficient way would be to
+implement memory mirroring in the <CODE>WriteMemory()</CODE> function. 
+</UL>
+<P>
+The <CODE>ReadMemory()/WriteMemory()</CODE> functions usually put a lot of 
+overhead on the emulation, and must be made as efficient as possible,
+because they get called very frequently. Here is an example of these
+functions:
+<FONT COLOR=#000080>
+<PRE>
+static inline byte ReadMemory(register word Address)
+{
+  return(MemoryPage[Address>>13][Address&0x1FFF]);
+}
+
+static inline void WriteMemory(register word Address,register byte Value)
+{
+  MemoryPage[Address>>13][Address&0x1FFF]=Value;
+}
+</PRE>
+</FONT>
+<B>Notice</B> the <CODE>inline</CODE> keyword. It will tell compiler to
+embed the function into the code, instead of making calls to it. If your
+compiler does not support <CODE>inline</CODE> or <CODE>_inline</CODE>, try
+making function <CODE>static</CODE>: some compilers (WatcomC, for example)
+will optimize short static functions by inlining them. 
+<P>
+Also, keep in mind that in most cases the <CODE>ReadMemory()</CODE> is
+called several times more frequently than <CODE>WriteMemory()</CODE>.
+Therefore, it is worth to implement most of the code in
+<CODE>WriteMemory()</CODE>, keeping <CODE>ReadMemory()</CODE> as short and
+simple as possible. 
+<P>
+After the opcode is fetched, we decrease the CPU cycle counter by a
+number of cycles required for this opcode:
+<FONT COLOR=#000080><PRE>Counter-=Cycles[OpCode];</PRE></FONT>
+The <CODE>Cycles[]</CODE> table should contain the number of CPU cycles
+for each opcode. <B>Beware</B> that some opcodes (such as conditional
+jumps or subroutine calls) may take different number of cycles depending
+on their arguments. This can be adjusted later in the code though. 
+<P>
+Now comes the time to interpret the opcode and execute it:
+<FONT COLOR=#000080>
+<PRE>
+switch(OpCode)
+{
+</PRE>
+</FONT>
+It is a common misconception that the <CODE>switch()</CODE> construct is
+inefficient, as it compiles into a chain of <CODE>if() ... else if()
+...</CODE> statements. While this is true for constructs with a small
+number of cases, the large constructs (100-200 and more cases) always
+appear to compile into a jump table, which makes them quite efficient. 
+<P>
+There are two alternative ways to interpret the opcodes. The first is to
+make a table of functions and call an appropriate one. This method appears
+to be less efficient than a <CODE>switch()</CODE>, as you get the overhead
+from function calls. The second method would be to make a table of labels,
+and use the <CODE>goto</CODE> statement. While this method is slightly
+faster than a <CODE>switch()</CODE>, it will only work on compilers
+supporting "precomputed labels". Other compilers will not allow you to
+create an array of label addresses. 
+<P>
+After we successfully interpreted and executed an opcode, the comes a time
+to check whether we need any interrupts. At this moment, you can also
+perform any tasks which need to be synchronized with the system clock:
+<FONT COLOR=#000080>
+<PRE>
+if(Counter<=0)
+{  
+  /* Check for interrupts and do other hardware emulation here */
+  ...
+  Counter+=InterruptPeriod;
+  if(ExitRequired) break;
+}
+</PRE>
+</FONT>
+Following is a short list of things which you may want to do in this
+<CODE>if()</CODE> statement:
+<UL>
+<LI>Check if end of screen is reached and generate VBlank interrupt if so
+<LI>Check if end of scanline is reached and generate HBlank interrupt if so
+<LI>Check for sprite collisions, generate interrupt if necessary
+<LI>Update emulated hardware timers, generate interrupt if timer expires
+<LI>Refresh a display scanline
+<LI>Refresh the entire screen
+<LI>Update sound
+<LI>Read keyboard/joysticks state
+<LI>etc.
+</UL>
+<P>
+Carefully calculate the number of CPU cycles needed for each task, then
+use the smallest number for <CODE>InterruptPeriod</CODE>, and tie all
+other tasks to it (they should not necessarily execute on every expiration
+of the <CODE>Counter</CODE>). 
+<P>
+Note that we do not simply assign <CODE>Counter=InterruptPeriod</CODE>,
+but do a <CODE>Counter+=InterruptPeriod</CODE>: this makes cycle counting
+more precise, as there may be some negative number of cycles in the
+<CODE>Counter</CODE>. 
+<P>
+Also, look at the
+<FONT COLOR=#000080><PRE>if(ExitRequired) break;</PRE></FONT>
+line. As it is too costly to check for an exit on every pass of the loop,
+we do it only when the <CODE>Counter</CODE> expires: this will still exit
+the emulation when you set <CODE>ExitRequired=1</CODE>, but it won't take
+as much CPU time. 
+<P>
+This is about all I have to say about CPU emulation in C. You should be 
+able to figure the rest on your own.
+<HR>
+
+<A NAME="LABI"></A>
+<H3>How do I optimize my C code?</H3>
+<HR>
+
+<I>
+  Maintained by <A HREF="../">Marat Fayzullin</A>
+  [<A HREF="mailto:fms@freeflight.com">fms@freeflight.com</A>]
+</I>
+</BODY>
+</HTML>

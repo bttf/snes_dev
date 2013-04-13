@@ -1,0 +1,34 @@
+#!/usr/bin/rc
+
+cat <<!
+typedef struct {
+	char *mnemonic;
+	short addr_m[22];
+} Instruction;
+
+#define ADDR_M_COUNT 22
+!
+
+awk -F'	' '
+	BEGIN { print "enum" }
+	{
+		if (NR==1) printf("{ "); else printf(", ")
+		printf("%4s_ // %2d | %7s | %s\n",tolower($1),NR-1,$2,$3) }
+	END { print "};" }
+' <modes
+
+echo;
+
+awk '
+	BEGIN {
+		print "#define MNEMONIC_COUNT 99"
+		print "Instruction Set[] = {" }
+	{
+		printf("{\"%s\",{", $1)
+		for (i=2; i<=NF; i++) {
+			if (i==NF) fmt="%2s}"; else fmt="%s,"
+			if ($i=="--") { printf(fmt," -1 ") }
+			else { printf("0x"); printf(fmt,$i) }}
+		printf("},\n") }
+	END { print "};" }
+' <instr

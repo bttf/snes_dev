@@ -1,0 +1,480 @@
+<html>
+	<head>
+		<title>65816 assembler manual by trofatter</title>
+		<link rel="stylesheet" type="text/css" href="./index.css" />
+	</head>
+	<body>
+		<table>
+			<tr>
+				<td>
+					<pre>
+65816 Assembler Manual
+
+Written by: K. P. Trofatter
+
+# Introduction
+The 65816 Assembler is a symbolic assembler for the 16-bit WDC 65816
+microprocessor, and thus the whole 65xx family. The assembler has a small but
+powerful set of directives that make programming 65816 assembly a practical
+matter. The program was written with the Super Nintendo Entertainment System
+(SNES) in mind, and has facilities that ease programming for this platform.
+
+# Usage
+| 65816a [flags] infile outfile
+
+For now `-r' is the only valid flag. It generates an assembly report.
+
+# Format
+The main input of the 65816 Assembler is a formatted source text file
+containing a series of statements.
+
+## Statements
+Statements are prefixed by the semicolon `;' operator.
+
+`;' may not be used other than to declare statements.
+
+A statement is either a:
+	- 65816 assembly instruction
+	- Directive
+	- Compiler expression
+	- Link
+
+Statements are made up of tokens. A token is a continuous string of a
+prescribed format. Valid tokens include:
+	- Mnemonics
+	- Names
+	- Numbers
+	- Symbols
+	- Strings
+
+File formatting is free between tokens with the characters:
+	| [ ]  // space
+	| [\n] // newline
+	| [\r] // carriage return
+	| [\t] // tab
+	| [\v] // vertical tab
+	| [\f] // form feed
+
+## Comments
+There are 4 ways to comment:
+	.1. Before a `;'
+		This is a subtle way to comment, and programmer discretion is
+		highly advised. Examples of comments:
+			- before the first `;'.
+			- after complete statement until next `;'
+
+	.2. After `#Print', the print directive
+	.3. After `#_', the comment directive, where _ is whitespace
+	.4. Between `#{' and `#}', the block comment directives. Block
+	    comments `#{' and `#}' may be nested.
+
+# Tokens
+All tokens may not be longer than the value NAME_MAX as defined in the
+file 'assembler.h'.
+
+## Mnemonic
+| Format: [ASM]
+
+A contiguous 3-character string of `[A-Z]'. All mnemonics defined or not
+are reserved words.
+
+A mnemonic as a statement's first token signifies an assembly instruction
+to the compiler.
+
+## Name
+| Format: [name]
+
+A contiguous string of `[0-9A-Za-z_.]', though `name' may not begin with
+a number. Limited in length by NAME_MAX, as defined in assembler.h.
+
+'name' must be prototyped or declared before dereferencing.
+
+## Number
+| Format: [base][number][size]
+
+A contiguous string of `[:%$0-9A-Fbwl]' where colons `:' are ignored and
+may be used as placeholders, % and $ may only prefix, and b, w, and l may
+only suffix.
+
+Decimal is the default number base. To change the base, prefix number with
+`base':
+
+| [%] for binary
+| [$] for hexadecimal
+
+For decimal, the assumed size of the data is minimized based on the
+magnitude of the integer.
+
+For binary and hexadecimal, the assumed size of the data is minimized
+based on the number of numeric characters in the number token.
+
+To explicitly declare a size, suffix number with `size':
+
+| [b] for byte, 1 byte
+| [w] for word, 2 bytes
+| [l] for long, 3 bytes
+
+Numbers may not exceed 3 bytes in size, giving a range:
+
+| binary      : %0 - %11111111:11111111:11111111
+| decimal     :  0 - 16777215
+| hexadecimal : $0 - $FF:FFFF
+
+## Symbol
+| Format: [symbol]
+
+Symbols are used to express operations on operands, that is names and
+numbers. Symbols look like `[;#{}[\]()=+-*/\,]+'.
+
+## String
+| Format: ["][string]["]
+
+- `string' is delimited by a pair of double quote `"' operators.
+- `string' may contain any character except `;'.
+
+Escape sequences are provided to include formatting characters in the
+string normally. To use an escape sequence, prefix a character by the
+backslash `\' operator. Switches include:
+
+| [\\] , backslash
+| [\"] , double quote
+| [\:] , semicolon
+
+# Statements
+## Assembly
+| Format: [;][ASM][operand and addressing mode]
+
+The official 65816 assembly language is implemented. The user's familiarity
+with the language is assumed. A reference of all mnemonic and addressing
+mode combinations can be found in `data.h'. Entries besides `-1' are
+valid instructions.
+
+Operands must always be either be a number or name. If the instruction is
+either a branch or absolute jump, then a link may also be targeted.
+
+To dereference a name, substitute the name for a number operand. To
+dereference a link, substitute the link (including braces) for a number
+operand.
+
+The 65816 is sensitive to the word mode it is in (8 of 16-bits) ans thus
+some assembly statements will act differently depending on the mode in
+use. Word mode can be altered by the REP and SEP assembly commands, or
+from the CPU assembler directives.
+
+### Addressing Modes
+The 22 official 65816 addressing modes are supported.
+
+b, w, and l represent a 1, 2, and 3 byte operand respectively.
+
+| ~        //  0 - Implied
+| #        //  1 - Immediate
+| A        //  2 - Accumulator
+| b        //  3 - Direct
+| b,S      //  4 - Stack Relative
+| b,X      //  5 - Direct X Indexed
+| b,Y      //  6 - Direct Y Indexed
+| (b)      //  7 - Direct Indirect
+| (b),Y    //  8 - Direct Indirect Y Indexed
+| (b,S),Y  //  9 - Stack Relative Indirect Y Indexed
+| (b,X)    // 10 - Direct X indexed Indirect
+| [b]      // 11 - Direct Indirect Long
+| [b],Y    // 12 - Direct Indirect Long Y Indexed
+| b,b      // 13 - Block Move
+| w        // 14 - Absolute
+| w,X      // 15 - Absolute X Indexed
+| w,Y      // 16 - Absolute Y Indexed
+| (w)      // 17 - Absolute Indirect
+| (w,X)    // 18 - Absolute X Indexed Indirect
+| [w]      // 19 - Absolute Indirect Long
+| l        // 20 - Long
+| l,X      // 21 - Long X Indexed
+
+### Instruction Set
+The 92 official 65816 mnemonics are supported, including the instructions
+`JML' and `JSL'. The alternate mnemonics `BGE' `BLT' `SWA' `TAD' `TAS'
+`TDA' `TSA' are also recognized. Thus there are 99 implemented mnemonics.
+
+|          ~  #  A  b                                w                 l
+|          0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21
+|        +------------------------------------------------------------------+
+|  [ADC] |    *     *  *  *     *  *  *  *  *  *     *  *  *           *  * |
+|  [AND] |    *     *  *  *     *  *  *  *  *  *     *  *  *           *  * |
+|  [ASL] |       *  *     *                          *  *                   |
+|  [BCC] |          *                                                       |
+|  [BCS] |          *                                                       |
+|  [BEQ] |          *                                                       |
+| *[BGE] |          *                                                       |
+|  [BIT] |    *     *     *                          *  *                   |
+| *[BLT] |          *                                                       |
+|  [BMI] |          *                                                       |
+|  [BNE] |          *                                                       |
+|  [BPL] |          *                                                       |
+|  [BRA] |          *                                                       |
+|  [BRK] |          *                                                       |
+|  [BRL] |                                           *                      |
+|  [BVC] |          *                                                       |
+|  [BVS] |          *                                                       |
+|  [CLC] | *                                                                |
+|  [CLD] | *                                                                |
+|  [CLI] | *                                                                |
+|  [CLV] | *                                                                |
+|  [CMP] |    *     *  *  *     *  *  *  *  *  *     *  *  *           *  * |
+|  [COP] |          *                                                       |
+|  [CPX] |    *     *                                *                      |
+|  [CPY] |    *     *                                *                      |
+|  [DEC] |       *  *     *                          *  *                   |
+|  [DEX] | *                                                                |
+|  [DEY] | *                                                                |
+|  [EOR] |    *     *  *  *     *  *  *  *  *  *     *  *  *           *  * |
+|  [INC] |       *  *     *                          *  *                   |
+|  [INX] | *                                                                |
+|  [INY] | *                                                                |
+| *[JML] |                                                          *  *    |
+|  [JMP] |                                           *        *  *  *  *    |
+| *[JSL] |                                                             *    |
+|  [JSR] |                                           *           *     *    |
+|  [LDA] |    *     *  *  *     *  *  *  *  *  *     *  *  *           *  * |
+|  [LDX] |    *     *        *                       *     *                |
+|  [LDY] |    *     *     *                          *  *                   |
+|  [LSR] |       *  *     *                          *  *                   |
+|  [MVN] |                                                                  |
+|  [MVP] |                                                                  |
+|  [NOP] | *                                                                |
+|  [ORA] |    *     *  *  *     *  *  *  *  *  *     *  *  *           *  * |
+|  [PEA] |                                           *                      |
+|  [PEI] |                      *                                           |
+|  [PER] |                                           *                      |
+|  [PHA] | *                                                                |
+|  [PHB] | *                                                                |
+|  [PHD] | *                                                                |
+|  [PHK] | *                                                                |
+|  [PHP] | *                                                                |
+|  [PHX] | *                                                                |
+|  [PHY] | *                                                                |
+|  [PLA] | *                                                                |
+|  [PLB] | *                                                                |
+|  [PLD] | *                                                                |
+|  [PLP] | *                                                                |
+|  [PLX] | *                                                                |
+|  [PLY] | *                                                                |
+|  [REP] |          *                                                       |
+|  [ROL] |       *  *     *                          *  *                   |
+|  [ROR] |       *  *     *                          *  *                   |
+|  [RTI] | *                                                                |
+|  [RTL] | *                                                                |
+|  [RTS] | *                                                                |
+|  [SBC] |    *     *  *  *     *  *  *  *  *  *     *  *  *           *  * |
+|  [SEC] | *                                                                |
+|  [SED] | *                                                                |
+|  [SEI] | *                                                                |
+|  [SEP] |          *                                                       |
+|  [STA] |          *  *  *     *  *  *  *  *  *     *  *  *           *  * |
+|  [STP] | *                                                                |
+|  [STX] |          *        *                          *                   |
+|  [STY] |          *     *                             *                   |
+|  [STZ] |          *     *                             *  *                |
+| *[SWA] | *                                                                |
+| *[TAD] | *                                                                |
+| *[TAS] | *                                                                |
+|  [TAX] | *                                                                |
+|  [TAY] | *                                                                |
+|  [TCD] | *                                                                |
+|  [TCS] | *                                                                |
+| *[TDA] | *                                                                |
+|  [TDC] | *                                                                |
+|  [TRB] |          *                                *                      |
+| *[TSA] | *                                                                |
+|  [TSB] |          *                                *                      |
+|  [TSC] | *                                                                |
+|  [TSX] | *                                                                |
+|  [TXA] | *                                                                |
+|  [TXS] | *                                                                |
+|  [TXY] | *                                                                |
+|  [TYA] | *                                                                |
+|  [TYX] | *                                                                |
+|  [WAI] | *                                                                |
+|  [WDM] |          *                                                       |
+|  [XBA] | *                                                                |
+|  [XCE] | *                                                                |
+|        +------------------------------------------------------------------+
+|          0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21
+|          ~  #  A  b                                w                 l
+
+### Directive
+| Format: [;][#Directive][arguments]
+
+Directives are prefixed with `#'.
+
+A `#' followed by a whitespace comments the statement.
+
+Directives add functionality to the assembler by altering assembly behavior
+and improving source file readability. The directives are roughly divided
+into the 5 subgroups by function, all of which are listed and detailed below:
+
+#### Comment
+| [;][#_][comment]
+| [;][#{][comment][;][#}]
+| [;][#Print][_][comment]
+
+#### CPU
+| [;]#m][;][#M]
+| [;]#x][;][#X]
+| [;]#y][;][#Y]
+
+#### PC
+| [;][#HiROM]
+| [;][#LoROM]
+| [;][#PC][+][data][,][pad]
+
+#### Flow
+| [;][#Halt]
+
+#### Declaration
+| [;][#Name][addr][name][,] ...
+| [;][#Code][addr][{][name][}][,] ...
+| [;][#Data][addr][name][{][data][,] ... [}][,] ...
+
+### Comment
+| Format: [;][#_][comment]  // `_' == whitespace or EOF
+
+Comments the following statement. Comment ends at next `;' or EOF.
+
+### Block Comment
+| Format: [;][#{][comment][;][#}]
+
+Comments the text between block directives `#{' and `#}'.
+	- If a pair imbalance is detected, a warning is issued.
+	- If a `#{' imbalance occurs, the file onward is commented.
+	- If a `#}' imbalance occurs, the directive is ignored.
+
+### Print
+| Format: [;][#Print][_][comment]  // `_' == whitespace
+
+Prints the following statement to stdout. If _a_ whitespace is included
+between the directive and comment, it is ignored and not printed.
+
+### CPU
+| Format: [;][#m] [;][#M]  // 16-Bit / 8-Bit Accumulator
+|         [;][#x] [;][#X]  // 16-Bit / 8-Bit Index
+|         [;][#y] [;][#Y]  // 16-Bit / 8-Bit Index (Alternate)
+
+Resets and sets the Processor status flags m and x. Since program execution
+is sensitive to these flags, these must be inserted where the mode is
+_assumed_. Note that the mode is automatically updated for REP and SEP.
+
+### ROM
+| Format: [;][#LoROM]  // LoRom mode ($00:8000-$7D:FFFF)
+| Format: [;][#HiROM]  // HiRom mode ($80:8000-$FF:FFFF)
+
+Invokes the SNES memory map and selected ROM mode. These functions make the
+output compatible with the SNES Memory map. In this map, the address space
+is mirrored from $00:0000-$7F:FFFF to $80:0000-$FF:FFFF with the addresses
+$7E:0000-$7F:FFFF actually being mapped to the SNES WRAM (and not being
+mirrored to $FE:0000-$FF:FFFF), and with the added constraint that from
+banks $00-$3F and $80-$BF contain program data only from $8000-$FFFF. A
+memory map is included with this manual.
+
+### PC
+| Format: [;][#PC][+][data][,][pad]
+
+#### Permutations:
+| [;][#PC]     [addr]          // [addr]  must be 2-3 bytes and valid.
+| [;][#PC]     [addr][,][pad]  // [pad]   must be 1-3 bytes.
+| [;][#PC][+][offset]          // [offset] may be 1-3 bytes.
+| [;][#PC][+][offset][,][pad]  // [pad]   must be 1-3 bytes.
+
+Changes the current program counter by either directly specifying `addr'
+or by incrementing it by `offset'. If `pad' is specified, the space between
+the current PC and new PC is padded with the data, else zero. The function
+takes into account the memory map being used. Note that the PC cannot be
+set to a lower value than the current PC.
+
+### Halt
+| Format: [;][#Halt]
+
+Halts assembler. Useful for debugging purposes.
+
+### Name
+| Format: [;][#Name][addr][name][,] ...
+
+#### Permutations:
+| [;][#Name][addr][name][,] ...
+| [;][#Name][b]   [name][,] ...
+| [;][#Name][w]   [name][,] ...
+| [;][#Name][l]   [name][,] ...
+
+The name directive allows for symbolic assembly code. Name associates `name'
+with `addr'. A name can also be prototyped by substituting `addr' with
+either `b', `w', or `l' representing a 1, 2, or 3 byte value respectively. A
+prototyped name must be defined by the end of the file if it is referenced.
+
+Only one of a given name can exist amongst name, code, and data declarations.
+
+A comma can be used to declare many names with one directive.
+
+A name must be defined or prototyped prior to referencing.
+
+The value of name can be modified by appending "_Lo" (for low byte) or
+"_Hi" for (high byte) to the end of name when referencing, incrementing
+the value by 0 or 1 respectively.
+
+### Code
+| Format: [;][#Code][addr][{][name][}][,] ...
+
+#### Permutations:
+| [;][#Code][addr]   [name]   [,] ...
+| [;][#Code][l]      [name]   [,] ...
+| [;][#Code][w]      [name]   [,] ...
+| [;][#Code][addr][{][name][}][,] ...
+| [;][#Code][w]   [{][name][}][,] ...
+| [;][#Code][l]   [{][name][}][,] ...
+
+Similar to `#Name', the code directive associates `name' with `addr'. Code
+may be prototyped with either `w' or `l'.
+
+To declare the position of the code, put braces around `name'. If the code
+was prototyped with `w' or `l', then the value of `addr' is automatically
+assigned.
+
+### Data
+| Format: [;][#Data][addr][name][{][flag][,][data][,] ... [}][,] ...
+
+#### Permutations:
+| [;][#Data][addr][name]
+| [;][#Data][w]   [name]
+| [;][#Data][l]   [name]
+| [;][#Data][addr][name][{][data][,][data] ... [}][,] ...
+| [;][#Data][w]   [name][{][data][,][data] ... [}][,] ...
+| [;][#Data][l]   [name][{][data][,][data] ... [}][,] ...
+
+Similar to `#Name', the data directive associates `name' with `addr'. Data
+may be prototyped with either `w' or `l'.
+
+To declare the position of the data, include a formatted data list surrounded
+by braces. Data are delimited by `,' or `_' where `_' is whitespace. The
+following data are valid:
+	- Numbers
+	- Names
+	- Strings
+	- `#Files' where `#' prefixes a file name.
+
+## Link (Labels)
+| Format: [;][{][+/-][link][}]      //Declaration
+| Format: [;][ASM][{][+/-][link][}] //Targeting
+
+Links serve as a way to name inline program addresses for the purposes of
+labeling branch or intrabank jump targets. Only these assembly instructions
+may target links.
+
+Prefix `+' or `-' to `link' to associate a direction with a link. When
+resolving a link reference, the link closest to the reference in the
+respective direction is found.
+
+The link name is unique in that its namespace is augmented to include `+'
+and `-' as well.
+					</pre>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

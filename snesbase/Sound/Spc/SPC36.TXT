@@ -1,0 +1,60 @@
+
+9. SUMMARY OF SPC700 COMMANDS.
+
+An SPC700 series is used for the SFX sound source CPU. However, 
+standby and sleep modes can not be used.
+
+The command set operand notation and explanation of command activity
+are indicated in the table below. The upper portion of the table are
+symbols necesary to operand description. These are symbols necessary
+assembler description. In the lower portion of the table, the values
+of the various operand are expressed as symbols. Assembler 
+descriptions are given as numerical values or labels.
+
+Table 9.1. Command Operand Symbols and Meaning
+
+Symbol
+-----------------------------------------------
+  A       A register
+  X       X register
+  Y       Y register
+ PSW      Program status ward
+ YA       Y, A paired 16-bit register
+ PC       Program counter
+ SP       Stack pointer
+
+ ( )      Indirect expression
+( )+      Indirect auto-increment expression
+  #       Inmediate data
+  |       Absolute address
+  /       Bit reversal
+  .       Bit position indicator
+ ( )      Indexed Indirect expression
+  H       Hexadecial notation
+------------------------------------------------
+ inm      8-bit inmediate data
+ dp       Offset address within direct page
+ abs      16-bit absolute address
+ rel      Relative offset complement value of 2
+ mem      Boolean bit operation address
+ bit      Bit location
+
+
+          MSB
+
+  X       -----------------------
+          | | | |0| |           |
+          -----------------------
+          \----X----/
+
+
+          MSB
+
+  Y       -----------------------
+          | | | |0| |           |
+          -----------------------
+          \----Y----/
+
+upage     Offset within U page
+  n       Vector call number.
+

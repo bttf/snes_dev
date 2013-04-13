@@ -1,0 +1,60 @@
+
+4. 8-BIT ARITHMETIC OPERATION COMMANDS.
+
+------------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                    Flag
+------------------------------------------------------------------------
+  ADC    A,#inm      88    2     2     A <- A+inm+C            NV..H..ZC
+  ADC    A,(X)       86    1     3     A <- A+(X)+C            NV..H..ZC
+  ADC    A,dp        84    2     3     A <- A+(dp)+C           NV..H..ZC
+  ADC    A,dp+X      94    2     4     A <- A+(dp+X)+C         NV..H..ZC
+  ADC    A,labs      85    3     4     A <- A+(abs)+C          NV..H..ZC
+  ADC    A,labs+X    95    3     5     A <- A+(abs+X)+C        NV..H..ZC
+  ADC    A,labs+Y    96    3     5     A <- A+(abs+Y)+C        NV..H..ZC
+  ADC    A,(dp+X)    87    2     6     A <- A+((dp+X+1)(dp+X)) NV..H..ZC
+  ADC    A,(dp)+Y    97    2     6     A <- A+((dp+1)(dp)+Y)   NV..H..ZC
+  ADC    (X),(Y)     99    1     5   (X) <- (X)+(Y)+C          NV..H..ZC
+  ADC    dp(d),dp(s) 89    3     6 (dp(d))<-(dp(d))+(dp(s))+C  NV..H..ZC
+  ADC    dp,#inm     98    3     5  (dp) <- (dp)+inm+C         NV..H..ZC
+------------------------------------------------------------------------
+  SBC    A,#inm      A8    2     2     A <- A-inm-!C           NV..H..ZC
+  SBC    A,(X)       A6    1     3     A <- A-(X)-!C           NV..H..ZC
+  SBC    A,dp        A4    2     3     A <- A-(dp)-!C          NV..H..ZC
+  SBC    A,dp+X      B4    2     4     A <- A-(dp+X)-!C        NV..H..ZC
+  SBC    A,labs      A5    3     4     A <- A-(abs)-!C         NV..H..ZC
+  SBC    A,labs+X    B5    3     5     A <- A-(abs+X)-!C       NV..H..ZC
+  SBC    A,labs+Y    B6    3     5     A <- A-(abs+Y)-!C       NV..H..ZC
+  SBC    A,(dp+X)    A7    2     6  A <- A-((dp+X+1)(dp+X))-!C NV..H..ZC
+  SBC    A,(dp)+Y    B7    2     6  A <- A-((dp+1)(dp)+Y)-!C   NV..H..ZC
+  SBC    (X),(Y)     B9    1     5   (X) <- (X)-(Y)-!C         NV..H..ZC
+  SBC    dp(d),dp(s) A9    3     6 (dp(d))<-(dp(d))-(dp(s))-!C NV..H..ZC
+  SBC    dp,#inm     B8    3     5  (dp) <- (dp)-inm-!C        NV..H..ZC
+------------------------------------------------------------------------
+  CMP    A,#inm      68    2     2     A-inm                   N......ZC
+  CMP    A,(X)       66    1     3     A-(X)                   N......ZC
+  CMP    A,dp        64    2     3     A-(dp)                  N......ZC
+  CMP    A,dp+X      74    2     4     A-(dp+X)                N......ZC
+  CMP    A,labs      65    3     4     A-(abs)                 N......ZC
+  CMP    A,labs+X    75    3     5     A-(abs+X)               N......ZC
+  CMP    A,labs+Y    76    3     5     A-(abs+Y)               N......ZC
+  CMP    A,(dp+X)    67    2     6     A-((dp+X+1)(dp+X))      N......ZC
+  CMP    A,(dp)+Y    77    2     6     A-((dp+1)(dp)+Y)        N......ZC
+  CMP    (X),(Y)     79    1     5     (X)-(Y)                 N......ZC
+  CMP    dp(d),dp(s) 69    3     6     (dp(d))-(dp(s))         N......ZC
+  CMP    dp,#inm     78    3     5     (dp)-inm                N......ZC
+  CMP    X,#inm      C8    2     2     X-inm                   N......ZC
+  CMP    X,dp        3E    2     3     X-(dp)                  N......ZC
+  CMP    X,labs      1E    3     4     X-(abs)                 N......ZC
+  CMP    Y,#inm      AD    2     2     Y-inm                   N......ZC
+  CMP    Y,dp        7E    2     3     Y-(dp)                  N......ZC
+  CMP    Y,labs      5E    3     4     Y-(abs)                 N......ZC
+------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+

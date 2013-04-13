@@ -1,0 +1,46 @@
+
+1. CPU REGISTERS
+
+
+Withing the CPU are the registers necessary for the execution of
+the various commands. These are an A register (note : functions
+as an 8-bit accumulator). X register, Y register (8-bit universal
+register which can also be used as index register). PSW ( program
+status ward). SP (stack pointer), etc. These are all 8-bit 
+registersm but the PC (program counter) is made up of 16 bits.
+
+
+------------------------------
+            P|C               |   Program Counter      (16 bits)
+------------------------------
+              ----------------
+             |        A       |   A Register           (8  bits)
+              ----------------
+------------------------------
+      Y      |        A       |   (Y,A Paired 16-bit Acumulator)
+------------------------------                         (16 bits)
+              ----------------
+             |        X       |   X Register           (8  bits)
+              ----------------
+              ----------------
+             |        Y       |   Y Register           (8  bits)
+              ----------------
+              ----------------
+             |       SP       |   Stack Pointer        (8  bits)
+              ----------------
+              ----------------
+             |       PSW      |   Program Status Ward  (8  bits)
+              ----------------
+            /              /
+           ---------------
+          |N|V|P|-|H|-|Z|C|
+           ---------------
+
+           N = Negative Flag
+           V = Overflow Flag
+           P = Direct Page Flag
+           H = Half Carry Flag
+           Z = Zero Flag
+           C = Carry Flag (Bit Accumulator)
+
+

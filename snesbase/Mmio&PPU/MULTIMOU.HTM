@@ -1,0 +1,241 @@
+<HTML>
+<TITLE>The Multiplayer Adapter and the Mouse</TITLE>
+<body bgcolor=#00c0a0 text=#000000>
+<HEAD>
+<H1><CENTER>
+How to Use the Mouse and the Super Multitap Accessories of the SNES
+</CENTER></H1><HR></HEAD>
+
+This information has been brought to you by Gau of the Veldt.<P>
+
+This document will show you how to read the mouse and multitap accessories
+in your SNES/SF programs.  The information is accurate to the best of my
+knowledge and has been tested (I do not write a doc and send it to the entire
+world if I cannot be certain of the functionality of the content).  However,
+I *DON'T* take responsibility for blown SNES's, mice, multitaps, fried
+cat in the microwave, etc...<P>
+
+I describe the reading of two separate accessories: the SNES Mouse and the
+Super Multitap.<P>
+
+<HR><H1>*** PART ONE: THE MOUSE ***</h1><HR>
+
+The mouse is a pointing device.  The usual purpose is to control an onscreen
+cursor, or pointer, usually an arrow (doesn't have to be), on the screen.
+Buttons on the mouse will indicate to the SNES program that something should
+happen at that point on the screen.  The function of the left and right buttons
+is completely up to the program, as is detecting single clicks, double clicks
+and dragging.<P>
+<MENU>
+<LI>    Before reading anything on a controller, be sure to read $4212
+        to ensure the ports have been completely scanned by the hardware.
+
+<LI>    Must be plugged in Port 1 (lefthand side)
+
+<LI>    Returns a 1 in $4218(19) when plugged in
+
+<LI>    Sets bits 6,7 in $4218(19) when the left and
+        righthand buttons are pushed, respectively.<BR><BR>
+
+        To read the mouse:<BR><BR><MENU>
+
+<LI>    The mouse is read serially through the controller
+        extended attribute registers, $4016-17.
+
+<LI>    Bit 0 in $4016 will contain a serial stream that contains
+        the mouse information.  To read it, read $4016 in a loop
+        sixteen times, shifting it right and rotating left into
+        a 16-bit location as follows:
+<CODE><PRE>
+                sep #$30
+             -  lda $4016
+                rep #$20
+                lsr
+                rol Somewhere16
+                sep #$20
+                dex
+                bne -
+</PRE></CODE>
+<LI>    The 16-bit value returned contains the following information:
+<PRE><CODE>
+           BIT: FEDCBA9876543210
+                YyyyyyyyXxxxxxxx
+
+                      X: X-dir (0==Right)
+                      Y: Y-dir (0==Down)
+                xxxxxxx: X-travel
+                yyyyyyy: Y-travel
+</CODE></PRE>
+<LI>    To use the info, you can simply add the travel values onto
+        pseudoregisters every VBL.  Use ADC when X or Y is 0 and use
+        SBC when X or Y is 1 (don't forget to use CLC for ADC and SEC
+        for SBC).  Add the horizontal and vertical travels separately.
+        If you want faster tracking, ASL the travel values.
+</UL></UL>
+<HR><H1>*** PART 2: The Super Multitap ***</H1><HR>
+
+The multitap is an easy way for a game to support more than two players.  The
+multitap is particularly useful when some other device supported by the game,
+say a mouse, uses up one of the precious controller ports.  With the multitap,
+you can have up to five players when nothing but controllers are plugged in,
+or you can have four players when something uses up port one (ie: mouse).<P>
+
+The switch on the multitap will disable the last three controllers, forcing
+the system to only have two controllers (1 and 2).  This is for some games
+that may have a compatibilty problem.  I don't know of any that do however.<P>
+
+The multitap contains a system for determining whether the extra controllers
+are actually plugged in or not.  This is a useful feature since it isn't
+available on the SNES when no multitap is connected.<P>
+
+The multitap does not interfere with normal controller reading.  Reading
+the normal controllers with the multitap on 3-5 player mode using the
+usual registers ($4218,19 for 1, $421A,1B for 2) works properly.<P>
+
+The multitap uses the port 4 registers to hold the info for port 3 so games
+that only use three players are as simple as reading the Joy 4 port in addition
+to the Joy 1 and 2 ports (Joy 4 is $421E,1F).<P>
+
+Note:  The order of operation here is very important.<P>
+
+<OL>
+<LI>To start reading the multitap, or any controller, be sure to check $4212
+   and delay if necessary, to ensure that the hardware has read all the port
+   information.
+
+<LI>The next step is to read the first controller normally.  Then read $4016
+   and store the first two bits.  They store the plug-in state for controllers
+   2 and 3.
+
+<LI>Check the lower four bits on port 1.  If they aren't zero, it means that
+   something other than a controller (probably a mouse) is in port one.  Read
+   it at this time.
+
+<LI>Read Controller two normally.
+
+<LI>Read controller four ($421E,$1F).  Now read $4017 and store the first
+   two bits.  These are the plug-in states for joyport 4 and 5.  Controller
+   four gives you joyport 3.
+
+<LI>Put a 0 onto the parallel port.  This tells the multitap to place
+   controllers four and five into $4017.  Bit 0 will give the bits for
+   joyport 4 and bit 1 will give you joyport 5.
+
+<LI>Set bit 7 of the parallel port to get the multitap off the extended
+   controller registers (so the mouse can use it next reading)
+</OL>
+If you hate descriptions (and my rambling on), here's a direct source code
+clip from my primary SNES project.  Since I use symbolic assembly, I'll make
+a list of magic numbers for the labels:<P>
+
+If you see it in MiXeD case, it's a RAM value, just create a label in your
+assembler with something like:<P>
+
+SJoy0 = 0       ;Controller result for Joystick 1 (of 5)/Mousebuttons<BR>
+..and so on...<P>
+
+Note: all the RAM locations used in this code section store words<P>
+
+If you see a label in UPPER case, it's a SNES register.<P>
+Use this table:<PRE><CODE>
+         HVBJOY = $4212
+          JOY0L = $4218 (H is +1)
+          JOY1L = $421A (H is +1)
+          JOY2L = $421C (H is +1)
+          JOY3L = $421E (H is +1)
+        JOYSER0 = $4016
+        JOYSER1 = $4017
+           WRIO = $4201
+
+;
+;       Read Multitap controller and mouse simultaneously
+;
+;       Code by Gau of the Veldt
+;       (C) 1995 Gau of the Veldt
+;       Freeware
+;
+;       Just mention me somewhere your greets or credits if you use
+;       this code (the "special thanks" section is fine).
+;
+;       Email is nice too - you can even ask for help :)
+;       gau@netbistro.com
+;
+;        Mixed labels: RAM locations
+;       CAPPED labels: SNES Registers
+;
+;       JOYSER0/1 are $4016,$4017 respectively
+;
+           php
+           sep #$30
+-          lda HVBJOY
+           bit #$01
+           bne -                ;Wait for the controller states to get read
+           lda JOY0H
+           sta SJoy0+1
+           lda JOY0L
+           sta SJoy0            ;Jport1/Mousebuttons is read directly
+           and #$0F
+           sta Spare0           ;Indicates a nonzero value here if something
+           ldx #$10             ;else (ie: mouse) uses $4016 - at this point
+-          lda JOYSER0          ;(and only this point) you can read this
+           rep #$20             ;device
+           lsr
+           rol SRodent          ;Read one word thorugh $4016 bit 0
+           sep #$20             ;serially into the rodent pseudoreg
+           dex                  ;(I use a BIOS for my coding)
+           bne  -
+           lda JOY1H            ;Joyport two is read directly
+           sta SJoy1+1          ;(ie: used $4219,1A)
+           lda JOY1L
+           sta SJoy1
+           and #$0F
+           sta Spare0+1         ;Joyport three is read directly
+           lda JOY3H            ;(Note you use $421E,1F, not $421C,1D)
+           sta SJoy2+1
+           lda JOY3L
+           sta SJoy2
+           and #$0F
+           sta SJoy23Prs+1      ;1's here indicate plugged-in controllers:
+           sta SJoy23Prs        ;Bit 0: #2 plugged in, 8: #3 plugged in
+           lda JOYSER1
+           lsr
+           rol SJoy23Prs
+           lsr
+           rol SJoy23Prs+1
+           stz WRIO             ;Control of $4016,17 given to multitap
+           ldy #$10
+ -         lda JOYSER1
+           rep #$20
+           lsr
+           rol SJoy3            ;32 bits from $4017, read serially from
+           lsr                  ;bit 0 and 1, will indicate the states of
+           rol SJoy4            ;the last two controller ports.
+           sep #$20             ;Bit 0 has the bits for Joyport four
+           dey                  ;Bit 1 has the bits for Joyport five
+           bne -
+           lda SJoy3
+           and #$0F
+           sta SJoy45Prs        ;1's here inidicate plugged-in controller
+           lda SJoy4            ;Bit 0: #4 plugged in, 8: #5 plugged in
+           and #$0F
+           sta SJoy45Prs+1
+           sta SJoy45Prs
+           lda JOYSER1
+           lsr
+           rol SJoy45Prs
+           lsr
+           rol SJoy45Prs+1
+           lda #$80             ;Control of $4016(17) given back to mouse
+           sta WRIO             ;Tricky - the tap spies on bit 7 of the
+           plp                  ;         parallel port (meaning it can be
+                                ;         read at the controller too :)
+</CODE></PRE>
+<HR><BR>
+<A HREF="snes.html">Back to SNES home page</A><BR><BR>
+<IMG ALIGN=left HSPACE=8 SRC="gau.gif">
+<A HREF="index.html">Back to Gau's home page</A><BR><BR>
+<HR>
+<ADDRESS>E-Mail: gau@netbistro.com<BR>
+WWW: http://www.netbistro.com/~gau<BR></ADDRESS>
+
+</HTML>

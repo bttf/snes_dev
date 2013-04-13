@@ -1,0 +1,75 @@
+
+7. CPU ORGANIZATION.
+
+A Sony SPC700 series is used in the CPU core of the SFX sound source.
+it is possible to access and address space of 64K bytes in the SPC
+series CPU. Address classification of the memory space is made
+according to purpose: and addresses 0000 - 00ff are called page 0
+and addresses 0100 - 01ff are called page 1.
+In regard to the data in this region, when direct page designation
+is carried out by direct page flaq (P) within the program status
+word, it is possible to carry out data processing in wide-ranging
+addresing modes with a small number of cycles.
+
+Within the CPU there are the universal registers A,X and Y, program
+status ward (PSW) of the varius flags, program counter (PC), and
+stack pointer (SP).
+
+The A register is operable by the greatest number of commands,
+and becomes and 8-bit operation accumulator. When 16-bit 
+operations are carried out, it becomes paired with Y register
+and becomes the lower lever 8-bit register of the 16-bit
+accumulator.
+The X and Y registers, in addition to their function as universal
+registers, are used in various operations, such as the function
+as index register of various index addressing modes, the function
+as dual-address command source, destination address register, etc.
+
+In the command set there are single address commands which carry
+out arithmetic and logical operations centered in the A register
+and dual address commands which can designate random address
+within the direct page as source address and destination addresses.
+
+In regard to bit processing diversified by control purpose. Boolean
+bit operation commands are applicable to the 8K byte range of
+data of addresses 0000 - 1fff. Morever, in regard to the bits
+within the total space of the 64K bytes, commads of multiple bit
+test and set, test and reset are provided for. For the purpose of
+data which must be systematized or in order to carry out data
+processing rapidly. It is possible to operate 16-bit data with a
+single commad. Addition, subtraction, comparison and transferrance
+are possible between two byte of continuous 16-bit data within the
+direct page and the paired Y register and A register. In addition
+increment and decrement of continuous 16-bit data within the
+direct page are possible.
+
+There are multiplication and division commands for the purpose
+of rapid data processing and processing of data ina variety of
+forms. Multiplication is 8-bit x 8-bit with no sign and is
+carried out with the multiplicand stored in the Y register and
+the multiplier stored in the A register; the result is entered
+into the Y, A 16-bit accumulator. Division is 16bits/8bits with
+no sign and carried out with the divident stored in the Y, A 16
+bit accumulator and the divisor stored in the X register : the
+resulting quotient is entered into the A register and the
+remainder is entered intro the Y register.
+In the processing of decimal data, there are decimal (addition,
+subtraction) correcting commands in regard to the results of
+both addition and subtraction.
+
+In regard to branched commands, there are relative branched
+commands according to the conditions of the various status
+flags, branched commands according to the conditions of set
+or reset of random bits with the direct page, etc. In addition,
+in regard to looped branched commands, there are comparision
+branched commands and subraction branched commands, and for
+these there are two types of addressing modes.
+
+In regard to subroutine call commands, there are subroutine
+address direct designation three-byte call commands within
+the 64K bytes. two-byte call commands for calling subroutines
+of specific areas, and 16 portion one-byte call commands using
+call table: it is possible to improve byte efficiency through
+proper useage in response to the frequency of subroutine use.
+
+

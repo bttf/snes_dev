@@ -1,0 +1,22 @@
+IMP		Implied
+A	A	Accumulator
+I	#	Immediate
+B	b	Direct
+BX	b,X	Direct X Indexed
+BY	b,Y	Direct Y Indexed
+BS	b,S	Stack Indexed
+BI	(b)	Direct Indirect
+BL	[b]	Direct Indirect Long
+BXI	(b,X)	Direct X Indexed Indirect
+BIY	(b),Y	Direct Indirect Y Indexed
+BLY	[b],Y	Direct Indirect Long Y Indexed
+BSIY	(b,S),Y	Stack Relative Indirect Y Indexed
+BM	b,b	Block Move
+W	w	Absolute
+WX	w,X	Absolute X Indexed
+WY	w,Y	Absolute Y Indexed
+WI	(w)	Absolute Indirect
+WL	[w]	Absolute Indirect Long
+WXI	(w,X)	Absolute X Indexed Indirect
+L	l	Long
+LX	l,X	Long X Indexed

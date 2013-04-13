@@ -1,0 +1,54 @@
+
+7.2.4. Direct Page Addressing
+
+Since all of the addressing modes indicated in Table 7.2.4 are
+applicable to the data of the direct page (P=0: addresses 
+0000-00FF P=1: address 0000 - 01FF) designated by the direct page
+(P) flag. it is possible to manipulate the data in various ways.
+In additon byte efficiency also improves due to the fact that
+direct address designation is possible by one-byte data within
+the command words. Moreover, since effective commad cycles also
+decrease data can be accessed more rapidly.
+
+
+        Table 7.2.4. Memory Access Addressing Effective Address
+
+--------------------------------------------------------------------
+                                        #of   Effective Addr. Region
+Simbol  |    Addressing    
+                                        Bytes  0000-01FF  1FFF  1FFF
+--------------------------------------------------------------------
+  dp       Direct Page                    2        X        X
+
+  dp+X     X-Indexed Direct Page          2        X        X
+
+  dp+Y     Y-Indexed Direct Page          2        X        X
+
+  (X)      Indirect                       1        X        X
+
+  (X)+     Indirect Auto-increment        1        X        X
+
+  dp,dp    Direct Page to D.P.            3        X        X
+
+  (X),(Y)  Indirect Page to I.P.          1        X        X
+
+  dp Inm   Inmediate Data to D.P.         3        X        X
+
+  dp, bit  Direct Page Bit                2        X        X
+
+dp,bit,rel Direct Page Bit Relative       3        X        X
+
+ mem, bit  Absolute Boolean Bit           3        X        X     
+                                                   
+   labs    Absolute                       3        X        X     X
+
+  labs+X   X-indexed Absolute             3        X        X     X
+
+  labs+Y   Y-indexed Absolute             3        X        X     X
+
+  (dp+X)   X-indexed Indirect             2        X        X     X
+
+  (dp)+Y   Indirect Y-indexed Indirect    2        X        X     X
+
+--------------------------------------------------------------------
+

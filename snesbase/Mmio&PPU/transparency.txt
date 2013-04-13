@@ -1,0 +1,64 @@
+
+SCREEN ADDITION/SUBTRACTION
+
+[...]
+
+Function :
+This function indicates the result after the addition or the
+subtraction of RGB data on the main screen and sub screen.
+This function can also select BG screen or OBJ data on the main
+screen to be added to or subtracted from the sub screen similar
+to the fig. below
+
+However, when there is no screen data on the sub screen (screen is clear), 
+the color constant explained on page 15 will be added or subtracted.
+
+When the result added or subtracted on each RGB is over 31 the value becomes
+31, also, when the value added or subtracted on each RGB is under 0, the 
+value becomes 0.
+Please don't use this function on BG mode 5 or 6
+                                                ______________________
+                                               |                     |
+   MAIN SCREEN  ------------------------------>|ADDITION/SUBTRACTION |
+      DATA              |                      |      Select         |
+                        |                      |_____________________|
+                        |
+                        |
+                        |                       _________________
+                        |--------------------->|                |
+                                               |Adder-Subtracter|
+   SUB SCREEN -------------------------------->|                | -----> DISPLAY
+      DATA                                     |________________|
+
+
+
+SETTING EXAMPLE :
+
+ INITIAL SETTINGS :
+
+  * clear each register
+  * enable BG to display
+  * enable OBJ to display
+  * Set D1 of register <2130H>
+     "CC ADD ENABLE" Settings
+  * Set Register <2130H>
+    ADD or SUB Enable     -|
+    1/2 Enable             | Settings
+    ADD/SUB               -|
+  * Set register <212DH>
+    "Through Sub" settings
+                 |
+   ------------->|
+   |             |
+   |          DISPLAY
+   |             |
+   |_____________|
+
+
+Note : When main screen data is the obj, it'll be added to or subtracted
+       from the sub screen data only for the OBJ of the palette code (4 to 7)
+       It is convenient for generating the dusky shadow
+
+Note : When "1/2 Enable" of register <2130> is enabled, the addition/subtrct.
+       result of each RGB becomes 1/2. 
+       

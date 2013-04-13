@@ -1,0 +1,35 @@
+odin@ccs.neu.edu
+
+Hi, this is the overly curious guy starting the SNES Knowledge Base (http://www.geocities.com/TimesSquare/Arcade/4777/snesbase.html)...
+
+First of all, YES!!!  Finally a *COMPLETE* SNES doc... thank you!!!
+
+This DOC finally clarifies some things I've been trying to figure for days... but, there are some *small* things I'd like to mention:
+
+-This has to be a typo: in your HiROM overview there's a line that says:
+40-7D	0000-7FFF	64k ROM Chunk
+
+-In the LoROM:
+40-7C   0000-7FFF  32k ROM Chunk
+        8000-FFFF  32k ROM Chunk
+Are these some kind of mirrors of the previous ROM (in 0-39h)? Why doesn't it say...
+40-7C   0000-FFFF  64k ROM Chunk...?
+
+00-3F 6000-7FFF Expansion RAM <-Do you happen to know whether this RAM is mirrored like the Shadow RAM or does each bank have different RAM?
+
+-And, for that 1Mhz speed increase in FastROM, the program has to do a jump to the mirror of its code at a bank >= 80h?  In HiROM, does accessing that last chunk of ROM at bank 0xFE-0xFF provide some kind of speed increase?
+
+-I read that a 48 Mbit ROM exists somewhere.  Any thoughts on that?
+
+-Can you help me a bit with the SMC file format?  Here's the LoROM format map as I have figured out... now, where the question marks are is where I don't understand...
+bytes 0-511 - Header, mostly 0's. 
+bytes 512-32703 (32192 bytes) - ????? This space is smaller than a full ROM bank, so...?
+bytes 32704-32735 (32 bytes) - Misc info - Name, Country etc.
+bytes 32736-33273 (538 bytes) - ????? 
+bytes 33274-33277 (4 bytes) - NMI/VBL and Reset Vectors
+bytes 33278-EOF - ROM?
+
+-The NMI & Reset vectors are only 2 bytes (instead of 3...) so what kind of address do they specify?  An offset into the ROM address space? (i.e. vector 0x0105->0x00.8105)
+
+-Oh wow, a "Dr. Duncanthrax teaches CPU!" doc? That would be great since there doesn't seem to be _ANY_ in existance.
+	-Qwertie

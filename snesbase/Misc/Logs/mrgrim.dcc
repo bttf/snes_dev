@@ -1,0 +1,166 @@
+
+*** Log file opened: 10/6/97 7:35:04 PM
+DCC Session established with 209.86.28.156
+<MrGrim> heya
+<MrGrim> you there?
+<_Qwertie> oh
+<_Qwertie> sorry
+<_Qwertie> I had to go do some stuff
+<MrGrim> hehe
+<_Qwertie> including eat ice cream =)
+<MrGrim> you want help with your snes emu?
+<MrGrim> hehe
+<MrGrim> have you ever been to the EPR?
+<_Qwertie> of course
+<_Qwertie> i got all the stuff there...
+<MrGrim> have you gotten 65c816.txt?
+<_Qwertie> have you heard about my info database?
+<_Qwertie> yep
+<MrGrim> yeah I was just there
+<MrGrim> saw your beg for help =)
+<_Qwertie> And I found a little help too
+<MrGrim> from who?
+<MrGrim> damn they beat me =)
+Herbman is on IRC
+<_Qwertie> I'm exchanging emails with this Jason guy..
+<MrGrim> well you got 65c816.txt thats plenty enough gor that cpu
+<_Qwertie> darn, I took so long writing a mail HoTMaiL wouldn't send it..
+<MrGrim> have you gotten todo.txt?
+<_Qwertie> yes.. wasn't that a...
+<_Qwertie> cant remember what it was
+<MrGrim> its an spc doc
+<MrGrim> with all the opcodes in it
+<MrGrim> if you are good at 80x86 asm almost any other asm is easy to comprehend through deductive reasoning
+<_Qwertie> oh.. that could be useful eventually..
+<_Qwertie> I only know a *little bit* of x86 asm
+<_Qwertie> I've optimised some grfx routines in it...etc
+<MrGrim> have you gotten help with the LoROM memory map?
+<_Qwertie> but haven't used it for over a year so...I'm kinda forgetting
+<_Qwertie> not much...
+<MrGrim> wot do you need to know about it?
+<_Qwertie> well, I already understand the ROM is at 8000h+ in banks 0-39h
+MrGrim has memorized the LoROM memory map, and knows squat about the HiROM memory map
+<MrGrim> btw... _Demo_ knows a LOT about the snes... you may want to talk to him
+<_Qwertie> and the other half of the bank seems to be partly RAM, partly ports
+<_Qwertie> yep, he's told me some stuff too
+<MrGrim> do you understand ports?
+<_Qwertie> well...kinda...
+<MrGrim> in banks 00-39h $0000 - $1ffff is RAM
+<MrGrim> but it all points to the same ram
+<_Qwertie> what??!
+<MrGrim> so the data in 23:0456 is the same as 12:0456
+<MrGrim> its mirroed all the way through
+<MrGrim> mirrored even
+<_Qwertie> uh... thats kinda stoopid
+<MrGrim> ya =)
+<_Qwertie> but that's only, um... 8k?
+<MrGrim> the ports are from $2100 - $4ffff
+<MrGrim> hold on
+<MrGrim> those are also mirrored
+<MrGrim> to write to a port you just write to a location in memory
+<MrGrim> and whenever a port is written to you take the appropriate action
+<MrGrim> so you are wondering where the rest of the ram is?
+<_Qwertie> k.. are the ports mirrored too?
+<_Qwertie> yes for sure
+<MrGrim> bank $7e contaisn the first 64k and bank $7f contains the other 64k of ram, and the ports are mirrored too
+<MrGrim> bank $7e:$0000-$1fff is the SAME memory as in $00-$39:$0000-$1ffff
+<MrGrim> save ram starts at bank $70 I THINK
+<MrGrim> the rom in banks $00-$39 IS NOT mirrored
+<_Qwertie> this's getting slightly complicated.. :)
+<MrGrim> do you know how to load a rom?
+<_Qwertie> um, I have a bit of confusion on that subject
+<MrGrim> ok.. you first have to read the headers I'll leave that to you =)
+<MrGrim> but when you get ot the actual rom data just read it all into a 4 meg pointer (some games may not take up the whole 4 megs) called SnesROM or something
+<_Qwertie> yep... I understand there is 512 bytes, then one bank...
+<_Qwertie> then there is the 'real' header with the useful info in it
+<MrGrim> then to access a rom from a pointer in the snes game do this ((bank >> 1) + (offset & 0x7FFFF))
+<MrGrim> no the rom data is stored in one linear region in the file...
+<MrGrim> err
+<MrGrim> make that offset & 0x7FFF
+<MrGrim> NOT 7FFFF =)
+<MrGrim> not about bank $80 and above
+<_Qwertie> ah, here in SnesKart it says:
+<_Qwertie> LoROM: offset 32704
+<_Qwertie> HiROM: offset 65472
+<_Qwertie> that would be after the first bank
+<MrGrim> I am NOT entirely sure about this.. but.. I believe that $80-$B9 are mirrors of $00-$39
+<MrGrim> dl the source to GrimSNES and read my memory routine in the assembly files...
+<MrGrim> those are correct
+<MrGrim> also in the new dir there is a C one too
+<MrGrim> I think...
+<MrGrim> there is 64K of VRAM and it is not accessible directly by the program
+<_Qwertie> I think that's right... if you do some kind of long jump in your code to bank $80 the program will run faster?
+<MrGrim> there is also (I think) 8K of OAM RAM also not accessible by the program
+<MrGrim> ya.. if a bit in a reg is set
+<_Qwertie> yep
+<_Qwertie> what does the OAM RAM do?
+<_Qwertie> uh oh, I just realised something...
+<MrGrim> it store sprite info as in location, mirroring, prioities
+<MrGrim> wha?
+<_Qwertie> 32704-512=32192
+<_Qwertie> isn't a bank 32768 in size?
+<MrGrim> no no no
+<MrGrim> you don't subtract the header
+<MrGrim> after you get paste the header you have linear rom data
+<MrGrim> err
+<MrGrim> get PAST
+<MrGrim> and a bank is 64k
+<MrGrim> its just tha the rom on LoROM only occupies 32k of the bank
+<_Qwertie> but, in LoROM a bank is 32K..isn't it?
+<_Qwertie> er...
+<_Qwertie> huh?
+<MrGrim> download the source to GrimSNES and TrepSNES
+<MrGrim> and study it for a long time
+<MrGrim> find a good doc on asm
+<_Qwertie> I got trepsnes.. studied it for a short time... Theres no COMMENTS!!
+<MrGrim> knowing asm will help with reasoning where there isn't any dox
+<MrGrim> well GRimSNES has comments in some of the asm versions
+<MrGrim> =)
+<_Qwertie> wait a min, back to this header thingie.. there are TWO "headers"
+<MrGrim> I never really learned the rom format
+<MrGrim> for GrimSNES's short lifetime I used trep's rom loading code
+<_Qwertie> doh! well, I haven't gotten a hold of trep..
+<_Qwertie> I think I'll add this chat log to the misc directory of SnesBase..ok?
+<MrGrim> umm..
+<MrGrim> hold on..
+<_Qwertie> holding... holding... holding... losing grip...
+<_Qwertie> hello?
+<MrGrim> ok
+<MrGrim> go ahead =)
+<_Qwertie> what's going on? MrGrim :No such nick/channel
+<MrGrim> ?
+<MrGrim> MrGrim mr_grim@user-38lc74s.dialup.mindspring.com * :wooohoooo!!
+<MrGrim> MrGrim :#emu #emuhelp
+<MrGrim> MrGrim irc.mindspring.com :Mindspring Enterprises IRC Server
+<MrGrim> MrGrim: 17 seconds idle, logged in at 10/7/97 1:33:41 AM (GMT)
+<MrGrim> MrGrim :End of /WHOIS list.
+<_Qwertie> that was weird... that message appeared 4 times in my server window..
+<MrGrim> dunno...
+<_Qwertie> know anything when it comes to hiROM? _Demo_ tells me the HiROM is in banks 0x40..0x7F
+<_Qwertie> which would occupy the RAM address space in LoROM mode
+<MrGrim> I don't know hirom much... in fact.. I want to learn it
+<MrGrim> I'll ask _Demo_
+<MrGrim> maybe this will proove to the teach that I didn't learn all there is to know about the snes from snes9x =)
+<_Qwertie> umm yeah
+<_Qwertie> when you figure it out, pass the info on
+<MrGrim> _Demo_ knows =)
+<_Qwertie> ok, I have a asm source here
+<_Qwertie> from Anthrox
+<MrGrim> ok..
+<_Qwertie> do you know what assembler might compile it?
+<MrGrim> hmmm..
+<MrGrim> no
+<MrGrim> I never got a 65c816 emu
+<MrGrim> err
+<MrGrim> assembler =)
+<_Qwertie> darn my aunt!
+<_Qwertie> I have to go... when will you be back online?
+<MrGrim> umm
+<MrGrim> tomorrow
+<MrGrim> gotta go in 30 min
+<_Qwertie> when? & time zone
+<MrGrim> CST, prolly 3:00pm
+<_Qwertie> I'm on usually about 7:00 MST
+<_Qwertie> well, cya
+<MrGrim> cya
+*** Log file closed: 10/6/97 8:34:45 PM

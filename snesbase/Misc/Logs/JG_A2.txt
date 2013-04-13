@@ -1,0 +1,142 @@
+> I got some more questions... let's start with the easy ones first:
+> 1. Where does the code start executing?  It runs directly from ROM, 
+> correct? If so the addresses would have to be different in HiROM than in 
+> LoROM (they are in a different set of banks, after all).  So, what are 
+> they?
+
+Oh ah... yes, it runs from ROM, and the program, unless specified
+otherwise by the "reset vector" in the game header (not the SMC
+header, but the game header which comprises the last 64 bytes of the
+first bank of the ROM), starts execution at 0x8000 in bank 0x00. Both
+in LoROM and in HiROM
+
+> 2. How much basic RAM does the SNES have?
+
+128k. However, it can have some expansion RAM, which is mapped at
+locations 0x6000-0x7FFF in LoROM mode in banks 0x00-0x39. I'm not,
+however, sure if it's a whole 64 banks of 8k (or is that 16k) or if
+it's just one bank mapped 64 times... like the "shadow" ram at
+0x0000-0x1fff, which is shadowed from bank 0x7e.
+
+> 3. The crappy GTE 65c816 doc often refers to "inputs" such as "/ABORT", 
+> "/NMI", "/IRQ", etc.  What the heck is that all about?
+
+These are actual pins on the processor, presumably a hardware clock
+generates these signals. Most emulators just treat these as a special
+case... NMI is a strobe that triggers the nonmaskable interrupt, which
+is specified by the NMI vector (also in the header), and the IRQ
+signal triggers regular interrupts, which can be masked out by the
+processor status register.
+
+> 4. What is supposed to happen if a program makes a write to someplace in 
+> the ROM address space? What if a read-only port is written to? What if 
+> you read or write to an address in a bank that is past the end of the 
+> RAM address space?
+
+Umm... hehe I dunno. My best guess is that nothing at all will happen,
+but I could be wrong. Most people don't try it... 8-)
+
+> 
+> >Snax sent me a good explanation of all the opcodes, that might help you 
+> out!
+> it just might!
+> >
+
+OK I'll try to forward that to you along with my memory map doc.
+
+> >2. VRAM - JT or Snax would be better to explain this.
+> How could I get in touch with them?
+
+JT's email is on his page EPR (Emulation Programmer's Resource).
+Snax's email is on his sneese page.
+
+> >3. Addressing modes... meaning what? LoROM vs. HiROM? I know most of 
+> this,
+> >please refine the question... 8-)
+> Gee whiz, what do addressing modes have to do with Lo/HiROM?  I mean the 
+> addressing modes that are refered to in the GTE 85c816 doc.  _Demo_ 
+> tells me they are built into the opcode... like, the opcode number 
+> determines which addressing mode is used to access memory? What are 
+> these addressing modes?
+
+Oh ah. This is a case of "indirect" "direct" "absolute", etc... right?
+This is basic Assembly language stuff, and you'd need to get a
+reference for it. I think that's what you're talking about... maybe
+Snax's doc will explain it better.
+
+> >6. Ports are simply hardware mapped memory ranges. On the SNES, in 
+> banks
+> >0x00 to 0x39, memory ranges 0x2000-0x5fff are memory mapped ports...
+> 0x00 to 0x39?? I protest! My calculator says that that would be a whole 
+> megabyte of space reserved for hardware ports.  Besides the SNES doesn't 
+> even have 40h banks of RAM, does it?  Oh, and are the memory mapped 
+> ports set up any differently in HiROM?
+
+Hehe. The SNES has banks 0x00-0xFF (256 of them) with RAM addresses
+0x0000-0xFFFF in each bank (64k) for a total addressing space of
+16Megabytes. Of course it doesn't actually have 16 Megs, and the
+hardware registers in each bank all map to the same hardware... so
+there's really only like 16k of them, maybe much less since nowhere
+near all of them were ever used - a lot were set aside for expansion
+options.
+
+> >7. The SMC file format, when you take away the header, isn't much! It's 
+> just
+> >the whole rest of the ROM in binary... 8-) Most ROM images nowadays are
+> >either SMC or can be easily converted with UCON, so I just assume that 
+> all
+> >ROMs have a header and are in SMC, which is basically 
+> 512byteheader+Image
+> Erm...no... on most of my ROMs the first 512 bytes are filled with 
+> zeroes... the actual "header" information starts at "about" 32 or 64K 
+> (by the way, how can you tell where the header is supposed to be?  I was 
+> thinking maybe of checking that there was alphanumeric chars at 32K, and 
+> if not it would be HiROM? Would that work ok?)  So tell me if I have 
+> this right: the header is stored, then the first ROM bank, then the 
+> actual useful information, followed by the rest of the banks?  If this 
+> is the case, exactly how many bytes of this useful information is 
+> inserted between banks 0 and 1?
+
+OK, this is the deal - the "SMC header" is the 1st 512 bytes, yes it's
+usually just set to mostly 0's to avoid messing up most copiers which
+will only accept .smc files... the "real header" is part of the ROM
+image, has nothing to do with the format, and makes up the last 64
+bytes (is that number right? it might be 128 bytes) of the first bank
+- 32k for Lorom mode and 64k for hirom mode.
+
+Here's the bad news... there's NO easy way to figure out which it
+is... doesn't that suck? It's a hardware signal in the real
+machine... and the easiest way is to look for english text (21 bytes
+of it, check out the sneskart.txt document) but that won't work for
+any international games. You can also use the checksums, and simply
+hope that nobody messed them up...
+
+And last but not least, if the game is real small, it's definitely
+lorom. So there you go. And if it's real big, it's definitely hirom,
+since no lorom games over like 16mb were ever made.
+
+OK, there's a whole lot more, if you want to join up with the team and
+help out with our emu you can - or if you just want info I'll try to
+help as much as possible. Our emulator is going to work on the threads
+principle... which is this:
+
+Everybody else is making emulators which incorporate scheduling and
+timing into them... then they're running them in a dos box or in
+Win95. Why bother? Win95 has task scheduling and threading built right
+in. So our emulator, for example, has multiple threads... one for each
+piece of hardware... so we have:
+
+CPU
+SPC-700
+ROM BIOS
+
+And that's just for starters... that way everything can run in a
+separate process, and it'll all be timed properly... from square
+one. Plus I'm going to use snax's CPU code which is pretty much 100%
+right now, the portable one sucked to try to use (too many levels of
+MACRO indirection! BLEAH!)
+
+OK, I'll e-mail you the web address once I get it uploaded to the
+right place (I have a LOT of work to do tonite!)
+
+        - Jason

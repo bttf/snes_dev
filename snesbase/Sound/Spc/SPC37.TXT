@@ -1,0 +1,53 @@
+
+In giving an explanation of opertaions, in addition to the notations
+and simbols above, the following symbols are also used.
+
+Table 9.2. Symbols and Meaning of Operation Explanation
+
+
+Symbol      Meaging
+---------------------------------------
+  N        Negative flag
+  V        Overflow flag
+  P        Direct page flag
+  B        Break flag
+  H        Half carry flag
+  I        Indirect master enable flag
+  Z        Zero flag
+  C        Carry flag
+
+  +        Addition
+  -        Subtraction
+  :        Comparison
+ AND       Logic product
+  OR       Logic sun
+ EOR       Exclusive logic sun
+  *        Multiplication
+  /        Division
+
+  Q        Division quotient
+  R        Division remainer
+ (d)       Destination
+ (S)       Source
+ ---       Direction of data transmision
+ - -       Data decrement
+ + +       Data increment
+ < <       1 bit shift left
+ > >       1 bit shift right
+------------------------------
+Note : The number of cycles of conditional branching commands are
+appreorite to cases when there is no branching to the left side 
+and when theree is branching tothe right side.
+
+Table 9.3.  Explanation of Symbols in the Status Flag Column
+
+
+-----------------------------------------------
+ Symbol         Meaning
+-----------------------------------------------
+  .          No change
+  0          Cleared to 0
+  1          Set to 1
+Flag name    Set or cleared depending on result
+-----------------------------------------------
+

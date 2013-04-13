@@ -1,0 +1,43 @@
+>Wow, this new SNES9X is good!  It almost convinced me not to do my own!
+
+Yeah except they're a bunch of jerkoffs, so... (wait, I didn't say that...
+hehe)
+
+>-What DOC should I look at to gain an understanding of how SNES graphics
+>works?  Or does that type of doc not exist either?
+
+Well, there are a bunch of shitty mini-docs. But no, JT and Snax and I are
+all going to do that one as well, I don't know much right now, I'm more a
+guts guy...
+
+>oohhhh wait a minute now... I got GetRight now, so my 14.4 doesn't
+>matter... :) whats this IP you're talking about?  Oh and does it still
+>compile DOS proggies?
+
+Umm... I'll give you a L/P when it's up. No, it don't compile DOS no more...
+just 32-bit command-line Win32 apps... hehe.
+
+>huh?  Okay...um... lets just suppose I'm writing a SNES emulator.  Now
+>if I was writing this emulator I would want to know how to act like a
+>NTSC SNES or a PAL SNES, ok?  How does the GAME (eg. The Super Mario
+>Allstars PAL version) tell that when it is running on a NTSC SNES, so
+>that it can crash itself with the message about it not being designed
+>for the NTSC SNES?
+
+Odds on says that message came from the emulator... or else there's code to
+run inside a cartridge that gives out that message and the emu just called
+it.
+
+>I meant it's weird how the header is not part of the copier format, but
+>it's actually part of the ROM at some arbitrary place in the middle of
+>it.
+
+Not arbitrary, it's always in the same place.
+
+>I just have trouble visualizing how you would use the debugger for a
+>program with multiple threads running at once..
+
+Easy, debug one thread at a time, or when you hit advance they all go one
+step - not too hard really.
+
+    - Jason aka Duncanthrax@hotmail.com

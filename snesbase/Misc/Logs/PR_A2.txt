@@ -1,0 +1,56 @@
+In a message dated 31/01/98  22:05:55, you write:
+
+> I was going through a source file and saw this:
+>       rep     #$30
+>       sep     #$20
+>  uh... would there be a point to resetting and setting $20?
+
+It's a habit thing. I do it sometimes. Most SNES apps start of with
+clc xce rep $30... it puts the machine into a known state. There is no
+difference between rep$30 and rep$10 in this case.
+
+
+>>It would read 2 when M=1,3 when M=0. ADC is not dependent on X. An
+>>instruction such as LDX immediate would depend on X
+> doesn't this mean that, if you wrote an assembler routine for a certain 
+> mode, it would completely crash if you ran it in any other mode?
+
+Yes.... as a 65816 doesn't have that many unimplemented opcodes it 
+usually just wanders off into no-mans land.
+
+>  hmm... well, the book never mentioned it and I've never seen a source 
+>  file that used that notation...  Perhaps something like:
+>      cpy      #$0010
+>  Implies that a 16-bit operand is used?
+
+Yes, I've seen this too. I suspect this is the "standard" assembler. The
+freeones (TRASM,X112) don't support this quite as well. I actually prefer
+the .w .b as its clearer. There's also a .l for the 24-bit address modes.
+
+>>Not a clue. AFAIK no SNES code uses Emulation mode. There are a few
+>>basic things- the vectors are wrong, the Stack pointer is always at 
+>>  01xx etc.
+>>  really?  Is it even worth emulating then?
+
+No. With a SNES, you could run a 32k program in Page 0 & have access 
+to all the hardware. I can't see the point in switching back to a limited
+CPU. X=1M=1 is very close but with enough extensions to make it 
+worthwhile. The only real use I can see for the mode is as a fast
+replacement 6502 when you want to keep old software (There are 65816's
+much faster than the SNES's)
+
+>  >When an address is X or Y indexed, this is a 'full' addition.
+>  hmmmm...so... if DBR=0 and I:
+>      LDX #$10
+>      LDA $FFF5,X
+>  A=($1.0005)?
+
+Can't remember off hand. I think not, in this case it's forced into 00. I
+think
+it works for 24 bit addresses. 
+
+Paul Robson (autismuk@aol.com)
+>  >  
+>  >Any way you like... do some of one, then some of another.
+>  just curious, have you done some SPC emulation yet?
+>  

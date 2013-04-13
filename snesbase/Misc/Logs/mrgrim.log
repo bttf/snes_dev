@@ -1,0 +1,166 @@
+
+*** Log file opened: 6/22/97 6:08:13 PM
+<Qwerty> hiya there
+<Qwerty> I've been wanting to do a snes emu for some time
+<Qwerty> I want to know, how do u do a SNES CPU emulation core??
+<Qwerty> I would start but I need information!!!
+<Qwerty> about the vid-mode proggie: the top of the screen goes above the monitor!
+<Qwerty> The screen is skinny and tall on my monitor
+<Qwerty> it looks like eSNES before LordEsnes fixed it
+<MrGrim> mess with the moniter controls for a little bit... see if that fixes it
+<Qwerty> My monitor has no controls, except for bright & contrast
+<Qwerty> its an old vga
+<MrGrim> yuk... check the back..
+<MrGrim> this proggie uses vesa 1.2 d00d.. =)
+<Qwerty> well
+<Qwerty> there r screwdriver controls in the back
+<MrGrim> there's no hope...
+<MrGrim> get a svga.. =)
+<Qwerty> well, esnes fixed it...
+<Qwerty> NESticle isn't so tall
+<Qwerty> as your version of the mode
+<Qwerty> it just needs tweaking...
+<MrGrim> it's the mode
+<MrGrim> 256x256
+<MrGrim> neither uses it
+<MrGrim> and they don't use VESA either
+<Qwerty> NESticle runs in 256x256
+<Qwerty> and it looks ok
+<MrGrim> I need a SVGA for page flipping
+<Qwerty> do you have tweak16b?
+<MrGrim> I might add a standard VGA 256x256
+<Qwerty> RU using mode X or the linear tweaked mode?
+<Qwerty> You should use mode Q. it rules...
+<MrGrim> linear
+<Qwerty> ok
+<MrGrim> it set's VESA 320x200x256 first
+<MrGrim> that's probaly why
+<Qwerty> so it needs a bit of tweaking for some monitors...
+<MrGrim> no..
+<MrGrim> VGA doesn't use VESA
+<MrGrim> VESA is a SVGA standard
+<Qwerty> ya...so?
+<MrGrim> that's why
+<Qwerty> Ok
+<Qwerty> the proggie says "now going into 256x256x256"
+<MrGrim> talk to _Demo_, he's doing the graphic's
+<Qwerty> ?
+<Qwerty> he's doing the graphics emulation?
+<MrGrim> he's the graphic's coder in grimsnes
+<MrGrim> he will do most
+<Qwerty> ok
+<MrGrim> I will work on CPU and SPC
+<MrGrim> and void will do a sound mixer
+<Qwerty> how do u work together like that?
+<Qwerty> wow
+<Qwerty> you guys sound like u have a plan :)
+<MrGrim> yup
+<Qwerty> well like i was saying
+<Qwerty> I want to know, how do u do a SNES CPU emulation core?
+<Qwerty> I need information!
+<Qwerty> What r ure sources
+<MrGrim> I'll send u trep's source
+<MrGrim> that's what I learned from
+Bargle: Dcc CHAT Auto Closed
+<Qwerty> does he have all opcodes implemented?
+<MrGrim> 100 and somethin'
+<MrGrim> but you'll get the idea of how it's done
+MrGrim: DCC Send tsnessrc.zip (207.79.146.69)
+<Qwerty> is that enough to run any comercial games?
+<Qwerty> do u have someplace where other codes are listed?
+<MrGrim> yes
+<MrGrim> you want to make a snes emu?
+<Qwerty> yes actually
+<Qwerty> I want to make the best thing since NESticle :)
+<MrGrim> shit I lost it
+<MrGrim> search in yahoo
+<MrGrim> that's where I found it
+<Qwerty> for what?
+<Qwerty> what keywords?
+<MrGrim> 65c816.txt
+<MrGrim> every single opcode
+<MrGrim> register
+<MrGrim> complete specs
+<Qwerty> hm... maybe it would be in an ftp search?
+<Qwerty> I'm checking altavista
+<Qwerty> Word count: 65c816 txt: 2
+<MrGrim> hmm...
+LeaDeR2 is on IRC
+<Qwerty> hm
+<Qwerty> some txt files on the eSNES page
+IceWizard is on IRC
+LeaDeR2 has left IRC
+IceWizard has left IRC
+Rellik is on IRC
+Rellik has left IRC
+LeaDeR2 is on IRC
+*** Log file closed: 6/22/97 7:48:04 PM
+
+*** Log file opened: 6/22/97 8:08:34 PM
+<Qwerty> do I have to worry about the 65xx Emulation mode?
+<MrGrim> yup
+<Qwerty> doh@
+<Qwerty> what's it used for?
+<Qwerty> what's it used for?
+*** Log file closed: 6/22/97 8:32:17 PM
+
+*** Log file opened: 6/24/97 5:56:04 AM
+<Qwertie> hello..
+<MrGrim> wha?
+<Qwertie> I need to learn about the SNES architecture...
+<MrGrim> why?
+<MrGrim> not another emu... =)
+<Qwertie> I've got all the ref. docs off terri.oulu.fi but I don't get it... oh ya I'm starting a SNES emu
+<Qwertie> :)
+<MrGrim> well...
+<MrGrim> go to yahoo and search for 65c816
+<MrGrim> that's where I got a processor file
+<Qwertie> I got that doc...
+<MrGrim> lemme send you trps source to trepsnes
+<MrGrim> and a sound doc
+<Qwertie> I got that too
+<Qwertie> u forgot didn't u? u sent me that already =)
+MrGrim: DCC Send spc.htm (207.79.146.57)
+<MrGrim> trep's source?
+<Qwertie> SPC doc?
+<MrGrim> that's all I needed
+<MrGrim> that's enuff
+<Qwertie> really
+<Qwertie> I must be not quite as smart as you...
+<Qwertie> do you have some previous experience with snes
+<Qwertie> Oh yeah, and I don't have a coauthor...
+<Qwertie> I have to understand the whole darn system
+<MrGrim> no previous experiance
+<MrGrim> those doc's are the whole system
+<Qwertie> well
+<Qwertie> its kinda going over me
+<Qwertie> like, uh... what is HiROM, LoROM, VRAM, HiRAM, LoRAM, the weird "port" things and all that?
+<MrGrim> heh....
+<MrGrim> still werkin' on that.. =)
+<Qwertie> really
+<Qwertie> But I can't get started i don't get it... argh! `.-/
+*** Log file closed: 6/24/97 7:23:26 AM
+
+*** Log file opened: 8/31/97 8:14:56 PM
+<MrGrim> wots da problem?
+<Qwertie> iz this faraway's channel?
+<Qwertie> kinda pompous naming a channel after oneself eh?
+<MrGrim> hehe
+<MrGrim> you asked about the snes?
+<MrGrim> using a ! trigger gets one banned or kicked in #emu =)
+<Qwertie> really?
+<Qwertie> hmm
+<Qwertie> I just got back from a month in hawaii
+<Qwertie> I oughtta update my timers..
+*** Log file closed: 8/31/97 8:25:15 PM
+
+*** Log file opened: 10/6/97 6:56:39 PM
+<MrGrim> you wanna learn 65c816?
+Herbman has left IRC
+_Demo_ has left IRC
+<_Qwertie> hi grim
+<_Qwertie> yes I do
+<_Qwertie> All I have is the GTE doc
+<_Qwertie> and some opcode <-> raw byte tables
+<MrGrim> you there?
+*** Log file closed: 10/6/97 7:48:28 PM

@@ -1,0 +1,17 @@
+
+3. 8-BIT DATA TRANSMISSIN COMMANDS, GROUP 3.
+
+------------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                    Flag
+------------------------------------------------------------------------
+  MOV    A, X        7D    1     2     A <- X                   N......Z
+  MOV    A, Y        DD    1     2     A <- Y                   N......Z
+  MOV    X, A        5D    1     2     X <- A                   N......Z
+  MOV    Y, A        FD    1     2     Y <- A                   N......Z
+  MOV    X, SP       9D    1     2     X <- SP                  N......Z
+  MOV    SP, X       BD    1     2    SP <- X                   ........
+  MOV    dp(d),dp(s) FA    3     5    (dp(d)) <- (dp(s))        ........
+  MOV    dp,#inm     8F    3     5    (dp) <- inm               ........
+------------------------------------------------------------------------
+
+

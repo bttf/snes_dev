@@ -1,0 +1,50 @@
+
+When sending data to RAM, the stack pointer decreases by one
+after sending data (post decrement) and increases by one prior
+to restoring data (pre-increment).
+The diversified activites of the stack pointer are summarized below:
+
+SUB-ROUTINE CALLS
+
+        --------------------------------------------------------
+       |Stack Address|    Activity     |  SP Value after sending|
+        --------------------------------------------------------
+       |    SP       |  sending to PCH |       SP-1             |
+       |    SP-1     |  sending to PCL |       SP-2             |
+        --------------------------------------------------------
+
+
+RESTORING FROM SUB-ROUTINE
+
+        --------------------------------------------------------
+       |Stack Address|    Activity     |  SP Value after sending|
+        --------------------------------------------------------
+       |    SP+1     |  sending to PCH |       SP+1             |
+       |    SP+1     |  sending to PCL |       SP+2             |
+        --------------------------------------------------------
+
+To send to A register, X register, Y register, PSW to and from
+the stack, the commands PUSH and POP can be used.
+
+PUSH A (X,Y, PSW)
+
+        ---------------------------------------------------------
+       |Stack Address|    Activity      |  SP Value after sending|
+        ---------------------------------------------------------
+       |    SP       |sending of A (X..)|       SP-1             |
+        ---------------------------------------------------------
+
+POP A (X,Y, PSW)
+
+        ---------------------------------------------------------
+       |Stack Address|    Activity      |  SP Value after sending|
+        ---------------------------------------------------------
+       |    SP+1     |sending of A (X..)|       SP+1             |
+        ---------------------------------------------------------
+
+
+
+
+
+
+

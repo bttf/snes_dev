@@ -1,0 +1,3989 @@
+These are the responses from zsKnight... I don't have the questions except the quoted ones...
+
+___________________________________________________________________________
+> Hi zsKnight.  Well, I've talked to _Demo_ quite a bit before but I 
+> thought I'd pick on you for a while, if you don't mind... :)
+> 
+> I'm writing a new SNES emulator, and I've got just about all the 
+> instruction set done, but my mind has been going around in circles to 
+> decide how do this without making it incredibly slow.  It's written in C 
+> but, believe it or not, the speed seems to be almost as good as zSNES.  
+> But-- I'm wondering what might be the best way to 'trap' memory-mapped 
+> I/O.  I mean, I need to be able to "trap" any reads or writes to 
+> $2000-$5FFF, but this requires an extra long "if" in each of my 
+> instruction execution cases:
+> if (address > 0x2000 && address < 0x5FFF && bank < 0x40)
+>     trap_register_read ();
+> Is there a better way to do this?  I'm wondering, for example, if I only 
+
+Not that I can think of at the moment.  But in zsnes, I made a jump table
+for each bank.  So the table is 256 dword long and the first 40h pointers
+will point to a function that compares the address and sees if it's in the
+registers, wram, or rom.
+
+> need to do the register check for certain instructions.  If a
+>     INC $xxxx
+> is encountered, for instance, I'm guessing that the I/O register check 
+> is unneccesary because a ROM would probably never do an INC to a I/O reg 
+> address.  Right?  Which means I could avoid the check and the INC 
+
+Probabily, but I wouldn't put my bet on it since there are some sound code
+that does stuff like that so chances are that 65816 code might also do that
+too.  I don't know exactly though since zsnes always used the register
+ports when using instructions such as INC.
+
+> instruction would run faster.  Do you know what other instructions are 
+> never used on I/O ports?
+
+Nope.  No ideas.
+
+> And, any other ideas?
+> 
+> Thanks for writing your debugger; it's helpful.  Is there any way to 
+> reset the ROM while in the debugger?  
+
+Not really.  It's about the same where you exit and reload zsnes.
+
+> Is there a memory dump function?  
+
+Only for the sound data.
+
+> With zSNES, Can you do a type of breakpoint where you wait for something 
+> to happen (memory change, or a certain instruction opcode is executed, 
+> etc.)?
+
+There is a feature, but it's only accessible through the source code.
+
+> By the way, your emu's APU skip method threw me for a loop.  When $214x 
+> is read from, NOP is patched into the next two bytes.  Is that right?  
+
+It's patched when a BNE is found
+
+> Does this happen always, or only when the rom uses the CMP $214x 
+> instruction?  I mean, if the rom had something like LDA $2140, would the 
+> patching still occur??  Are there any other skip methods you use?
+
+It will still occur if BNE is found.  The other skip methods involve
+changing the A register I think.  I'm not really sure since it's been a
+while I coded that part.
+
+> 
+> Thanks again,
+>     - Qwertie (David Piepgrass)
+___________________________________________________________________________
+
+> >Not that I can think of at the moment.  But in zsnes, I made a jump 
+> table
+> >for each bank.  So the table is 256 dword long and the first 40h 
+> pointers
+> >will point to a function that compares the address and sees if it's in 
+> the
+> >registers, wram, or rom.
+> what's wram?
+
+wram = addresses 0-1FFFh, banks 0 - 3Fh
+
+> BTW, does your emu prevent writes to the ROM address space?  Is that 
+> neccessary?
+
+It should be necessary.  It breaks trainers though, but it also prevents
+roms that have copy protection.
+
+> >
+> 
+> >Probabily, but I wouldn't put my bet on it since there are some sound 
+> code
+> >that does stuff like that so chances are that 65816 code might also do 
+> that
+> >too.  I don't know exactly though since zsnes always used the register
+> >ports when using instructions such as INC.
+> hm..ok..
+> >
+> >> instruction would run faster.  Do you know what other instructions 
+> are 
+> >> never used on I/O ports?
+> >
+> >Nope.  No ideas.
+> >
+> >Not really.  It's about the same where you exit and reload zsnes.
+> okay, it's just bugging me how hard it is to debug an emulator... I 
+> spent over two hours yesterday tracking down one little bug... urg, then 
+> I felt like an idiot when I figured it out... :)
+
+It happens all the time =)  Even with me.
+
+> >
+> >There is a feature, but it's only accessible through the source code.
+> oh, hehe.
+> >
+> >It's patched when a BNE is found
+> well....only after a SPC port access though right?  You don't patch ALL 
+
+Yup.
+
+> bne's?
+
+Umm.  That would cause a lot of problems, don't you agree?
+
+> >
+> from the y0shi doc:
+> | w   |$2105  |Screen mode register [BGMODE]                             
+   
+> |
+> |     |       |abcdefff              a: BG4 tile size (0=8x8, 1=16x16).  
+   
+> |
+> uh, how are 16x16 tiles formatted?  The other docs that cover grfx only 
+> give the format for 8x8 tiles...
+
+16x16 = 4 8x8 tiles stored in continuous memory
+
+> 
+> | w   |$2107  |BG1 VRAM location register [BG1SC]
+> |     |       |xxxxxxab              x: Base address
+> |     |       |                     ab: SC size     
+> Drat, I wish these docs had more description.  Is this where the 'tile 
+> map' starts? or the actual tiles? or..
+
+It should be the tile map.
+
+> 
+> | w   |$2115  |Video port control [VMAIN]                                
+   
+> |
+> |     |       |i000abcd              i: 0 = Addr-inc after writing to 
+> $2118  |
+> | w 2 |$2118  |Video port data [VMDATAL/VMDATAH]                         
+   
+> |
+> Are these the registers that control the data 'upload' to VRAM?
+
+Yup.
+
+> 
+> 
+> | w   |$2126  |Window 1 left position register [WH0]                     
+   
+> |
+> Uh.. what are 'windows'?
+
+Don't worry about them since they will be a feature to add after you get
+the graphics working.  One example is that opening window in mario world.
+
+> 
+> | w   |$212C  |Main screen designation [TM]                              
+   
+> |
+> |     |       |000abcde              a: OBJ/OAM disable/enable.          
+   
+> |
+> |     |       |                      b: Disable/enable BG4.              
+   
+> |
+> Is this register a way for snes games to toggle the visibility of BGs?
+
+Yup
+
+> 
+> Are OAM and CGRAM part of the VRAM??  Where are they located?
+
+Nope.  They're both totally separate memory.  OAM is 544 bytes in size and
+CGRAM is 512 bytes in size.
+
+> 
+> |r    |$213F  |PPU status flag & version number [STAT78]                 
+   
+> |
+> |     |       |fl0mvvvv              f: Field # scanned in int. mode 
+> (0=1st).|
+> |     |       |                      m: NTSC/PAL mode (0=NTSC, 1=PAL).   
+   
+> |
+> Is this right: If I am emulating a PAL snes I should always return '1' 
+> in the m bit, otherwise zero?
+
+Yup.
+
+> 
+> |rw   |$2180  |Read/write WRAM register [WMDATA]
+> |rw   |$2181  |WRAM data register (low byte) [WMADDL]
+> |rw   |$2182  |WRAM data register (middle byte) [WMADDM]
+> |rw   |$2183  |WRAM data register (high byte) [WMADDH]
+> what's this WRAM thing about?
+
+Banks 7E/7F.  The address is 17 bit (when a value is written to 2183, mask
+out bits 1-7).
+
+> 
+> | w 2 |$4209  |Video vertical IRQ beam position/pointer [VTIMEL/VTIMEH]
+> |     |       |0000000y yyyyyyyy     y: Beam position.
+> |     |       |Same as $4207, but valid values for y are 0 to 261(based 
+> from|
+> |     |       |overscan at the top of the screen).
+> Uh..so.. have I got this right?
+
+Pretty much.
+
+>    - The VBL interrupt is triggered when y=0 and
+
+Nope.  y=224/239, depending on the resolution bit.
+
+>    - The VBlank period lasts from y=0 to y=about 21 and
+
+Nope.  It lasts from y=224/239 to y=261
+
+>    - the "real" screen output scanline is 0 when y=about 22
+
+It's from 0 to 223 or 0 to 239.
+
+> 
+> |r    |$4210  |NMI register [RDNMI]                                      
+   
+> |
+> |     |       |x000vvvv              x: Disable/enable NMI.              
+   
+> |
+> Is the NMI enabled or disabled by default?
+
+disabled
+
+> 
+> |r    |$4218  |Joypad #1 status register [JOY1L]                         
+   
+> |
+> The joypad reading system looks pretty straightforward, but why does 
+> SNES 9X have two different joypad reading methods (old style, 'new' 
+> style)
+
+old is done like the nes and is read from 4016.  It's rarely used, but it's
+still used.
+
+> 
+> |rw   |$FFC0  |Cartridge title.
+> |rw   |$FFD6  |ROM/RAM information on cart.
+> |rw   |$FFD7  |ROM size.
+> |rw   |$FFD8  |RAM size.
+> |rw   |$FFD9  |Developer ID code.
+> |rw   |$FFDB  |Version number.
+> |rw   |$FFDC  |Checksum complement.
+> |rw   |$FFDE  |Checksum.
+> |rw   |$FFEA  |NMI vector/VBL interrupt.
+> |rw   |$FFEC  |Reset vector.
+> This all looks right except for one thing: the "w".  These locations are 
+> NOT writeable, are they?
+
+They're not supposed to be writable.  The documentation has errors.
+
+> Also, I thought this information was only located in bank zero.  It 
+> isn't mirrored in banks 1-0x39, is it?
+
+No it isn't.  Only the registers are mirrored
+
+> P.S. zSNES is the "official" emulator of FF5e (whether you had a say in 
+
+I never said that.  The members of RPGe said that.
+
+> that, I don't know...).  But I hope you know the game crashes (or at 
+> least screws up) at random points during the game.  (for example, after 
+> the canal area you usually get taken to a strange place from FAR later 
+> in the game, and you are inside the walls... took me three hours to get 
+> past that part... :/)
+
+Hmm.  Which version did you use when you played it?
+
+> 
+> Later. :)
+___________________________________________________________________________
+
+> Ha!  I just noticed zSNES .305 came out--before EMU news even told about 
+> it, heh. (what's the PPU multiplication bug?)
+
+It's just a bug with the registers 211B * 111C = 2134/2135/2136
+
+> 
+> >wram = addresses 0-1FFFh, banks 0 - 3Fh
+> any idea why it's called that?
+
+It's called "work ram"
+
+> >
+> >> BTW, does your emu prevent writes to the ROM address space?  Is that 
+> >> neccessary?
+> >
+> >It should be necessary.  It breaks trainers though, but it also 
+> prevents
+> >roms that have copy protection.
+> so zSNES prevents ROM writes?
+
+Yup.  But then, you can still write to ROM using the debugger or cheat
+codes.
+
+> >
+> >> >
+> >> 
+> >It happens allthe time =)  Even with me.
+> I suppose most of your bugs are ironed out by now...
+
+Maybe.  But there are still many more left.
+
+> >
+> >> >
+> >Umm.  That would cause a lot of problems, don't you agree?
+> well yea..
+> >
+> >> >
+> >> from the y0shi doc:
+> >> | w   |$2105  |Screen mode register [BGMODE]                          
+  
+> >> |     |       |abcdefff              a: BG4 tile size (0=8x8, 
+> 1=16x16).  
+> >   
+> >> |
+> >> uh, how are 16x16 tiles formatted?  The other docs that cover grfx 
+> only 
+> >> give the format for 8x8 tiles...
+> >
+> >16x16 = 4 8x8 tiles stored in continuous memory
+> sooo....I'm guessing eg for a 4-color tile...
+> where  what
+> -----  ----
+> 0      top-left tile plane 0
+> 8      top-left tile plane 1
+> 16     top-right tile plane 0
+> 24     top-right tile plane 1
+> 32     bottom-left tile plane 0
+> 40     bottom-left tile plane 1
+> 48     bottom-right tile plane 0
+> 56     bottom-right tile plane 1
+
+Yup.  That should be correct
+
+> 
+> | w   |$2105  |Screen mode register [BGMODE]
+> |     |       |abcdefff              a: BG4 tile size (0=8x8, 1=16x16).
+> ...
+> |     |       |                      e: Highest priority for BG3 in MODE 
+> 1.
+> |     |       |                      f: MODE definition.
+> What does the 'e' bit do?  Can you tell me anything about BG priorities 
+> on the SNES?
+
+This is how the background priorities are drawn if e = 0 :
+
+BG4, priority 0
+BG3, priority 0
+BG4, priority 1
+BG3, priority 1
+BG2, priority 0
+BG1, priority 0
+BG2, priority 1
+BG1, priority 1
+
+This is how the background priorities are drawn if e = 1 :
+
+BG4, priority 0
+BG3, priority 0
+BG4, priority 1
+BG2, priority 0
+BG1, priority 0
+BG2, priority 1
+BG1, priority 1
+BG3, priority 1
+
+For each tile, I believe bit 13 of the tile info determines which priority
+it is drawn in.
+
+> Does the 'f' bit refer to the basic screen mode ("mode 0-7")?
+> >
+> >> 
+> >> | w   |$2107  |BG1 VRAM location register [BG1SC]
+> >> |     |       |xxxxxxab              x: Base address
+> >> |     |       |                     ab: SC size
+> >It should be the tile map.
+> If that's the tile map, then where are the tiles?  (Isn't this how it 
+> works?? There is a tile map and a set of tiles?)  What's the format of 
+> the tile map?
+> | w   |$210B  |BG1 & BG2 VRAM location register [BG12NBA]
+> |     |       |aaaabbbb              a: Base address for BG2.
+> |     |       |                      b: Base address for BG1.
+> Ok.. so how do the 'x' and 'b' bits refer to a VRAM region?
+> What's the SC size?  (& what does 'SC' stand for?)
+> 
+> | wd  |$2104  |OAM data register [OAMDATA]
+> |     |       |???????? ????????
+> why is this listed as a double-byte write register?  And when writing 
+> this kind, do you always write the low byte followed by the high byte?
+> 
+> >Don't worry about them since they will be a feature to add after you 
+> get
+> >the graphics working.  One example is that opening window in mario 
+> world.
+> hmm..better ask later ;D
+> >> 
+> >> | w   |$212C  |Main screen designation [TM]                           
+  
+> >> |     |       |000abcde              a: OBJ/OAM disable/enable.       
+  
+> >> |     |       |                      b: Disable/enable BG4.           
+  
+> >> Is this register a way for snes games to toggle the visibility of 
+> BGs?
+> >Yup
+> There's also a 'sub-screen designation'.  What's that for?
+
+It's for transparencies.
+
+> BTW, are 'sub-screens' the same as 'windows'?
+
+Nope.  They're very different
+
+> 
+> | w   |$2115  |Video port control [VMAIN]
+> |     |       |i000abcd              i: 0 = Addr-inc after writing to 
+> $2118  |
+> |     |       |                             or reading from $2139.
+> |     |       |                         1 = Addr-inc after writing to 
+> $2119  |
+> |     |       |                             or reading from $213A.
+> |     |       |                     ab: Full graphic (see table below).
+> |     |       |                     cd: SC increment (see table below).
+> |     |       |abcd|Result
+
+This stuff should be straight forward
+
+> |     |       
+> |----|---------------------------------------------------------|
+> |     |       |0100|Increment by 8 for 32 times (2-bit formation).
+> |     |       |1000|Increment by 8 for 64 times (4-bit formation).
+> |     |       |1100|Increment by 8 for 128 times (8-bit formation).
+Don't worry about this for now.  This stuff gets quite confusing.
+> |     |       |0000|Address increments 1x1.
+When VRAM increments, it increments by 1 word
+> |     |       |0001|Address increments 32x32.
+When VRAM increments, it increments by 32 words
+> |     |       |0010|Address increments 64x64.
+When VRAM increments, it increments by 64 words
+> |     |       |0011|Address increments 128x128.
+When VRAM increments, it increments by 128 words
+> |     |       
+> |----|---------------------------------------------------------|
+> | w 2 |$2118  |Video port data [VMDATAL/VMDATAH]
+> |     |       |???????? ????????
+> |     |       |According to bit 7 of $2115, the data can be stored as:
+> |     |       |Bit 7|Register                   |Result
+> |     |       
+> |-----|---------------------------|----------------------------|
+> |     |       |  0  |Write to $2118 only.       |Lower 8-bits written 
+> then   |
+> |     |       |     |                           |address is increased.   
+   
+> |
+> |     |       |  0  |Write to $2119 then $2118. |Address increased when 
+> both |
+> |     |       |     |                           |are written to (in 
+> order).  |
+> |     |       |  1  |Write to $2119 only.       |Upper 8-bits written, 
+> then  |
+> |     |       |     |                           |address is increased.   
+   
+> |
+> |     |       |  1  |Write to $2118 then $2119. |Address increased when 
+
+When bit 7 of 2115 is set, the vram address is incremented only if 2118 is
+written to
+When bit 7 of 2115 is clear, the vram address is incremented only if 2119
+is written to
+
+> both |
+> |     |       |     |                           |are written to (in 
+> order).  |
+> |     |       
+> |-----|---------------------------|----------------------------|
+> Wow, there seem to be a whole lot of different 'modes' for data upload!  
+> Can you shed some light on the meaning of this stuff?
+> >
+> >> 
+> >> Are OAM and CGRAM part of the VRAM??  Where are they located?
+> >
+> >Nope.  They're both totally separate memory.  OAM is 544 bytes in size 
+> and
+> >CGRAM is 512 bytes in size.
+> >
+> >> 
+> >> |r    |$213F  |PPU status flag & version number [STAT78]              
+  
+> >> |     |       |fl0mvvvv              f: Field # scanned in int. mode 
+> >> (0=1st).|
+> >> |     |       |                      m: NTSC/PAL mode (0=NTSC, 
+> 1=PAL).   
+> if says the 'v' bits are a version number.  Do you know what that is 
+> supposed to return?
+
+Nope.  I just return a 1.
+
+> >> 
+> >> |rw   |$2180  |Read/write WRAM register [WMDATA]
+> >> |rw   |$2181  |WRAM data register (low byte) [WMADDL]
+> >> |rw   |$2182  |WRAM data register (middle byte) [WMADDM]
+> >> |rw   |$2183  |WRAM data register (high byte) [WMADDH]
+> >> what's this WRAM thing about?
+> >Banks 7E/7F.  The address is 17 bit (when a value is written to 2183, 
+> mask
+> >out bits 1-7).
+> erm.. what is it used for?
+
+It's to read/write to RAM
+
+> >
+> >Nope.  y=224/239, depending on the resolution bit.
+> >Nope.  It lasts from y=224/239 to y=261
+> >It's from 0 to 223 or 0 to 239.
+> k, thanks.
+> >> 
+> >> |r    |$4210  |NMI register [RDNMI]
+> >> |     |       |x000vvvv              x: Disable/enable NMI.
+> hmm, vvvv--another version-number thingie...
+> >> 
+> >old is done like the nes and is read from 4016.  It's rarely used, but 
+> it's
+> >still used.
+> yeah, Super Star Wars uses it...
+> >> 
+> >> that, I don't know...).  But I hope you know the game crashes (or at 
+> >> least screws up) at random points during the game.  (for example, 
+> after 
+> >> the canal area you usually get taken to a strange place from FAR 
+> later 
+> >> in the game, and you are inside the walls... took me three hours to 
+> get 
+> >> past that part... :/)
+> >
+> >Hmm.  Which version did you use when you played it?
+> um, probably version .270 or .201, but a couple days ago I got a mail 
+> from somebody who had exactly the same problem... :/  Also, there was a 
+> problem where it froze in a black screen after a nifty mode 7 thing 
+> later in the game, probably in v.295.  And, (apparently completely at 
+> random) you will go to a (frozen) garbage screen with the theme music 
+> playing once in a while when you enter a place from the world map.  I 
+> haven't tried v.305 yet tho...
+
+Still bugs here and there.  I need to experience them to figure out what's
+wrong.
+
+> >
+> |r    |$2137  |Software latch for horizontal/vertical counter [SLHV]
+> |     |       |aaaaaaaa                 a: Result.
+> |     |       |The counter value at the point when $2137 is read can be
+> |     |       |latched. Data read is meaningless.
+> So, the program has to read from this register in order for the scanline 
+> value at $2409 to be set?
+
+I guess so.
+
+> 
+> I have this funny text file, very similar to the yoshi doc, and it keeps 
+> saying 'see appendix xx'.  Of course, there aren't any appendixes... :/
+> later!!
+___________________________________________________________________________
+
+> >It's just a bug with the registers 211B * 111C = 2134/2135/2136
+> uhm, these are the same as mode 7 registers "cos, sin rotate angle/ x 
+> expansion"... how does that work?
+> Is this form of multiply often used?
+
+The multiplication of any word value written to 211B and any byte value
+into 211C is read from 2134/2135/2136.  Zelda uses it on its triforces
+
+> >> 
+> >Yup.  But then, you can still write to ROM using the debugger or cheat
+> >codes.
+> drat, my emu was really not designed to prevent writes...!  Adding code 
+> for it will be as much a chore as adding register write intercept 
+> support... and slow it down as much.. :/
+
+Yup.  But it's the correct way of emulation.
+
+> 
+> >> | w   |$2105  |Screen mode register [BGMODE]
+> >> |     |       |abcdefff              a: BG4 tile size (0=8x8, 
+> 1=16x16).
+> >> |     |       |                      e: Highest priority for BG3 in 
+> MODE 
+> >> |     |       |                      f: MODE definition.
+> >> What does the 'e' bit do?  Can you tell me anything about BG 
+> priorities 
+> >> on the SNES?
+> >
+> >This is how the background priorities are drawn if e = 0 :
+> >
+> >BG4, priority 0
+> >BG3, priority 0
+> >BG4, priority 1
+> >BG3, priority 1
+> >BG2, priority 0
+> >BG1, priority 0
+> >BG2, priority 1
+> >BG1, priority 1
+> >
+> >This is how the background priorities are drawn if e = 1 :
+> >
+> >BG4, priority 0
+> >BG3, priority 0
+> >BG4, priority 1
+> >BG2, priority 0
+> >BG1, priority 0
+> >BG2, priority 1
+> >BG1, priority 1
+> >BG3, priority 1
+> >
+> >For each tile, I believe bit 13 of the tile info determines which 
+> priority
+> >it is drawn in.
+> `,^\ ..sorry...I don't understand... (there are only two priorities and 
+> each BG is drawn TWICE?!)
+
+Yup.  Each tile has a priority bit in the tile map.  (Each tile has a 2
+byte identifier which contains info such as the tile #, which direction it
+is flipped, priority bit, etc.)  The BG only has to be scanned twice, not
+drawn twice.
+
+> 
+> >> Does the 'f' bit refer to the basic screen mode ("mode 0-7")?
+> well...does it?
+> 
+> the folllowing VRAM questions are very important to me, as there's no 
+> way I can draw anything on the screen without knowing where to find the 
+> tiles, maps etc..!
+> >> >> | w   |$2107  |BG1 VRAM location register [BG1SC]
+> >> >> |     |       |xxxxxxab              x: Base address
+> >> >> |     |       |                     ab: SC size
+> >> >It should be the tile map.
+> If that's the tile map, then where are the tiles?  (Isn't this how it 
+> works?? There is a tile map and a set of tiles?)  What's the format of 
+> the tile map?
+
+The tile map is either a 32x32, 32x64, 64x32, or a 64x64 8x8 tile map. 
+Starting from that VRAM location starts at tile info (0,0) which is 2 bytes
+of information/tile.
+
+> >> | w   |$210B  |BG1 & BG2 VRAM location register [BG12NBA]
+> >> |     |       |aaaabbbb              a: Base address for BG2.
+> >> |     |       |                      b: Base address for BG1.
+> Ok.. so how do the 'x' and 'b' bits refer to a VRAM region?
+> What's the SC size?  (& what does 'SC' stand for?)
+
+This stuff on 'a' and 'b' should be documented clearly.  Bits 0-3 is the
+address for BG1 and 4-7 is the address for BG2.
+
+SC size is the tile map size.  Either 32x32, 32x64, 64x32 or 64x64
+
+> >> 
+> >> | wd  |$2104  |OAM data register [OAMDATA]
+> >> |     |       |???????? ????????
+> why is this listed as a double-byte write register?  And when writing 
+> this kind, do you always write the low byte followed by the high byte?
+
+It's listed as a double since the snes writes 2 bytes into it in a row. 
+The first is the low then the second is the high.
+
+> 
+> >> There's also a 'sub-screen designation'.  What's that for?
+> >
+> >It's for transparencies.
+> I noticed that the 'sub-screens' can be turned on and off just like 
+> normal BGs.  Is a sub-screen simply a normal BG with special add/sub 
+> bits set?
+
+It's the background where it's added to the mainscreen.
+
+> 
+> oh yeah, also I noticed 'windows' can be turned off 'along with' other 
+> BGs... eg in SMW toggling BG3 toggles the window too.
+> 
+> >> 
+> >> | w   |$2115  |Video port control [VMAIN]
+> >> |     |       |i000abcd              i: 0 = Addr-inc after writing to 
+> >> $2118  |
+> >> |     |       |                             or reading from $2139.
+> >> |     |       |                         1 = Addr-inc after writing to 
+> >> $2119  |
+> >> |     |       |                             or reading from $213A.
+> >> |     |       |                     ab: Full graphic (see table 
+> below).
+> >> |     |       |                     cd: SC increment (see table 
+> below).
+> >> |     |       |abcd|Result
+> >
+> >This stuff should be straight forward
+> nuh-uh... It's the way it's worded, I don't understand what the i bit 
+> does exactly...
+
+if bit i is set, the vram is incremented only if a byte is written to 2139
+or read from 213A
+if bit i is clear, the vram is incremented only if a byte is written to
+2138 or read from 2139
+
+bits ab and cd should relate to the table below.
+
+> >
+> >> |     |       
+> >> |----|---------------------------------------------------------|
+> >> |     |       |0100|Increment by 8 for 32 times (2-bit formation).
+> >> |     |       |1000|Increment by 8 for 64 times (4-bit formation).
+> >> |     |       |1100|Increment by 8 for 128 times (8-bit formation).
+> >Don't worry about this for now.  This stuff gets quite confusing.
+> I should ignore these bits?
+> >> |     |       |0000|Address increments 1x1.
+> >When VRAM increments, it increments by 1 word
+> 1 word = 2 bytes?
+> >> |     |       |0001|Address increments 32x32.
+> >When VRAM increments, it increments by 32 words
+> >> |     |       |0010|Address increments 64x64.
+> >When VRAM increments, it increments by 64 words
+> >> |     |       |0011|Address increments 128x128.
+> >When VRAM increments, it increments by 128 words
+> 
+> why in the world would a game want the VRAM pointer to increment by more 
+> than 1 or 2 bytes??  I mean, you can only write 2 bytes max before an 
+> increment right?  I'm thinking:
+
+When a map is 32x32, a program might want to write to one vertical row
+where incrementing by 32 is useful.  Super Mario World uses this.
+
+> 
+> SEP #$30
+> LDA #$03   ; "Address increments 128x128."
+> REP #$30   ; Write one word to VRAM
+> STZ $2116  ; VRAM_ptr==0
+> LDA #$XxXx ; Value to write to VRAM
+> STA $2118  ; vram[VRAM_ptr] = ACCUM;
+>            ; VRAM_ptr += 256;  <-- Right?  Why would you want to do 
+> that?!
+
+Increment by 256 is useful for mode 7.  Not really sure about 128, but I'm
+sure there's a use for it.
+
+> 
+> Also... I heard that writing to $2116 (VRAM Pointer) should multiply by 
+> two eg:
+> LDA #5
+> STA $2116  ; VRAM address = 5*2 = 10??
+
+It's under a word address so if 5 is written to it, it's using byte offset
+10.
+
+> 
+> >> |----|---------------------------------------------------------|
+> >> | w 2 |$2118  |Video port data [VMDATAL/VMDATAH]
+> >> |     |       |???????? ????????
+> >> |     |       |According to bit 7 of $2115, the data can be stored 
+> as:
+> >> |     |       |Bit 7|Register                   |Result
+> >> |     |       
+> >> |-----|---------------------------|----------------------------|
+> >> |     |       |  0  |Write to $2118 only.       |Lower 8-bits written 
+> >> then   |
+> >> |     |       |     |                           |address is 
+> increased.   
+> >   
+> >> |
+> >> |     |       |  0  |Write to $2119 then $2118. |Address increased 
+> when 
+> >> both |
+> >> |     |       |     |                           |are written to (in 
+> >> order).  |
+> >> |     |       |  1  |Write to $2119 only.       |Upper 8-bits 
+> written, 
+> >> then  |
+> >> |     |       |     |                           |address is 
+> increased.   
+> >   
+> >> |
+> >> |     |       |  1  |Write to $2118 then $2119. |Address increased 
+> when 
+> >
+> >When bit 7 of 2115 is set, the vram address is incremented only if 2118 
+> is
+> >written to
+> >When bit 7 of 2115 is clear, the vram address is incremented only if 
+> 2119
+> >is written to
+> Okay, this is what I hear you saying, is this right? (It CAN'T be 
+> right!)
+
+But it is right.
+
+> 
+> SEP #$30
+> LDA #$00   ; Clear bit 7; Address increments 1x1.
+> STZ $2116  ; 
+> STZ $2117  ; VRAM_ptr==0
+> LDA #1     ; value to write
+> STA $2119  ; vram[0] = 1;
+
+This should be vram[1] = 1
+
+>            ; VRAM_ptr += 2; <---- 1 word??
+> LDA #2
+> STA $2118  ; vram[2] = 2;  <--- notice location 1 is SKIPPED!
+> LDA #3
+> STA $2119  ; vram[2] = 3;  <--- stupid behavior
+
+This should be vram[3] = 3
+
+>            ; VRAM_ptr += 2;  <-- now  =4
+> 
+> >> >> |rw   |$2180  |Read/write WRAM register [WMDATA]
+> >> >> |rw   |$2181  |WRAM data register (low byte) [WMADDL]
+> >> >> |rw   |$2182  |WRAM data register (middle byte) [WMADDM]
+> >> >> |rw   |$2183  |WRAM data register (high byte) [WMADDH]
+> >> >> what's this WRAM thing about?
+> >> >Banks 7E/7F.  The address is 17 bit (when a value is written to 
+> 2183, 
+> >> mask
+> >> >out bits 1-7).
+> >> erm.. what is it used for?
+> >It's to read/write to RAM
+> But WHY would you want to use a register instead of doing it directly?
+
+DMA.  Enough said.
+
+> 
+> Now, after staring at it for a few minutes, I'm guessing this is how it 
+> works?
+> 
+> SEP #$30  ; Let's say that I want set $7F.1234 to $FF
+> LDA #$34
+> STA $2181 ; Low byte
+> LDA #$12
+> STA $2182 ; Middle
+> LDA #$F1
+> STA $2183 ; High byte, but the 'F' is ignored
+> LDA #$99
+> STA $2180 ; Store $99 at $7F.1234
+> LDA #$FF
+> STA $2180 ; Now, store $FF at $7F.1234
+
+After writing to 2180, it auto increments by 1
+
+>           ; and the first value ($99) is overwritten
+> >> >> 
+> >> >old is done like the nes and is read from 4016.  It's rarely used, 
+> but 
+> >> it's
+> >> >still used.
+> >> yeah, Super Star Wars uses it...
+> ok, weird... and I suppose joypad 2 can be read from $4017?
+
+Pretty much
+
+> 
+> >Still bugs here and there.  I need to experience them to figure out 
+> what's
+> >wrong.
+> well, FF5e is fun... go for it! :)
+> >
+> 
+> oh yeah, did I mention I need some info about how the tile map is stored 
+> (not the tiles but the map) and where to FIND it in VRAM?  (And for that 
+> matter, where to find the tiles.)
+
+It should be in Yoshi's docs.  I've learned all the graphics stuff from
+there.
+___________________________________________________________________________
+
+> The SPC skip of zSNES is still screwing with my mind.  Whenever a CMP 
+> $2140 is done, the Carry bit is set (why?).  I do a 'M' to look at the 
+
+It also changes the registers.  That's another method of skipping.
+
+> memory location and it's always some funny value... then if I check it 
+> again it will be set to zero.  what's going on?  (My emu is still 
+> crashing [GPF] after about 40,000 instructions of super mario world... 
+> :/)
+
+Best to trace it to figure out which instruction exactly it's crashing on.
+___________________________________________________________________________
+
+
+> Hi again...Hope this helps.  Well, while I was debugging Super Mario 
+> World, I came across a problem which seems to be in _your_ emulator.  
+> There was a TAX instruction:
+> (about instruction # 579980)
+> A=0380 X=C4F8 P=A0
+> the following line had the registers
+> A=0380 X=0380 P=20
+> Read this, from my 65c816 book:
+>       If the M bit is set and the X bit is clear (that is, m&a are 8 bits but 
+> the X register is 16-bits), the A register (lower 8 bits of the 
+> accumulator) is transferred to the XL register (lower 8 bits of the X 
+> register) and a 0 is transferred to the XH register (upper 8 bits of the 
+> X register.)
+
+
+Okay.  Here is something I copied from that 65816 text file I have which is
+very accurate :
+
+     TAX: Transfer accumulator to X index register.
+     TAY: Transfer accumulator to Y index register.
+     TYA: Transfer Y index register to the accumulator.
+     TXA: Transfer X index register to the accumulator.
+     TSX: Transfer Stack pointer to the X index register.
+     TXS: Transfer X index register to the Stack pointer.
+
+Two new register transfer instructions are TXY to transfer directly from
+the X register into the Y register and TYX to transfer from Y register to X
+register.
+
+Because the accumulator and index registers can be set for either 8 or 16
+bits independently, the width of the transfer is determined by the
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+destination register. The following table shows the possible combinations:
+^^^^^^^^^^^^^^^^^^^^^^
+
+   8 bit acc to  8 bit index regs. (m=1,x=1) 8 bits transferred.
+   8 bit acc,to 16 bit index regs (m=1, x=0), 16 bits are transferred.
+  
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                The hidden high order accumulator byte becomes the
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                X or Y high byte.
+            ^^^^^^^^^^^^^^^^^^^
+
+I hope this explains it.
+
+
+
+
+> whew, maybe I should have just paraphrased.  Anyways, BTW, if the X bit 
+> is set it is always an 8-bit transfer.  Also, you should know that this 
+> behavior applies to all the Transfer instructions that use the letter 
+> 'A' instead of the letter 'C' (eg TCD is always 16bit.)
+> 
+> At the same time I found a bug in my emu--the flags weren't being set 
+> properly. cya!
+___________________________________________________________________________
+
+
+> Hello _yet again_.  Well, I've been having a bit of timing problems... 
+> e.g. when zSNES reaches the end of scanline 230, mine has only reached 
+> scanline 217.  (Of course, after a few frames have gone by this makes 
+> quite a difference....)  I don't know what could be wrong with mine, 
+> since it executes 2.68 MHz.  Well, take a look:
+> 
+> hz = 2680000 * curgs->cpupercent / 100;
+> curfastrom = false;
+> ... test for ntsc...
+> frame_cycles = hz / 60;
+> cycles_per_scan = scan_cycles = (frame_cycles / 260);
+>       // Because of the remainder, frame_cycles/260 gives *almost*
+>       // 261 scanlines
+> screen_scanline = 0;
+> 
+> this gives 44666 cycles per frame and 171 cycles per scanline.  Isn't 
+> that right?
+
+ZSNES executes less than 171 cycles/scanline to improve compatibility since
+a lot of games seems to require DMA timing.
+
+> 
+> Okay, and I don't *quite* get the timer registers... there's a bunch of 
+> them.  At first I thought the NMI register ($4210) was writable (to set 
+> whether NMIs were enabled) but it seems it isn't...
+> 
+> | w   |$4200  |Counter enable [NMITIMEN]
+> |     |       |a0yx000b              a: NMI/VBlank interrupt.
+> Now THIS is the real register that controls whether IRQs and NMIs are 
+> enabled, right?
+
+Yes
+
+> 
+> | w 2 |$4209  |Video vertical IRQ beam position/pointer 
+> |     |       |0000000y yyyyyyyy     y: Beam position. 
+> heh!  Ok, is this the register that decides when an IRQ interrupt 
+> occurs?  Like if I write $0 here I should get an interrupt at the 
+> beginning of every frame?  
+
+Yes
+
+> There is also one for the horizontal beam position... does that generate 
+> an IRQ as well?  When the IRQ handler gets called, how does it find out 
+
+Yes
+
+> whether it was a vertical or horizontal interrupt?
+
+HIRQ is barely used.  When it's enabled, I just treat it like VIRQ and it
+seems to not cause any problems.
+
+> With a horizontal interrupt, how are overlapping IRQ's prevented (i.e. 
+> so that a new IRQ doesn't get called before the old one finishes)?  I 
+> think you could use SEI, but is there any other way a snes program might 
+> use?
+
+Don't call IRQs when the interrupt flag is set
+
+> 
+> |rw   |$4211  |Video IRQ register [TIMEUP]                       
+> |     |       |i0000000              i: 0 = IRQ is not enabled.   
+> |     |       |                         1 = IRQ is enabled.       
+> What's this one for?  To enable IRQs do you have to set this bit _AND_ 
+> the one in $4200?
+
+This is mainly a read register
+
+> 
+> |rw   |$4212  |Status register [HVBJOY]                           
+> |     |       |xy00000a          x: 0 = Not in VBlank state.  
+> |     |       |                     1 = In VBlank state.      
+> |     |       |                  y: 0 = Not in HBlank state.  
+> |     |       |                     1 = In HBlank state.      
+> |     |       |                  a: 0 = Joypad not ready.     
+> |     |       |                     1 = Joypad ready.         
+> Does x return whether 224/240 < scanline < 270?
+
+Yes
+
+> When is an HBlank state?
+
+It's around the last 20% of a line.
+
+> When is the joypad ready or not ready?  and how come there's only one 
+> bit (when there are two joypads)?
+
+I've never implemented that in zsnes since I don't know how it works
+
+> Finally, why is this register listed as writable?  (another error??)
+> 
+> |r    |$4213  |Programmable I/O port (in-port) [RDIO]
+> | w   |$4201  |Programmable I/O port (out-port) [WRIO]
+> what's this stuff?
+
+I never used those and I don't think I'll ever use those since they are for
+external devices (like maybe the snes cdrom)
+
+> 
+>     - Qwertie (David Piepgrass)
+___________________________________________________________________________
+
+
+> >> Hello _yet again_.  Well, I've been having a bit of timing 
+> problems... 
+> >> e.g. when zSNES reaches the end of scanline 230, mine has only 
+> reached 
+> >> scanline 217.  (Of course, after a few frames have gone by this makes 
+> >> quite a difference....)  I don't know what could be wrong with mine, 
+> >> since it executes 2.68 MHz.  Well, take a look:
+> >> 
+> >> hz = 2680000 * curgs->cpupercent / 100;
+> >> curfastrom = false;
+> >> ... test for ntsc...
+> >> frame_cycles = hz / 60;
+> >> cycles_per_scan = scan_cycles = (frame_cycles / 260);
+> >>    // Because of the remainder, frame_cycles/260 gives *almost*
+> >>    // 261 scanlines
+> >> screen_scanline = 0;
+> >> 
+> >> this gives 44666 cycles per frame and 171 cycles per scanline.  Isn't 
+> >> that right?
+> >
+> >ZSNES executes less than 171 cycles/scanline to improve compatibility 
+> since
+> >a lot of games seems to require DMA timing.
+> exactly how many cycles does it do then?
+
+Something like 150.  I don't remember the exact number
+
+> 
+> I guess this means you have no information about how much clock cycles 
+> it takes to do a DMA transfer?  (Obviously that would be the best way to 
+> fix timing problems... eh?)
+
+It takes 1 cycle.  I've done that before, but it caused a lot of problems
+so there's more than that.
+
+> >
+> >> 
+> >HIRQ is barely used.  When it's enabled, I just treat it like VIRQ and 
+> it
+> >seems to not cause any problems.
+> hmm.. when hirq is enabled, do you still trigger an IRQ every scanline 
+> (and at the right place in the line?)?
+> >
+> >> |rw   |$4211  |Video IRQ register [TIMEUP]                       
+> >> |     |       |i0000000              i: 0 = IRQ is not enabled.   
+> >> |     |       |                         1 = IRQ is enabled.       
+> >
+> >This is mainly a read register
+> What do you mean... "mainly"?
+
+It means that programs usually read from it.
+
+> 
+> >> |rw   |$4212  |Status register [HVBJOY]                           
+> >> |     |       |xy00000a          x: 0 = Not in VBlank state.  
+> >> |     |       |                     1 = In VBlank state.      
+> >> |     |       |                  y: 0 = Not in HBlank state.  
+> >> |     |       |                     1 = In HBlank state.      
+> >> |     |       |                  a: 0 = Joypad not ready.     
+> >> |     |       |                     1 = Joypad ready.         
+> 
+> Is it an error that this reg is listed as writable?
+
+Don't know.
+___________________________________________________________________________
+
+>----------
+>> From: David L.P. <qwertman@hotmail.com>
+>> To: zsknight@usa.net
+>> Subject: Re: Hello again
+>> Date: Saturday, February 14, 1998 7:03 PM
+>> 
+>> >Okay.  Here is something I copied from that 65816 text file I have 
+>> which is
+>> >very accurate :
+>> >
+>> well, one of our sources has to be wrong!  But I don't know which one, 
+>> because in Super Mario World it doesn't make a difference (at least not 
+>> as far as I can tell.)
+>
+>My info was from at least 2 sources.  What book are you using?  I found one
+>book out there where many contents are incorrect.
+My book is "65816/65802 Assembly Language Programming".  Generally very good book; it's really verbose about everything and the info on how the Txx instructions works is explained over and over for each of the instructions... I thought it was safe to assume they knew what they were talking about :)
+___________________________________________________________________________
+
+> Date: Saturday, February 14, 1998 8:16 PM
+> 
+> >> >This is how the background priorities are drawn if e = 0 :
+> >> >
+> >> >BG4, priority 0
+> >> >BG3, priority 0
+> >> >BG4, priority 1
+> >> >BG3, priority 1
+> >> >BG2, priority 0
+> >> >BG1, priority 0
+> >> >BG2, priority 1
+> >> >BG1, priority 1
+> ok, so this is the ORDER that the BGs are drawn in?  ie.
+> void draw_graphics()
+> {
+>   if ((XxXx & e)==0) {
+>      draw_bg(4,0); draw_bg(3,0);
+>      draw_bg(4,1); draw_bg(3,1);
+>      draw_bg(2,0); draw_bg(1,0);
+>      draw_bg(2,1); draw_bg(1,1);
+>   } else ....
+> }
+
+Pretty much.
+
+> 
+> I've been reviewing the SNES registers all day... but it has only 
+> reduced my confusion by a little bit...
+> 
+> Actually I had Thursday and Friday off, so I wasted the whole fricken 
+> time on debugging this darn emulator...
+> 
+> >The multiplication of any word value written to 211B and any byte value
+> >into 211C is read from 2134/2135/2136.  Zelda uses it on its triforces
+> is it a signed (arithmetic) multiply?
+
+I don't really remember.  Just implement it and check out the triforces and
+see if they are correct.
+
+> >
+> >Yup.  But it's the correct way of emulation.
+> I wonder if I could get away with only trapping the "obvious" ones...
+> eg do you think copy-protection schemes use simple things like: 
+> LDA #0
+> STZ $8000
+> FREEZE CMP $8000
+> BEQ FREEZE
+
+It may not be as obvious as you think.  Many coders can try out weird ways
+of copy protection to try to prevent as much hacking as possible.
+
+> 
+> Ok, the stats for $2101 (OAM Size & Object Data area) are:
+> b5-b7: Object size
+>        ^---Okay, but how do you know which objects are what sizes?
+
+This should be documented very well.  There is a bit in the sprite info
+tells which size they use.
+
+> b3-b4: Name selection
+> b0-b2: Base selection
+>        ^---What in bloody blazes are these five bits for?
+
+Ignore the name selection until your emu is already developed well since
+it's a bit tricky
+
+> And if they are to specify some kind of VRAM address, how is the address 
+> calculated?
+
+This should be documented well. Byte address of the sprite image data is
+located at :
+(Base Selection) << 14
+
+> In the OAM address register ($2102) what is the priority rotation bit 
+> for? (b7)
+
+Don't worry about this one yet.  Your main goal right now is to get the
+emulation working at a point where games are running, not to perfect it.
+
+> 
+> The OBJ positions are absolute, right (ie 0,0 always=top-left corner of 
+> screen)?
+
+Yes.
+
+> 
+> What is the 9-bit 'character data' field in the OAM lookup table?  
+> Does it select a graphic?  If so, where do I find the graphic in VRAM?
+
+The base pointer for it is selected from reg 2102/2103
+
+> Are the OBJ graphics also stored in the form of tiles?
+
+Yes
+
+> What is the color depth of OBJs?
+
+4-bit which is documented clearly in yoshi's docs.
+
+> 
+> (BTW in case you're wondering, no I haven't got any screen emulation 
+> done yet.. I'm just asking questions for when I do finally get it 
+> working...)
+
+I think you should worry about them when you get it working.  I'm pretty
+sure you will have a better understanding of those which you don't
+understand when you're there.  I think you haven't spent enough time with
+the documents.  When I first coded zsnes, I never asked anyone for help
+before it ran 30% of the lorom commercial games with full graphics.  Every
+info I used was from Yoshi's docs and those docs have basically everything
+you need to get started.
+
+> >>
+> >> >> | w   |$2105  |Screen mode register [BGMODE]
+> >> >> |     |       |abcdefff              a: BG4 tile size (0=8x8, 
+> >> 1=16x16).
+> >> >> |     |       |                      e: Highest priority for BG3 
+> in 
+> >> MODE 
+> >> >> |     |       |                      f: MODE definition.
+> >> >For each tile, I believe bit 13 of the tile info determines which 
+> >> priority
+> >> >it is drawn in.
+> >> `,^\ ..sorry...I don't understand... (there are only two priorities 
+> and 
+> >> each BG is drawn TWICE?!)
+> >
+> >Yup.  Each tile has a priority bit in the tile map.  (Each tile has a 2
+> >byte identifier which contains info such as the tile #, which direction 
+> it
+> >is flipped, priority bit, etc.)  The BG only has to be scanned twice, 
+> not
+> >drawn twice.
+> So, is this right? on the first scan of the tile map you would draw the 
+> tiles with a certain priority bit;  then you would draw some tiles from 
+> a different BG(s), and then go back to the first BG and draw the tiles 
+> with the other priority bit.
+
+Yup
+
+> 
+> Is there anything else that determines priorities other than that one 
+> bit?
+
+Nope
+
+> >> 
+> >> >> Does the 'f' bit refer to the basic screen mode ("mode 0-7")?
+> >> well...does it?
+> like, erm... if you don't answer a question, am I supposed to just take 
+> it as a "yes"?
+
+It's a yes, but I missed that question previously.
+
+> 
+> >> >> >> | w   |$2107  |BG1 VRAM location register [BG1SC]
+> >> >> >> |     |       |xxxxxxab              x: Base address
+> >> >> >> |     |       |                     ab: SC size
+> >> >> >It should be the tile map.
+> 
+> >The tile map is either a 32x32, 32x64, 64x32, or a 64x64 8x8 tile map. 
+> >Starting from that VRAM location starts at tile info (0,0) which is 2 
+> bytes
+> >of information/tile.
+> Ok, WHAT IS THE MULTIPLIER ON THIS ADDRESS?  i.e. if I send %00000100 to 
+> this register, what will the BG1 VRAM position be?
+
+byte address : 1 << 11.  I'm pretty sure this is also documented well.
+
+> 
+> >> >> | w   |$210B  |BG1 & BG2 VRAM location register [BG12NBA]
+> >> >> |     |       |aaaabbbb              a: Base address for BG2.
+> >> >> |     |       |                      b: Base address for BG1.
+> >This stuff on 'a' and 'b' should be documented clearly.  Bits 0-3 is 
+> the
+> >address for BG1 and 4-7 is the address for BG2.
+> 
+> WHAT IS THE MULTIPLIER ON THIS ADDRESS?  i.e. if I send %00000001 to 
+> this register, what will the BG1 VRAM Tile Graphics position be set to 
+> (what location in the 64K of VRAM)?
+
+I'll let you figure this one out.  Shouldn't be hard.  Just look at the
+previous examples and use the documents.
+
+> >
+> >> I noticed that the 'sub-screens' can be turned on and off just like 
+> >> normal BGs.  Is a sub-screen simply a normal BG with special add/sub 
+> >> bits set?
+> >
+> >It's the background where it's added to the mainscreen.
+> 
+> huh???
+
+ie.  Transparencies
+
+> 
+> >> oh yeah, also I noticed 'windows' can be turned off 'along with' 
+> other 
+> >> BGs... eg in SMW toggling BG3 toggles the window too.
+> 
+> why is that?
+
+To make that circular opening at the beginning
+
+> 
+> >if bit i is set, the vram is incremented only if a byte is written to 
+> 2139
+> >or read from 213A
+> >if bit i is clear, the vram is incremented only if a byte is written to
+> >2138 or read from 2139
+> 
+> Maybe if I put this a little differently.... What is the PURPOSE a SNES 
+> program would have of wanting it to be one way or the other?  What is 
+> the _practical_ difference between the two?
+
+*Some programs want to only write the high byte of each word.  Some others
+want to only write the low byte of each word.  You'll understand when you
+debug games.
+
+> 
+> Also, what happens differently when writing words or writing bytes to 
+> these addresses?
+
+Then increment depending on which one is set to be the increment register
+
+> 
+> >bits ab and cd should relate to the table below.
+> >> >> |----|---------------------------------------------------------|
+> >> >> |     |       |0100|Increment by 8 for 32 times (2-bit formation).
+> >> >> |     |       |1000|Increment by 8 for 64 times (4-bit formation).
+> >> >> |     |       |1100|Increment by 8 for 128 times (8-bit 
+> formation).
+> >> >Don't worry about this for now.  This stuff gets quite confusing.
+> 
+> should I ignore these bits?
+
+For now, yes.
+
+> 
+> >> >> |     |       |0000|Address increments 1x1.
+> >> >When VRAM increments, it increments by 1 word
+> 
+> 1 word = 2 bytes?
+> what if you wanted to modify a single byte of VRAM?
+
+Read above at the *.
+
+> 
+> >> >> |     |       |0001|Address increments 32x32.
+> >> >When VRAM increments, it increments by 32 words
+> >> >> |     |       |0010|Address increments 64x64.
+> >> >When VRAM increments, it increments by 64 words
+> >> >> |     |       |0011|Address increments 128x128.
+> >> >When VRAM increments, it increments by 128 words
+> >> 
+> >Increment by 256 is useful for mode 7.  Not really sure about 128, but 
+> I'm
+> >sure there's a use for it.
+> hm..okay.
+> >
+> >> Also... I heard that writing to $2116 (VRAM Pointer) should multiply 
+> by 
+> >> two eg:
+> >> LDA #5
+> >> STA $2116  ; VRAM address = 5*2 = 10??
+> >
+> >It's under a word address so if 5 is written to it, it's using byte 
+> offset
+> >10.
+> 
+> Interesting.  That setup allows you to address 128K of VRAM instead of 
+> just 64K.  So, should the MSB be ignored?
+
+Yup
+
+> 
+> By the way, do SNES programs ever intensionally increment the VRAM 
+> pointer beyond 64K, and if they do, does it wrap around to 0?
+
+I don't really know, but treat it so that it wraps
+
+> 
+> >> Okay, this is what I hear you saying, is this right? (It CAN'T be 
+> >> right!)
+> >
+> >But it is right.
+> >
+> >> 
+> >> SEP #$30
+> >> LDA #$00   ; Clear bit 7; Address increments 1x1.
+> >> STZ $2116  ; 
+> >> STZ $2117  ; VRAM_ptr==0
+> >> LDA #1     ; value to write
+> >> STA $2119  ; vram[0] = 1;
+> >
+> >This should be vram[1] = 1   <-- When did VRAM_ptr become 1?
+> does vram[0] get skipped over then?
+
+Yes
+
+> 
+> why isn't it correct?  you said the VRAM pointer gets incremented (by at 
+> least 2 bytes/1 word) when I write to $2119.
+
+But when it writes to 2119, it writes to the high byte of the current word
+the vram pointer is pointing at.
+
+> 
+> >>            ; VRAM_ptr += 2; <---- 1 word??
+> >> LDA #2
+> >> STA $2118  ; vram[2] = 2;  <--- notice location 1 is SKIPPED!
+> >> LDA #3
+> >> STA $2119  ; vram[2] = 3;  <--- stupid behavior
+> >
+> >This should be vram[3] = 3
+> again, why?
+> >
+> >>            ; VRAM_ptr += 2;  <-- now  =4
+> no??
+> >> 
+> >> >> >> |rw   |$2180  |Read/write WRAM register [WMDATA]
+> >> >> >> |rw   |$2181  |WRAM data register (low byte) [WMADDL]
+> >> >> >> |rw   |$2182  |WRAM data register (middle byte) [WMADDM]
+> >> >> >> |rw   |$2183  |WRAM data register (high byte) [WMADDH]
+> >> >> >> what's this WRAM thing about?
+> >> >> >Banks 7E/7F.  The address is 17 bit (when a value is written to 
+> >> 2183, 
+> >> >> mask
+> >> >> >out bits 1-7).
+> >> >> erm.. what is it used for?
+> >> >It's to read/write to RAM
+> >> But WHY would you want to use a register instead of doing it 
+> directly?
+> >
+> >DMA.  Enough said.
+> 
+> are you suggesting a memory-to-memory DMA transfer?  Why wouldn't the 
+> programmer simply use a MVN/MVP?
+
+MVP/MVN takes more than 5 cycles/move.  DMA takes 1 cycle/move
+
+> 
+> >After writing to 2180, it auto increments by 1
+> ok.
+> 
+> >> >Still bugs here and there.  I need to experience them to figure out 
+> >> what's
+> >> >wrong.
+> >> well, FF5e is fun... go for it! :)
+> >> >
+> >> 
+> >> oh yeah, did I mention I need some info about how the tile map is 
+> stored 
+> >> (not the tiles but the map) and where to FIND it in VRAM?  (And for 
+> that 
+> >> matter, where to find the tiles.)
+> >
+> >It should be in Yoshi's docs.  I've learned all the graphics stuff from
+> >there.
+> 
+> it should be, but it's awefully hard to find!
+
+Not really.  You just need to spend more time reading/understanding it. 
+When I read it, I made sure I understand every single word of the document.
+ It takes a lot of time (I think I've spent over 40 hours staring at the
+documents), but it's required.  This is the challenge of emulating a snes.
+
+> 
+>     - Qwertie (David Piepgrass)___________________________________________________________________________
+
+> >> Date: Saturday, February 14, 1998 7:03 PM
+> >> 
+> >> >Okay.  Here is something I copied from that 65816 text file I have 
+> >> which is
+> >> >very accurate :
+> >> >
+> >> well, one of our sources has to be wrong!  But I don't know which 
+> one, 
+> >> because in Super Mario World it doesn't make a difference (at least 
+> not 
+> >> as far as I can tell.)
+> >
+> >My info was from at least 2 sources.  What book are you using?  I found 
+> one
+> >book out there where many contents are incorrect.
+> My book is "65816/65802 Assembly Language Programming".  Generally very 
+> good book; it's really verbose about everything and the info on how the 
+> Txx instructions works is explained over and over for each of the 
+> instructions... I thought it was safe to assume they knew what they were 
+> talking about :)
+
+Can you tell me how it explains the MVN/MVP instructions?___________________________________________________________________________
+
+> Date: Sunday, February 15, 1998 5:04 PM
+> 
+> >> b5-b7: Object size
+> >>        ^---Okay, but how do you know which objects are what sizes?
+> >
+> >This should be documented very well.  There is a bit in the sprite info
+> >tells which size they use.
+> ahh, I figured it out :) one of the bits of the 32byte oam table..
+> >
+> >> b3-b4: Name selection
+> >> b0-b2: Base selection
+> >>        ^---What in bloody blazes are these five bits for?
+> >
+> >Ignore the name selection until your emu is already developed well 
+> since
+> >it's a bit tricky
+> Patience sux..
+
+That's what writing an emu is all about.
+
+> >
+> >> And if they are to specify some kind of VRAM address, how is the 
+> address 
+> >> calculated?
+> >
+> >This should be documented well. Byte address of the sprite image data 
+> is
+> >located at :
+> >(Base Selection) << 14
+> I swear I searched through the Yoshi docs as much as possible but 
+> couldn't find that tidbit.  However, I have another doc that said:
+> 
+>      D2-d0     Name Base Select (Upper-3 Bit)
+>                Designate the Segment (8k-word) Address Which
+>                The Obj Data is Stored in Vram.    (Appendix 1 & 2)
+> UC I'd read it before but it isn't worded very well... finally it 
+> 'clicked'. :)  And I think you mean 1 << 13.
+
+I took that 1 << 14 from the zsnes source code.  Remember that the manual
+lists it as word, not byte.
+
+> 
+> >> What is the 9-bit 'character data' field in the OAM lookup table?  
+> >> Does it select a graphic?  If so, where do I find the graphic in 
+> VRAM?
+> >The base pointer for it is selected from reg 2102/2103
+> 
+> I thought THAT register was for uploading the OBJ TABLE to OAM.  
+
+You're right.  The base pointer is selected from 2101
+
+> 
+> >> Are the OBJ graphics also stored in the form of tiles?
+> >
+> >Yes
+> >
+> >> What is the color depth of OBJs?
+> >4-bit which is documented clearly in yoshi's docs.
+> ahh.
+> >> 
+> >I think you should worry about them when you get it working.  I'm 
+> pretty
+> >sure you will have a better understanding of those which you don't
+> >understand when you're there.  I think you haven't spent enough time 
+> with
+> >the documents.  When I first coded zsnes, I never asked anyone for help
+> >before it ran 30% of the lorom commercial games with full graphics.  
+> Every
+> >info I used was from Yoshi's docs and those docs have basically 
+> everything
+> >you need to get started.
+> 
+> Maybe you have superior research skills?
+
+Don't know
+
+> 
+> >It's a yes, but I missed that question previously.
+> 
+> I figured that maybe was it, so I'm trying to space things a bit more :)
+> 
+> >> 
+> >> >> >> >> | w   |$2107  |BG1 VRAM location register [BG1SC]
+> >> >> >> >> |     |       |xxxxxxab              x: Base address
+> >> >> >> >> |     |       |                     ab: SC size
+> >> >> >> >It should be the tile map.
+> >> 
+> >> >The tile map is either a 32x32, 32x64, 64x32, or a 64x64 8x8 tile 
+> map. 
+> >> >Starting from that VRAM location starts at tile info (0,0) which is 
+> 2 
+> >> bytes
+> >> >of information/tile.
+> >> Ok, WHAT IS THE MULTIPLIER ON THIS ADDRESS?  i.e. if I send %00000100 
+> to 
+> >> this register, what will the BG1 VRAM position be?
+> >
+> >byte address : 1 << 11.  I'm pretty sure this is also documented well.
+> 
+> again, I couldn't find that in the Yoshi docs.  Last night I took the 
+> two big docs I had and one little one and combined them into one file so 
+> it would be easier to search... 
+> 
+>      D7-D2     SC BASE ADDRESS
+>                DESIGNATE THE SEGMENT WHICH BG-SC IN THE VRAM
+>                IS STORED. (1K-WORD/SEGMENT)
+> 
+> BG-SC?  1K-WORD?  I was thinking, 'what the heck??'... once I combined 
+> the docs AND got your reply, THEN it clicked...  a 1K word segment 
+> sounds like I should shift by 10...?
+
+I also got that from the zsnes source.  I don't know why, but it's there.
+
+> 
+> >I'll let you figure this one out.  Shouldn't be hard.  Just look at the
+> >previous examples and use the documents.
+> 
+>           Background Name Base Address (Upper 4-bit), Segment Address
+>        In the Vram Where Bg Character Data is Stored. (4k-word/segment)
+> 
+> aha!  There we go... sounds like 1 << 12.  The word "character"... I 
+> think I'm still confused by that word.  In this case "character" is 
+> synonomous with "a cell that contains the number of the tile to display 
+> and a couple other things."  Right?  Now then...please wait while i try 
+
+Yes
+
+> and figure this out.... ... ....Dang it, I didn't figure it out. hm...
+> 
+> Well, looking at the objects thing again:
+> |         Byte   2             abcdeeeC           a: Vertical flip.      
+   
+> |
+> ...
+> |         Byte   3             CCCCCCCC           C: Character data.     
+   
+> |
+> This makes reference to "characters" as well.  I *think* I finally found 
+> an explanation for this, so tell me if I have this right:
+> 
+> int obj_vram_address = (SNESMEM($2101) & 7) << 13;
+>       // Get base address
+> obj_vram_address += OAM_character_data (OBJ_number) * 8 * 4; // 8 bytes 
+> per plane, 4 planes
+>       /* the C bits reference a 'starting tile number'?  i.e. 1=the object's 
+> tiles start at the second 8x8x16 color tile after the base address? */
+> 
+> btw, why is the sprite position 9 bits?  Since the screen is only 256 
+> pixels across?
+
+Think sprite clipping.
+
+> 
+> Now then, extending this logic to the BGs, let's say that I'm using mode 
+> 0 and 16x16 tiles (2 color planes, therefore 64 bytes per tile).  So, if 
+> I'm gonna blit the tile at (0,0)... YES!!! I FINALLY FOUND THE 
+> EXPLANATION!!!! and it wasn't in the Yoshi doc.
+
+I think that's more like general knowledge.  Remember how the vga screen
+starts at (0,0) at offset 0?
+
+> 
+> Screen Map
+> ~~~~~~~~~~
+> Famicom can use only Tiles $0-$3ff, max 1024 chars.
+> 16 bits:   YX?c ccNN NNNN NNNN
+>            fedc ba98 7654 3210
+> 
+>   Y = mirror y     X = mirror x   ?=unknown
+>   ccc = palette nr (8 palettes)   NN.. = character number
+
+? = priority bit.  This is undocumented in yoshi's docs
+
+> 
+> Screen Resolution is normally 32x32 chars but only the first 30 y blocks 
+> are 
+> visible (until scrolled) - 64 bytes / line
+> .............
+>       // Blitting tile at (0,0) in mode 0
+> int bg1_graphics_address = (SNESMEM($210B) & 15) << 12;
+>       // Get base address
+> int bg1_char_at_00 = (SNESMEM ($2107) & ~3) << 8;
+>       // Get address of tile map element 0,0... do I shift left 8 or 9?  I'm 
+> not sure...
+> bg1_char_at_00 = ((vram [bg1_char_at_00 + 1] & 3) << 8) + 
+> vram[bg1_char_at_00];
+>       // Figure out which tile to blit
+> bg1_graphics_address += bg1_char_at_00 * 32 * 2; // 32 bytes per tile 
+> plane, 2 planes
+
+I don't program in C so I'm not very familiar with it.
+
+>       /* the N bits reference the tile index?  i.e. 1=the object's tiles 
+
+Yes
+
+> start at the second 16x16x4 color tile after the base address? */
+> 
+> Is that all right?
+
+Yes
+
+> 
+> by the way, in a 256-color mode, are the palette bits ignored?
+
+Pretty much
+
+> 
+> See the question-mark bit?  Is it really unused, or is the doc 
+> incomplete?
+
+incomplete.  See above
+
+> 
+> >> >> I noticed that the 'sub-screens' can be turned on and off just 
+> like 
+> >> >> normal BGs.  Is a sub-screen simply a normal BG with special 
+> add/sub 
+> >> >> bits set?
+> >> >
+> >> >It's the background where it's added to the mainscreen.
+> >> huh???
+> >ie.  Transparencies
+> 
+> I knew we were talking about transparencies, what I didn't know was how 
+> that sentence relates to my original question.
+> 
+> >> >> oh yeah, also I noticed 'windows' can be turned off 'along with' 
+> >> other 
+> >> >> BGs... eg in SMW toggling BG3 toggles the window too.
+> >
+> >To make that circular opening at the beginning
+> how does a 'circular opening' relate to how bgs get toggled?
+
+The windowing affects each bg individually
+
+> 
+> >> >if bit i is set, the vram is incremented only if a byte is written 
+> to 
+> >> 2139
+> >> >or read from 213A
+> >> >if bit i is clear, the vram is incremented only if a byte is written 
+> to
+> >> >2138 or read from 2139
+> >> 
+> >> Maybe if I put this a little differently.... What is the PURPOSE a 
+> SNES 
+> >> program would have of wanting it to be one way or the other?  What is 
+> >> the _practical_ difference between the two?
+> >
+> >*Some programs want to only write the high byte of each word.  Some 
+> others
+> >want to only write the low byte of each word.  You'll understand when 
+> you
+> >debug games.
+> 
+> AHH! I THINK I FINALLY GET IT!!
+> 
+> >> Also, what happens differently when writing words or writing bytes to 
+> >> these addresses?
+> >
+> >Then increment depending on which one is set to be the increment 
+> register
+> 
+> | w   |$2115  |Video port control [VMAIN]
+> |     |       |i000abcd    i: 0 = Addr-inc after writing to $2118
+> |     |       |                   or reading from $2139.
+> 
+> all right, so suppose (VRAM pointer is 0) that if this bit is set to 0, 
+> and I write a BYTE to $2119, then VRAM[1] = $2119.  BUT, the VRAM 
+> pointer is still set to zero.  If I then write a byte to $2118, then 
+> VRAM[0] = $2118, and the VRAM pointer is incremented by TWO. (or 
+> something lese depending on bits CD.) Right?
+> 
+> Also, if I write a WORD to $2118 and $2119 then the setting of the i bit 
+> makes NO difference, right?
+
+It makes a difference.  Suppose i=1 and you write the word is 7890 3 times
+into 2118 and also assuming the vram was initially cleared with 0s, the
+vram will look like this :
+7890789078900000
+If i=0, it'll look like this :
+7800789078900090
+I'll let you figure this one yourself
+
+> 
+> >> Interesting.  That setup allows you to address 128K of VRAM instead 
+> of 
+> >> just 64K.  So, should the MSB be ignored?
+> >
+> >Yup
+> ok.
+> 
+> >> By the way, do SNES programs ever intensionally increment the VRAM 
+> >> pointer beyond 64K, and if they do, does it wrap around to 0?
+> >
+> >I don't really know, but treat it so that it wraps
+> ok.
+> >> 
+> >> are you suggesting a memory-to-memory DMA transfer?  Why wouldn't the 
+> >> programmer simply use a MVN/MVP?
+> >
+> >MVP/MVN takes more than 5 cycles/move.  DMA takes 1 cycle/move
+> ok.
+> >> 
+> >Not really.  You just need to spend more time reading/understanding it. 
+> >When I read it, I made sure I understand every single word of the 
+> document.
+> > It takes a lot of time (I think I've spent over 40 hours staring at 
+> the
+> >documents), but it's required.  This is the challenge of emulating a 
+> snes.
+> 
+> It wouldn't be such a challenge if somebody had written one single good 
+> doc in the first place.  In fact, I think that's what I'll do.  I run 
+> the SNES Knowledge Base (did you know that?) so...
+> ...erm, although, if I do write one, probably no one will read it since 
+> SNES programming looks like it's dead and buried... :/
+
+Yeah.  It's hard to write a single good doc that is easy to read though. 
+Even though it looks easy for you to read, it'll most likely be hard for
+others to read.
+
+> All right.  Now, my confusion shifts to DMA.  Even a lowly game like SMW 
+> uses it. :/  First I'm gonna ask about DMA, and save HDMA for later, 
+> heh... except for one thing.  What is a "line-by-line" graphics engine?  
+
+It draws a line at a time
+
+> I think it has something to do with HDMA?
+
+Yes
+
+> 
+> With a line-by-line engine, do you actually render the screen one line 
+> at a time?  i.e.
+> while (line < 261) {
+>       do_cpu (cycles_per_line);
+>       draw_graphics (line);
+>       line++;
+> }
+
+Yes
+
+> 
+> Now then, I think the only thing I don't understand about DMA is the 
+> "Modes".  (There's a DMA.txt doc, but it only covers about three of the 
+> (5/10) modes and looks a bit dated.... it calls the DMA control register 
+> the "DMA channel control register", and it calls the DMA Enable Register 
+> the "DMA control register".  like, whoa.  so...as i was saying...)
+> 
+> a: Transfer type:
+>    000 = 1 address write twice: LH.     |
+>    001 = 2 addresses: LH.               |
+>    010 = 1 address write once.          |
+>    011 = 2 addresses write twice: LLHH  |
+>    100 = 4 addresses: LHLH              |
+> 
+> wowzers.  can you see why I don't get it?!?!?  What do these mean in 
+> English?
+
+Do you know what DMA is?  I understood those registers the first time I
+read it so I can't see why it's hard.
+
+> 
+> By the way, it seems that when HDMA is enabled for a given channel, 
+> normal DMA transfers will be disallowed for that channel.  Right?
+
+Yup
+
+> 
+> ....whew....
+___________________________________________________________________________
+
+> >> My book is "65816/65802 Assembly Language Programming".  Generally 
+> very 
+> >> good book; it's really verbose about everything and the info on how 
+> the 
+> >> Txx instructions works is explained over and over for each of the 
+> >> instructions... I thought it was safe to assume they knew what they 
+> were 
+> >> talking about :)
+> >
+> >Can you tell me how it explains the MVN/MVP instructions?
+> >
+> Why do you ask?  (I wonder if any SNES proggies use this, when there's 
+> DMA and all...)  I won't repeat the whole thing (especially since 
+
+They use it to save code space.  Mainly use it during initialization.
+
+> there's a separate couple of pages for each instruction), but it says 
+> something like:
+> -MVN moves blocks backward in memory and MVP moves them forward (when 
+> the regions overlap.)
+> -A=Number of bytes to move - 1 (after operation, A will equal 0xFFFF)
+> -X=lower 16 bits of address of data to be moved
+> -Y=lower 16 bits of address of destination
+> -The destination bank immediately follows the opcode (low byte), and the 
+> source bank is two bytes after (high byte).  Also the destination bank 
+> is copied to DBR.
+> -MVN moves a byte, X++, Y++, A--, and repeat if A != -1
+> -MVP moves a byte, X--, Y--, A--, and repeat if A != -1
+> -No flags are changed
+> -It's pretty useless in emulation mode, but works.
+
+Okay.  Your book isn't the same book I've read which says repeat until A =
+0,
+
+> 
+> Well, I'm finally starting on my 'good' SNES graphics doc...
+> 
+>     - Qwertie (David Piepgrass)___________________________________________________________________________
+
+> Date: Wednesday, February 18, 1998 12:34 PM
+> 
+> The wording of the Y0shi sprite doc is a little strange: it says that 
+> sprite palettes start at "the eighth palette", and then it said that was 
+> palette number 7.  Does this mean that sprite palette 0 starts at 
+> palette entry #128, or #120?
+
+#128
+
+> 
+> And with the BG palettes, are the palettes 'packed' together?  i.e. in 
+> 4-color mode, would palette #1 start at CG entry #4, and in 16-color 
+> mode, palette #1 would start at entry #16?
+
+Yup
+
+> 
+> I thought of a simple (but memory-eating and probably completely 
+> defective) tile caching scheme for my emu... but anyways since your emu 
+> is so fast, can you tell me about your algorithm?  Or is it one of those 
+
+My algorithm isn't anything special.  Just detect which vram changes and
+change those tiles when they are supposed to be drawn.  But the detail
+behind it is a bit complex.
+
+> trade secret thingies?
+> 
+>     - Qwertie (David Piepgrass)___________________________________________________________________________
+
+> >I took that 1 << 14 from the zsnes source code.  Remember that the 
+> manual
+> >lists it as word, not byte.
+> oooh.  They do their darndest to confuse me.
+> 
+> >The tile map is either a 32x32, 32x64, 64x32, or a 64x64 8x8 tile 
+> >> map. 
+> 
+> 0=32x32 1=32x64 2=64x32 3=64x64?
+
+Should be.
+
+> 
+> >I also got that from the zsnes source.  I don't know why, but it's 
+> there.
+> must be the word/byte thing again..
+> 
+> >> >I'll let you figure this one out.  Shouldn't be hard.  Just look at 
+> the
+> >> >previous examples and use the documents.
+> >> 
+> >>           Background Name Base Address (Upper 4-bit), Segment Address
+> >>        In the Vram Where Bg Character Data is Stored. 
+> (4k-word/segment)
+> >> 
+> >> aha!  There we go... sounds like 1 << 12. 
+> 
+> I think this must actually be shifted left 13, or 4096 * 2.
+> 
+> >> This makes reference to "characters" as well.  I *think* I finally 
+> found 
+> >> an explanation for this, so tell me if I have this right:
+> >> 
+> >> int obj_vram_address = (SNESMEM($2101) & 7) << 13;
+> >>    // Get base address
+> >> obj_vram_address += OAM_character_data (OBJ_number) * 8 * 4; // 8 
+> bytes 
+> >> per plane, 4 planes
+> >>    /* the C bits reference a 'starting tile number'?  i.e. 1=the 
+> object's 
+> >> tiles start at the second 8x8x16 color tile after the base address? 
+> */
+> 
+> >> btw, why is the sprite position 9 bits?  Since the screen is only 256 
+> >> pixels across?
+> >
+> >Think sprite clipping.
+> 
+> ahh, do you mean so that you can put a sprite clipped off the left edge 
+> of the screen?  
+
+Yes
+
+> Hmm, then what is the coordinate system for this?
+X = 0 .. 511, X=0 = left side
+
+The sprite X position wraps to 0 after 511
+
+> (e.g. where on the screen is a sprite at (0,0), or (220,220), or 
+> (256,256)?)
+
+They're at (0,0), (220,220) and (256,256), but I doubt there's a sprite at
+(256,256) since the y position is only 1 byte.
+
+> 
+> >> Now then, extending this logic to the BGs, let's say that I'm using 
+> mode 
+> >> 0 and 16x16 tiles (2 color planes, therefore 64 bytes per tile).  So, 
+> if 
+> >> I'm gonna blit the tile at (0,0)... YES!!! I FINALLY FOUND THE 
+> >> EXPLANATION!!!! and it wasn't in the Yoshi doc.
+> >
+> >I think that's more like general knowledge.  Remember how the vga 
+> screen
+> >starts at (0,0) at offset 0?
+> 
+> No, what I meant was that I finally found the explanation for the 2 
+> bytes of the tile map, which is not in the Yoshi doc.
+
+Oh.  Okay
+
+> 
+> >? = priority bit.  This is undocumented in yoshi's docs
+> it sure is :)
+> 
+> >> .............
+> >>    // Blitting tile at (0,0) in mode 0
+> >> int bg1_graphics_address = (SNESMEM($210B) & 15) << 12;
+> >>    // Get base address
+> >> int bg1_char_at_00 = (SNESMEM ($2107) & ~3) << 8;
+> >>    // Get address of tile map element 0,0... do I shift left 8 or 9?  
+> I'm 
+> >> not sure...
+> >> bg1_char_at_00 = ((vram [bg1_char_at_00 + 1] & 3) << 8) + 
+> >> vram[bg1_char_at_00];
+> >>    // Figure out which tile to blit
+> >> bg1_graphics_address += bg1_char_at_00 * 32 * 2; // 32 bytes per tile 
+> >> plane, 2 planes
+> >
+> >I don't program in C so I'm not very familiar with it.
+> Really?!  Oh.  Well that's what the comments are for... anyways it's 
+> like: <<: shift left   &: Binary AND   array[element] accesses an array 
+> element  ~: One's complement, so x & ~1 means turn bit 0 off.
+> x += y is the same as x = x + y; int declare an integer variable. 
+> *:multiply
+> It's a really compact language, it's my favorite...
+
+Yeah.  If you used the info correctly, then the code should be correct. 
+I'm just that type of person who doesn't like to read other people's code
+since I'm mainly used to my own coding style.
+
+> Although I recently disassembled my 65c816 core, and found the compiler 
+> doing weird, retarded things.  Like there's a switch (case statement) 
+> and instead of jumping right from the switch to the appropriate opcode, 
+> it would JMP to the end of the case and THEN index into a jump table and 
+> JMP backwards into the appropriate case.  (this is among the many 
+> methods the compiler uses to waste CPU time...)
+
+Not a smart compiler.  I guess you have to implement a jump table manually.
+
+> Also it isn't smart enough to do things like set the 65816 zero flag 
+> based on the value that got put into the x86 zero flag, etc.  So much 
+> for it being one of the best optimizing compilers out there....
+> >
+> >> >> >> oh yeah, also I noticed 'windows' can be turned off 'along 
+> with' 
+> >> >> other 
+> >> >> >> BGs... eg in SMW toggling BG3 toggles the window too.
+> >
+> >The windowing affects each bg individually
+> hmm.. o.k...
+> 
+> >> Also, if I write a WORD to $2118 and $2119 then the setting of the i 
+> bit 
+> >> makes NO difference, right?
+> >
+> >It makes a difference.  Suppose i=1 and you write the word is 7890 3 
+> times
+> >into 2118 and also assuming the vram was initially cleared with 0s, the
+> >vram will look like this :
+> >7890789078900000
+> >If i=0, it'll look like this :
+> >7800789078900090
+> >I'll let you figure this one yourself
+> 
+> ahh, this is good because of the way I have it set up (when a word is 
+> written, the low byte write is trapped first, and THEN the high byte.. 
+> so it works out naturally...)
+
+Yup
+
+> 
+> >> It wouldn't be such a challenge if somebody had written one single 
+> good 
+> >> doc in the first place.  In fact, I think that's what I'll do.  I run 
+> >> the SNES Knowledge Base (did you know that?) so...
+> >> ...erm, although, if I do write one, probably no one will read it 
+> since 
+> >> SNES programming looks like it's dead and buried... :/
+> >
+> >Yeah.  It's hard to write a single good doc that is easy to read 
+> though. 
+> >Even though it looks easy for you to read, it'll most likely be hard 
+> for
+> >others to read.
+> 
+> At the very least, I will have the info all in one file instead of 
+> spread randomly across millions of crappy mini-docs.  Besides I do 
+
+Yeah.  Lord esnes re-compiled yoshi's docs to be in one whole doc.
+
+> everything very wordily (did you notice?) to make it as easy to 
+> understand as possible.
+
+Yup.  It's possible to do it, but not very easy to make it so that it's
+easy to understand.
+
+> >It draws a line at a time
+> >> I think it has something to do with HDMA?
+> >Yes
+> 
+> In Contra III, when there is a split screen with two separate mode 7 
+> screens, does that need to use HDMA and a line-by-line engine?
+
+Yup
+
+> 
+> >> With a line-by-line engine, do you actually render the screen one 
+> line 
+> >> at a time?  i.e.
+> >
+> >Yes
+> 
+> wouldn't that be *really* slow?  Does zSNES use this kind of 
+> line-by-line engine?
+
+Zsnes is totally line by line.
+
+> >
+> >> a: Transfer type:
+> >>    000 = 1 address write twice: LH.     |
+> >>    001 = 2 addresses: LH.               |
+> >>    010 = 1 address write once.          |
+> >>    011 = 2 addresses write twice: LLHH  |
+> >>    100 = 4 addresses: LHLH              |
+> >> 
+> >> wowzers.  can you see why I don't get it?!?!?  What do these mean in 
+> >> English?
+> >
+> >Do you know what DMA is?  I understood those registers the first time I
+> >read it so I can't see why it's hard.
+> 
+> I know what DMA is used for.  I do not, however, know (for example) what 
+> "2 addresses write twice: LLHH" means.  Probably if you explain one 
+> (good) the other ones will make sense...
+
+2 addresses write twice :
+Suppose the memory is like : 01234567
+And the original register to write to is 2000
+It writes :
+01 -> 2000
+23 -> 2000
+45 -> 2001
+67 -> 2001
+
+> 
+> I compiled a list of defects I know about in my 65816 core.  Can you 
+> tell me if/which ones of these could be a problem for running ROMs?
+> 
+> Known potential CPU problems
+
+Hmm.  Not really sure about this one.  Mario World is the best bet here.
+
+> Wraparound problems:
+>       When a reference is made that crosses a bank boundary, often the 
+
+Gradius 3
+
+> wraparound does NOT
+>       occur.  Some wraparounds are implemented (e.g. stack decrement), but 
+> most are not
+>       (e.g. pushing a word onto the stack with one byte at 0 and the other at 
+> 0xFFFF, will
+>       screw up, and so will doing a relative long BRL accross a bank 
+> boundary).
+
+BRL isn't supposed to cross a bank.
+
+> Memory-mapped I/O problems:
+>       All memory accesses are supposed to be trapped for full emulation, but 
+> for simplicity
+>       and speed, many accesses are NOT trapped.  Here's a list of known 
+> non-traps:
+>       PC - opcode+data fetches are not intercepted
+>       S - Stack operations (PUSH and PULL) are not intercepted (although 
+> stack relative
+>               operations are.)
+>       Indirection - The final address resulting from an indirection is 
+> intercepted, but
+>           the pointer variable itself is not.  e.g.: LDA ($2139)
+>               This cannot trigger the VRAM-read data mechanism.  But, if this is 
+> used: LDA
+>               (<$0) and $0 contains: $39 $21 then the VRAM read/increment will 
+> occur.
+>       RMW operations: Currently, when a read-modify-write operation occurs 
+> (e.g. ROL $xxxx),
+>               only either the read is trapped or the write is trapped.  Certain 
+> operations (like
+>               INC,DEC) only check the read and some operations (ROL,SHR) only check 
+> the write.
+>               I know, life sucks.  Also, when a write is checked, the flags are set 
+> *after* the
+>               write intercept.  I don't know if this is the correct behavior.
+
+I'm not really sure since I did a check on read/write on every read/write
+stuff.
+
+>       Block move instructions: block move instructions are not intercepted.
+>       Indirect jump: Indirect jumps are not intercepted.
+> ROM:
+>       - ROM Writes are NOT prevented
+>       - FastROM handling is a bit iffy
+
+Don't worry about this one yet.
+
+> SRAM: The header information is NOT checked for SRAM size, and 
+> reads/writes are NOT
+>       intercepted - a game can always read and write to the full 512 kbits of 
+> SRAM address
+>       space.
+
+Some games can run into copy protection troubles.  (ie.  Puzzle Bobble)
+
+> Invalid addresses: I can't IMAGINE what will happen if you try to access 
+> an invalid
+>       address (GPF probably...)
+
+Just ignore invalid addresses.  They're everywhere (even mario world!)
+
+> 
+> <EOF...>
+___________________________________________________________________________
+> Date: Thursday, February 19, 1998 7:17 AM
+> 
+> >> >The tile map is either a 32x32, 32x64, 64x32, or a 64x64 8x8 tile 
+> >> >> map. 
+> 
+> oh, ah, I noticed you said "8x8" tile map.  If the SNES is in 16x16 tile 
+> mode, does this actually mean that the tile map would be 16x16, 16x32, 
+> 32x16, or a 32x32?
+
+Nope.  What I mean by 8x8 tile map is that if the tile map is 32x32, it has
+32 8x8 tiles across and 32 8x8 tiles down.  That means the total resolution
+of the tile map is (32*8)x(32*8) = 256x256.  When using 16x16 tiles, the
+total resolution is (32*16)x(32*16) = 512x512
+
+> 
+> When flipping a 16x16 tile (with the mirroring bits) does the whole tile 
+> get flipped (i.e. pixel zero gets swapped with pixel 15) or do the four 
+> 8x8 tiles that make up the 16x16 tile get flipped individually?
+
+Whole tile
+
+> 
+> Is 0 the 'transparent' color for tiles?
+
+Yes
+
+> 
+>  
+> >> >> btw, why is the sprite position 9 bits?  Since the screen is only 
+> 256 
+> >> >> pixels across?
+> >> >
+> >> >Think sprite clipping.
+> >> 
+> >> ahh, do you mean so that you can put a sprite clipped off the left 
+> edge 
+> >> of the screen?  
+> >
+> >Yes
+> >
+> >> Hmm, then what is the coordinate system for this?
+> >X = 0 .. 511, X=0 = left side
+> 
+> what is the X coordinate if a SNES game wants to have a sprite coming in 
+> on the left side of the screen then?  Or a sprite coming in from the 
+
+It goes from 510,511,0,1,2, etc.  So a tile wrapped from the left is at
+around 510 or something like that
+
+> top?  i.e. How are coordinates less than zero represented?
+
+The top should be understandable
+
+> >> At the very least, I will have the info all in one file instead of 
+> >> spread randomly across millions of crappy mini-docs.  Besides I do 
+> >
+> >Yeah.  Lord esnes re-compiled yoshi's docs to be in one whole doc.
+> 
+> this is true.. unfortunately he didn't add any more explanations while 
+> he was at it... hey, do you know if eSNES is still being worked on?
+
+Yes it is
+
+> 
+> >> wouldn't that be *really* slow?  Does zSNES use this kind of 
+> >> line-by-line engine?
+> >
+> >Zsnes is totally line by line.
+> 
+> but it's so fast!!!
+
+But it's totally written in assembler
+
+> 
+> 
+> >> >> a: Transfer type:
+> >> >>    000 = 1 address write twice: LH.     |
+> >> >>    001 = 2 addresses: LH.               |
+> >> >>    010 = 1 address write once.          |
+> >> >>    011 = 2 addresses write twice: LLHH  |
+> >> >>    100 = 4 addresses: LHLH              |
+> >> >> 
+> >> >> wowzers.  can you see why I don't get it?!?!?  What do these mean 
+> in 
+> >> >> English?
+> >> >
+> >> >Do you know what DMA is?  I understood those registers the first 
+> time I
+> >> >read it so I can't see why it's hard.
+> >> 
+> >> I know what DMA is used for.  I do not, however, know (for example) 
+> what 
+> >> "2 addresses write twice: LLHH" means.  Probably if you explain one 
+> >> (good) the other ones will make sense...
+> >
+> >2 addresses write twice :
+> >Suppose the memory is like : 01234567
+> >And the original register to write to is 2000
+> >It writes :
+> >01 -> 2000
+> >23 -> 2000
+> >45 -> 2001
+> >67 -> 2001
+> 
+> ahh, ok thanks.
+> 
+> >> I compiled a list of defects I know about in my 65816 core.  Can you 
+> >> tell me if/which ones of these could be a problem for running ROMs?
+> >> 
+> >> Known potential CPU problems
+> >
+> >Hmm.  Not really sure about this one.  Mario World is the best bet 
+> here.
+> 
+> The best bet for what?  Screwing up?
+> 
+> >> Wraparound problems:
+> >>    When a reference is made that crosses a bank boundary, often the 
+> >
+> >Gradius 3
+> What sort of wraparounds does Gradius 3 use?
+
+01FFFF+8001 = 028000
+
+> 
+> >> wraparound does NOT
+> >>    occur.  Some wraparounds are implemented (e.g. stack decrement), but 
+> >> most are not
+> >>    (e.g. pushing a word onto the stack with one byte at 0 and the other 
+> at 
+> >> 0xFFFF, will
+> >>    screw up, and so will doing a relative long BRL accross a bank 
+> >> boundary).
+> >
+> >BRL isn't supposed to cross a bank.
+> 
+> Yeah, but I made this guess that a game probably wouldn't try to do it 
+> anyway.
+
+Actually, there are some games that does that.
+
+> >> Memory-mapped I/O problems:
+> >>    All memory accesses are supposed to be trapped for full emulation, 
+> but 
+> >> for simplicity
+> >>    and speed, many accesses are NOT trapped.  Here's a list of known 
+> >> non-traps:
+> >>    PC - opcode+data fetches are not intercepted
+> >>    S - Stack operations (PUSH and PULL) are not intercepted (although 
+> >> stack relative
+> >>            operations are.)
+> >>    Indirection - The final address resulting from an indirection is 
+> >> intercepted, but
+> >>        the pointer variable itself is not.  e.g.: LDA ($2139)
+> >>            This cannot trigger the VRAM-read data mechanism.  But, if this is 
+> >> used: LDA
+> >>            (<$0) and $0 contains: $39 $21 then the VRAM read/increment will 
+> >> occur.
+> >
+> >I'm not really sure since I did a check on read/write on every 
+> read/write
+> >stuff.
+> 
+> Everything?  Geez, and zSNES is STILL fast :)
+> 
+> I'm thinking maybe I should set the flags before the write-check since a 
+> real SNES probably doesn't write the value and then read it back in to 
+> check it...
+> 
+> As for the indirection and stack ops, I have it set up so it's REALLY 
+> hard to intercept the indirection without writing half the engine over 
+> again and making it even slower... zSNES's CPU core nearly twice as fast 
+> as mine even now...
+> 
+> My compiler has #pragma's to 'help' it generate fast code, but there 
+> just isn't enough options available to make it do quite what I want. On 
+> the other hand, I am very bad at assembler (Even trying to do the 
+> slightest amount of inline assembly causes GPF's all over the place...)
+> 
+> >> SRAM: The header information is NOT checked for SRAM size, and 
+> >> reads/writes are NOT
+> >>    intercepted - a game can always read and write to the full 512 kbits 
+> of 
+> >> SRAM address
+> >>    space.
+> >
+> >Some games can run into copy protection troubles.  (ie.  Puzzle Bobble)
+> 
+> drat... I suppose I'll have to do that address-checker-jump-table 
+> thingie you were doing.
+
+Yup
+
+> 
+> >> Invalid addresses: I can't IMAGINE what will happen if you try to 
+> access 
+> >Just ignore invalid addresses.  They're everywhere (even mario world!)
+> 
+> what kind of invalid addresses?  Most invalid addresses won't cause a 
+> problem (for example the register memory space is just another memory 
+> space, so if you write to a place where there's not a register in the 
+> real SNES it still won't cause a problem), but accessing an invalid ROM 
+> bank could be a problem.
+
+I think Mario World accesses something like address 005000
+
+> 
+> Well... time to go to school.
+> 
+>     - Qwertie (David Piepgrass)___________________________________________________________________________
+> 
+> >> there's a separate couple of pages for each instruction), but it says 
+> >> something like:
+> >> -MVN moves blocks backward in memory and MVP moves them forward (when 
+> >> the regions overlap.)
+> >> -A=Number of bytes to move - 1 (after operation, A will equal 0xFFFF)
+> >> -X=lower 16 bits of address of data to be moved
+> >> -Y=lower 16 bits of address of destination
+> >> -The destination bank immediately follows the opcode (low byte), and 
+> the 
+> >> source bank is two bytes after (high byte).  Also the destination 
+> bank 
+> >> is copied to DBR.
+> >> -MVN moves a byte, X++, Y++, A--, and repeat if A != -1
+> >> -MVP moves a byte, X--, Y--, A--, and repeat if A != -1
+> >> -No flags are changed
+> >> -It's pretty useless in emulation mode, but works.
+> >
+> >Okay.  Your book isn't the same book I've read which says repeat until 
+> A =
+> >0,
+> That's interesting.  I have two books which both say A should be set to 
+> the number of bytes to copy "minus one", although only one says the 
+
+It should be the # of bytes to copy plus one
+
+> resulting A will be -1.  However it's a logical conclusion to make.___________________________________________________________________________
+
+> Date: Sunday, February 22, 1998 8:56 AM
+> 
+> I tried to implement basic graphics, but it isn't working for some 
+> reason (either I get nothing or a little bit of gibberish, and I never 
+> get any scrolling even though I made it to scroll.  Also, Super Mario 
+> World keeps toggling the BGs in the main screen designation register.  
+> Any ideas what's going on?)  
+
+Not really.  Maybe a bug in the 65816 code?
+
+> Are these two calculations correct?
+> 
+> bg[plane].tilemap = vram + ((*(REG2107 + plane) >> 2) << 11);
+> bg[plane].characters = ((*REG210B >> (plane << 2)) & 15) << 13;
+
+Implement the graphics and if they display something, then it's correct.  I
+can't think at the moment so you caught me at a wrong time.
+
+> 
+> where plane is 0..3 and * does an indirection...
+> 
+> 
+> 
+> Weird problem: a demo is trying to do this with DMA:
+> 
+> 32.565 Adding debug line:   CLP #$30 (showregs 1)
+> 32.615 Adding debug line:   SEP #$20 (showregs 1)
+> 32.670 Adding debug line:   LDA #$09 (showregs 1)
+> 32.680 Adding debug line:   STA $4300 (showregs 1)
+> 32.730 Adding debug line:   LDA #$18 (showregs 1)
+> 32.780 Adding debug line:   STA $4301 (showregs 1)
+> 32.795 Adding debug line:   LDX #$81C9 (showregs 1)
+> 32.835 Adding debug line:   STX $4302 (showregs 1)
+> 32.890 Adding debug line:   LDA #$00 (showregs 1)
+> 32.945 Adding debug line:   STA $4304 (showregs 1)
+> 32.960 Adding debug line:   LDX #$FFFF (showregs 1)
+> 33.  0 Adding debug line:   STX $4305 (showregs 1)
+> 34. 45 Adding debug line:   LDA #$01 (showregs 1)
+> 34.815 Adding debug line:   STA $420B (showregs 1)
+> 36. 25 DMA transfer initiated
+> 36. 25 DMA transfer on channel 0 cpu=$81C9 reg=$2118 dmacount=65535 
+> $4300=$9
+> 
+> notice that $4300=9 (decrement mode--I would expect increment mode would 
+> be used to transfer stuff to VRAM) and $4305=$FFFF (65535 bytes to 
+> transfer?!)  This crashed the emu originally because it caused a 
+> decrement below $00.0000, but I fixed that with a mask.. Why would a 
+> program do this?  Is my understanding of DMA flawed?
+
+When it decrements below $000000, it goes to $00FFFF.  I remember reading
+that from a document somewhere.
+___________________________________________________________________________
+
+
+> >Nope.  What I mean by 8x8 tile map is that if the tile map is 32x32, it 
+> has
+> >32 8x8 tiles across and 32 8x8 tiles down.  That means the total 
+> resolution
+> >of the tile map is (32*8)x(32*8) = 256x256.  When using 16x16 tiles, 
+> the
+> >total resolution is (32*16)x(32*16) = 512x512
+> 
+> When using a 32x32 (8x8 tile) tile map, which is exactly the same width 
+> as the screen, how can the SNES display half a tile on each side of the 
+> screen (is there some kind of deal like on the C64, where the very left 
+> and right sides of the screen are cut off?  How is that set up?)
+
+When a 32x32 tile map is displayed, the location where to start drawing at
+screen coordinate (0,0) is determined by the scroll registers (210D-2114)
+which is pixel-size based.  If the scroll register is (4,0) it starts
+drawing at tile(0,0) at coordinate (4,0).  Also remember that the tile map
+wraps.  So If tile(0,0) is drawn at coordinate (4,0), the tile (31,0) is
+drawn at coordinate (-4,0)
+
+> 
+> >> Is 0 the 'transparent' color for tiles?
+> >
+> >Yes
+> If color 0 always has to be the transparency color, what is it used for? 
+
+> The very back background color?
+
+Yup.
+
+> 
+> >> >> >> btw, why is the sprite position 9 bits?  Since the screen is 
+> only 
+> >> 256 
+> >> >> >> pixels across?
+> >> >> >
+> >> >> >Think sprite clipping.
+> >> >> 
+> >> >> ahh, do you mean so that you can put a sprite clipped off the left 
+> >> edge 
+> >> >> of the screen?  
+> >> >
+> >> >Yes
+> >> >
+> >It goes from 510,511,0,1,2, etc.  So a tile wrapped from the left is at
+> >around 510 or something like that
+> okies.
+> 
+> >> >> wouldn't that be *really* slow?  Does zSNES use this kind of 
+> >> >> line-by-line engine?
+> >> >
+> >> >Zsnes is totally line by line.
+> >> 
+> >> but it's so fast!!!
+> >
+> >But it's totally written in assembler
+> >
+> But I see there being a lot of overhead no matter what language it's in.
+
+Yeah.  I guess algorithmic optimisations also help.
+
+> >> >Gradius 3
+> >> What sort of wraparounds does Gradius 3 use?
+> >
+> >01FFFF+8001 = 028000
+> 
+> When does it do this?  i.e. what addressing mode etc.?
+
+mov 01FFFFh,x   <- x = 8001h
+
+> 
+> >> again and making it even slower... zSNES's CPU core nearly twice as 
+> fast 
+> >> as mine even now...
+> 
+> I bet you beam with pride when you read that
+
+Naw.  Your code is in C and mine is in asm.
+
+>  
+> >> drat... I suppose I'll have to do that address-checker-jump-table 
+> >> thingie you were doing.
+> >
+> >Yup
+> 
+> oh well, my emu's release date is now pushed back another month...
+> 
+> There's something I'd like to know about sprites: the Y coordinate is 
+> only 8 bits, so how do you have a sprite that is clipped at the top of 
+> the screen?  (ie negative Y coordinate)
+
+Unfortunately, I don't have that part correct in zsnes either.  But I'm
+sure there's something to it.
+
+> 
+> Okay, like I said I'd write a SNES Graphics doc.... after writing 40 K I 
+> decided it was enough and released it....
+
+Okay!
+
+> 
+> I'd like you to check over it if you would and see if its accurate.  
+> Particularly, could you check/fill in this information for me?
+
+I'll try, but chances are that I forgot a lot of this stuff already.
+
+> 
+> This register controls the way DMA transfers take place.  The t bits 
+> decide the 'mode' of the transfer.  To describe how this 
+> works, suppose the bytes of data to be transferred are $01 $23 $45 $67 
+> $89, and the register to write to is $2118.  Assuming 
+> f=0 and i=0: 
+> 
+> Transfer Type           Order of transfer
+> 000: 1 reg              $01->$2118 $23->$2118 $45->$2118 $67->$2118 
+> $89->$2118
+> 001: 2 regs             $01->$2118 $23->$2119 $45->$2118 $67->$2119 
+> $89->$2118
+> 010: 1 reg write twice  $01->$2118 $23->$2118 $45->$2118 $67->$2118 
+> $89->$2118
+> 011: 2 regs write twice $01->$2118 $23->$2118 $45->$2119 $67->$2119 
+> $89->$2118
+> 100: 4 regs             $01->$2118 $23->$2119 $45->$211A $67->$211B 
+> $89->$2118
+> 101, 110, 111  unknown behavior
+
+Sounds correct
+
+> 
+> Transfer modes 0 and 2 appear to be the same, but are different in HDMA 
+> mode.  I may have modes 0 and 2 backwards (i.e. 
+> 0=1 reg write twice.). 
+
+Yup.  Your modes 0 and 2 are not backwards  
+
+> 
+> This register determines the size of tile represented by one entry in 
+> the tile map array, the order that BGs are drawn on the 
+> screen, and the screen mode.  The screen modes are: 
+> 
+> MODE          # of BGs        Max Colors/Tile         Palettes        Colors Total
+> 0                     4                       4                               8                       128 (32*4)
+> 1                     3                       BG1/BG2:16 BG3:4        8                       128 & 32
+> 2                     2                       BG1/BG2:16              8                       128
+> 3                     2                       BG1:256 BG2:16          1/8                     256 & 128
+> 4                     2                       BG1:256 BG2:4           1/8                     256 & 32
+> 5                     2                       BG1:16 BG2:4            8               128 & 32 (Interlaced mode)
+> 6                     1                       16                              8                       128 (Interlaced
+mode)
+> 7                     1                       256                             1                       256
+
+Take note that in mode 0, each BG starts at a different color # offset. 
+BG0 starts at color 0, BG1 starts at color 32, etc.
+
+> 
+> zsKnight, I'm sure there's more than 1 BG in Mode 7.  What are the stats 
+
+I'm sure there's only one.  Whatever you're looking at in mode 7 other than
+the scaling screen are sprites and they can be used to substitute a
+background.
+
+> for the other(s)?  What are the stats for modes 2, 5, and 6?
+
+Given above
+
+> 
+> What does it mean when it says "interlaced mode" (mode 6), and how does 
+> it affect the way to emulate it?
+
+It's using 16x8 tiles to display 512 resolution
+
+> 
+> The p (priority bit) affects the order in which BGs are drawn on the 
+> screen, as follows ("o" refers to the setting of bit 13 of the 
+> tile map: 
+> 
+> p (Priority) 0         1
+> Drawn first  BG4, o=0  BG4, o=0
+>    (Behind)  BG3, o=0  BG3, o=0
+>       .      BG4, o=1  BG4, o=0
+>       .      BG3, o=1  BG2, o=0
+>       .      BG2, o=0  BG1, o=0
+>       .      BG1, o=0  BG2, o=0
+> Drawn last   BG2, o=1  BG1, o=0
+>   (in front) BG1, o=1  BG3, o=0
+
+It should be :
+
+If Mode!=1 or (Mode=1 and bit3 of 2105h=0) :
+
+BG4 o=0, BG3 o=0, BG4 o=1, BG3 o=1, BG2 o=0, BG1 o=0, BG2 o=1, BG1 o=0
+
+If Mode=1 and bit3 of 2105=1 :
+
+BG4 o=0, BG3 o=0, BG4 o=1, BG2 o=0, BG1 o=0, BG2 o=1, BG1 o=0, BG3 o=1
+
+> 
+> "
+> The SNES has one more display 
+> quirk that is thrown into the mix: all of the rows must be stored 16 
+> tiles apart (i.e. 512 bytes, or 256 words.)  This means that, if 
+> there was one 32x32 sprite in VRAM, it would have to be stored like 
+> this: 
+> 
+> Offset  Y-coord. Tile Coord
+> 0       0-7      (0, 0) (8, 0) (16, 0) (24, 0) <Unused--room for 12 more 
+> tiles>
+> 512     8-15     (0, 8) (8, 8) (16, 8) (24, 8) <Unused--room for 12 more 
+> tiles>
+> 1024    16-23    (0,16) (8,16) (16,16) (24,16) <Unused--room for 12 more 
+> tiles>
+> 1536    24-31    (0,24) (8,24) (16,24) (24,24) <Unused>
+
+Hmm.  I don't remember how the sprites go, but I think that should be the
+way
+
+> 
+> In practice, the sprites are interleaved.  In other words, when using 
+> 32x32 tiles, there would be 3 more sprites stored in that 
+> "unused" space.  If the first sprite, shown in the above table, started 
+> at offset 0, the next sprite would start at offset 128 (the 
+> Character Number, in OAM, would be 4); the third sprite would start at 
+> offset 256 (Character #8), and the fourth sprite would 
+> start at offset 384 (Character #12).  If a fifth sprite was desired, the 
+> pattern would repeat and it would be located at offset 
+> 2048 (Character #64). 
+> "
+___________________________________________________________________________
+
+
+> Hi, I'm having timing problem(s) again.  zSNES does only 88% of the 
+> number of cycles my emu does by default, but it does something like 96% 
+> of the number of *instructions*... on average.  In other words, on 
+> average zSNES takes less 65816 cycles for every instruction.  The book 
+> I'm using to count cycles has many tables that list the cycles and bytes 
+> used by each opcode, in both 16 and 8-bit mode.  Where do you get your 
+> info?
+
+I just copied it from the GTS text file which is quite inaccurate from what
+I heard.
+
+> 
+> P.S. Are you remembering to add a cycle when you do a 16-bit memory 
+> access?
+
+It's not added, but I know about that.  However, I wasn't worried about the
+timing of zsnes when I first worked on the engine so it's not really
+possible to fix that unless I rewrite the timing engine.
+___________________________________________________________________________
+
+
+> >When a 32x32 tile map is displayed, the location where to start drawing 
+> at
+> >screen coordinate (0,0) is determined by the scroll registers 
+> (210D-2114)
+> >which is pixel-size based.  If the scroll register is (4,0) it starts
+> >drawing at tile(0,0) at coordinate (4,0).  Also remember that the tile 
+> map
+> >wraps.  So If tile(0,0) is drawn at coordinate (4,0), the tile (31,0) 
+> is
+> >drawn at coordinate (-4,0)
+> 
+> so in other words, if so want a scrolling game that looks right, you 
+> *must* use 64x32 or 64x64.
+
+Pretty much
+
+> 
+> >> The very back background color?
+> >
+> >Yup.
+> 
+> How come so many emulators have come out that at first didn't display 
+> the right color for the sky in SMW? ...eSNES, SNES96, SNES97... I was 
+> wondering if there was something tricky about it that made all early 
+> emus work wrong...
+
+That's mainly screen add/sub on the back area so it was pretty much an
+unimplemented feature back then.
+
+> 
+> >> >01FFFF+8001 = 028000
+> >> 
+> >> When does it do this?  i.e. what addressing mode etc.?
+> >
+> >mov 01FFFFh,x   <- x = 8001h
+> 
+> in other words this is not a wraparound, but a *lack* of wraparound that 
+> I need to check.
+
+Yup
+
+> 
+> >Naw.  Your code is in C and mine is in asm.
+> 
+> Do you happen to know where any docs are about writing dynamic 
+> recompilation (generating machine language code in software) for the 
+> x86?  It's something I'm thinking about.. for the far future.
+
+I don't think it's worth it to do on a snes, especially when it only runs
+at 3mhz.  Also, dynamic recompilation is *hard*!
+
+> 
+> >Unfortunately, I don't have that part correct in zsnes either.  But I'm
+> >sure there's something to it.
+> 
+> I haven't noticed any sprite problems in zSNES..
+
+There are lots.  Try Squaresoft games.  They show a lot of problems since
+that company seems to have a great understanding of the snes.
+
+> 
+> >Yup.  Your modes 0 and 2 are not backwards  
+> ok.. There were two docs, they seemed to directly contradict one 
+> another..
+> 
+> >> MODE       # of BGs        Max Colors/Tile         Palettes        Colors Total
+> >> 0                  4                       4                               8                       128 (32*4)
+> >> 1                  3                       BG1/BG2:16 BG3:4        8                       128 & 32
+> >> 2                  2                       BG1/BG2:16              8                       128
+> >> 3                  2                       BG1:256 BG2:16          1/8                     256 & 128
+> >> 4                  2                       BG1:256 BG2:4           1/8                     256 & 32
+> >> 5                  2                       BG1:16 BG2:4            8               128 & 32 (Interlaced 
+> mode)
+> >> 6                  1                       16                              8                       128 (Interlaced
+> >mode)
+> >> 7                  1                       256                             1                       256
+> >
+> >I'm sure there's only one.  Whatever you're looking at in mode 7 other 
+> than
+> >the scaling screen are sprites and they can be used to substitute a
+> >background.
+> I don't have my computer right now but I was sure I remembered being 
+> able to toggle BG1 and BG2 or something in Mode 7.
+
+There should only be one background.
+
+> 
+> >It's using 16x8 tiles to display 512 resolution
+> Hmm?  If Mode 6 is the 512-line mode, then what is that other bit (can't 
+> remember what register, but it was the same register that controls the 
+> 448-vline mode) that controls pseudo-512 line mode do?
+
+That's different.  It does the resolution differently
+
+> Do you have to be in mode 6 to use that mode?  You list mode 6 as having 
+> 1 BG, but I know that the 512-line mode in Secret of Mana has 2 BGs.
+
+Yes.  SoM uses Mode 5, not Mode 6
+
+>  
+> >> The p (priority bit) affects the order in which BGs are drawn on the 
+> >> screen, as follows ("o" refers to the setting of bit 13 of the 
+> >> tile map: 
+> 
+> >It should be :
+> >
+> >If Mode!=1 or (Mode=1 and bit3 of 2105h=0) :
+> >
+> >BG4 o=0, BG3 o=0, BG4 o=1, BG3 o=1, BG2 o=0, BG1 o=0, BG2 o=1, BG1 o=0
+> >
+> >If Mode=1 and bit3 of 2105=1 :
+> >
+> >BG4 o=0, BG3 o=0, BG4 o=1, BG2 o=0, BG1 o=0, BG2 o=1, BG1 o=0, BG3 o=1
+> 
+> In other words, bit3 of 2105 is ignored if not in mode 1?
+
+Yep
+
+> 
+> >> "
+> >> The SNES has one more display 
+> >> quirk that is thrown into the mix: all of the rows must be stored 16 
+> >> tiles apart (i.e. 512 bytes, or 256 words.)  This means that, if 
+> >> there was one 32x32 sprite in VRAM, it would have to be stored like 
+> >> this: 
+> >> 
+> >> Offset  Y-coord. Tile Coord
+> >> 0       0-7      (0, 0) (8, 0) (16, 0) (24, 0) <Unused--room for 12 
+> more 
+> >> tiles>
+> >
+> >Hmm.  I don't remember how the sprites go, but I think that should be 
+> the
+> >way
+> Was wondering since the y0shi doc was a bit on the unclear side (as 
+> usual...)
+> 
+> I have seen two pieces of evidence to suggest that 8x8 tiles have 
+> interleaved color planes (there was a source code and some sentence in 
+> I-can't-remember-what doc)... i.e.
+> 
+> Byte #         0       1          2       3        4
+> X-coordinate 0 to 7   0 to 7   0 to 7   0 to 7   0 to 7
+> Y-coordinate   0       0          1       1        2
+> Color plane    0       1          0       1        0
+> and if it's in 16-color mode, then after those two planes would be two 
+> more.
+
+Should be
+
+> 
+> but that I think goes against the what the yoshi doc says...
+> 
+> Does Mario World use IRQ's in the intro screen at all?  I haven't done 
+> IRQs yet..
+
+It only uses NMI.  But during the gameplay, it uses IRQ's.  However, it's
+not needed
+
+> 
+> Where can I find demos with source code?
+
+I only found Yoshi's Infinity.  That's the main program which I used to
+first build zsnes.
+___________________________________________________________________________
+
+> Hey... are you still there??
+
+Yes.  I'm still here.
+
+> How does a program turn sprites off?  In ATX1, there are about a hundred 
+> sprites (@'s) located at (0,0) which I suppose are supposed to be off, 
+> but how do I tell that they are supposed to be off?
+
+I have no idea.  In zsnes, I never turn off sprites.  I just drawn
+everything.
+
+> Meanwhile the moving-sprite text won't display properly; I'm getting 
+> lots of @'s--in lots of different colors, even though the colors for 
+> each sprite is supposed to be constant--and later on I get multiple rows 
+> of @'s.  And the sine wave is much bigger than it's supposed to be, 
+> going from below the top of the screen to almost the bottom... oh well, 
+> I'm working on it...
+
+I guess it's debugging time!
+
+> Any ideas what sonic.smc might be doing here?  This is REALLY weird...
+> 
+> 6.815 debug PC=8000  SEI
+> 7.430 debug PC=8001  PSH PBR
+> 7.920 debug PC=8002  PUL DBR
+> 7.975 debug PC=8003  CLC
+> 8. 30 debug PC=8004  XCE
+> 8. 35 debug PC=8005  SEP #$30
+> 8. 85 debug PC=8007  LDA #$8F
+> 8.145 debug PC=8009  STA $2100
+> 8.150 debug PC=800C  LDA #$00
+> 8.195 debug PC=800E  STA $2101
+> ....stuff....
+> 8.470 debug PC=8023  STA $2109
+> 8.525 debug PC=8026  STA $0A0D
+                                     ^^^^^^^^^^^^^^
+
+It's supposed to be STA $210A
+
+Something is wrong there.  Not a common bug.  I guess it's a programming
+error somewhere.
+You should check what's in memory contents 8027/8028 and see if any of the
+previous instructions modifies it.
+
+> 8.535 debug PC=8029  AND (<$8D,X)
+> 8.580 debug PC=802B  PSH D
+> 8.855 debug PC=802C  AND (<$8D,X)
+> 9. 25 debug PC=802E  TSB $8D21
+> 9.130 debug PC=8031  ORA $8D21
+> 9.240 debug PC=8034  ORA $8D21
+> 9.900 debug PC=8037  SHL $8D21
+> 10.285 debug PC=803A  SHL $8D21
+> 10.505 debug PC=803D  ORA $0F8D21
+> 10.945 debug PC=8041  AND (<$8D,X)
+> 11.275 debug PC=8043  BPL @33
+> 11.660 debug PC=8066  BRK
+> 12.485 Message added: Warning: BRK encountered at $0
+> 12.485 debug PC=0  BRK
+> 
+> WTF?!  I rechecked the 65816 opcode table, and none of the opcodes are 
+> being misinterpreted... 
+> 
+> Anyways, if I set the PC to be right beyond the BPL, it still does some 
+> weird stuff... for example, there are some WDM's... eventually it 
+> uploads the graphic data, but in a roundabout way... and then you can 
+> see the sonic, but it's corrupted.  oh well, sorry to dump all this on 
+> you...
+___________________________________________________________________________
+
+> Date: Sunday, March 08, 1998 2:19 PM
+> 
+> >I have no idea.  In zsnes, I never turn off sprites.  I just drawn
+> >everything.
+> 
+> Uhh, that can't work right there should be @'s in the top-left corner of 
+> the screen for the off sprites..?  (Sprite 0=@)
+
+There aren't any bits that enable sprites though.  Most games hide sprites
+by putting it below the bottom of the screen.
+___________________________________________________________________________
+
+> >Yes.  I'm still here.
+> well... I didn't get replies to a couple other mails...
+
+The mail probabily got lost.
+
+> >
+> >I have no idea.  In zsnes, I never turn off sprites.  I just drawn
+> >everything.
+> Hmmm..!
+> >
+> >I guess it's debugging time!
+> 
+> It's been debugging time for the last month!
+
+And I'm sure it will be in within the next year since that's what writing
+emulators is about - debugging.
+
+> 
+> >> Any ideas what sonic.smc might be doing here?  This is REALLY 
+> weird...
+> >> 8.525 debug PC=8026  STA $0A0D
+> >                                     ^^^^^^^^^^^^^^
+> >
+> >It's supposed to be STA $210A
+> >
+> >Something is wrong there.  Not a common bug.  I guess it's a 
+> programming
+> >error somewhere.
+> >You should check what's in memory contents 8027/8028 and see if any of 
+> the
+> >previous instructions modifies it.
+> 
+> Nope... this ROM is like this originally.  I guess it must have errors 
+> in it?  I've mentioned my copy doesn't work in zSNES, could you send me 
+> a copy that works?
+
+Okay.  I guess you have a corrupt version.
+
+> >
+> Can you tell how the sprite priority bits work?
+
+I have no idea.  It's been a while since I programmed the sprites.
+
+> 
+> Argh, SMW started causing GPFs again!...
+> 
+___________________________________________________________________________
+> Date: Sunday, March 08, 1998 3:51 PM
+> 
+> Okay, I just discovered ATX1 uses HDMA for setting the palette!  (WTF 
+> for?!) 
+
+It's there to make a shade in the colors from top to bottom.
+
+> So, while I'm at it, how do the HDMA "tables" and modes work 
+> exactly?  
+
+It's been a while since I coded HDMA so I forgot most of the details.  It
+works quite similar to DMA.
+
+> Also, what is "indirect" HDMA?
+
+Indirect HDMA points to memory which contains addresses which points to
+hdma data.  I forgot the exactly detail, but I think for the first line,
+you take an address, get the data from that address, then go back for the
+next line.
+___________________________________________________________________________
+
+> Date: Sunday, March 08, 1998 4:14 PM
+> 
+> HDMA.txt, which is probably a really incomplete doc, has a description 
+> of HMDA 'tables' for two HDMA modes.  do I have it right: every frame 
+> the HMDA settings are reset, and when a '0' is encountered in the table, 
+> HMDA transfers stop until next frame.
+
+That's pretty much correct.
+
+> 
+> Also, what do you do if the program starts a HDMA transfer in the middle 
+> of a frame?  Do you wait till next frame to start it?
+
+If it sets the HDMA during HBlank, the HDMA starts in the middle of the
+screen, otherwise, it starts at the beginning of the next frame.
+___________________________________________________________________________
+
+> >If it sets the HDMA during HBlank, the HDMA starts in the middle of the
+> >screen, otherwise, it starts at the beginning of the next frame.
+> 
+> What?? that's weird.  What do you mean by "the middle"?
+
+It's more like if HDMA is written in the middle of the screen, the only
+time when it's enabled is when it's written during HBlank.  I guess I was
+sleepy when I wrote that.
+
+> 
+> Also, do you still start at the beginning of the HDMA table regardless 
+> of where the transfer was enabled?
+
+I guess so.
+
+> 
+> Oh yeah this reminds me: does the vbl period (& NMI int) start at the 
+> beginning of scanline 224/239, or is it 225/240?
+
+224/239 as far as I've written it.___________________________________________________________________________
+
+> Listen, uhh.. if it's not too much to ask... could you put a "dump" 
+> debugger feature in zSNES?  e.g. press a certain key to dump either raw 
+> OAM, VRAM, CGRAM or a CPU bank to a "OAM/CGRAM/etc.DMP" file?  I would 
+> be very very happy...
+
+That's some work to do.  I don't think I'll put it in since when I needed
+such a feature, I just edit the zsnes source code.  But I'll consider it.
+___________________________________________________________________________
+
+> In register $4212, how often do you return $1 (joypad ready)?  After 
+> that, when do you reset it back to 0?
+
+Use the M function of the zsnes debugger and find out.
+
+> 
+> While I was running sine.smc, a demo with two bobbing (scrolling) 
+> "anthroxes", I _think_ I encountered "windows".  I got the full-screen 
+> logo sort of repeating itself.  So are these windows used for clipping?  
+> How does it work?
+
+It works for clipping depending on whether the outside or inside bit is
+set.  If it's clipped outside, the left side of the window left position
+value is clipped and the right side of the window right position value is
+clipped.
+
+> Also, I noticed that it was using a coordinate range of 0 to 2048 
+> instead of 0-256, which I would expect since it's a 32x32 SC.
+> 
+> ...still don't have sprites displaying correctly... grr.  later.
+> 
+___________________________________________________________________________
+> >It's there to make a shade in the colors from top to bottom.
+> 
+> I take it that doesn't quite work on any current emus?  Hmmm... how does 
+
+It's handled perfectly in zsnes using 65536 color mode.
+
+> zSNES handle palette setting in a 256-color mode?  Do you set the 
+
+It copies the palette data to the screen at around line 224.
+
+> palette everytime 0x2122 is written, or do you wait for the end/start of 
+> the frame?
+
+I wait.  If I did it everytime at 0x2122, it's going create a lot of snow. 
+Plus when the palette changes in the middle of the screen, it'll create
+some sort of weird flickering effect which isn't good.
+
+> >
+> >It's been a while since I coded HDMA so I forgot most of the details.  
+> It
+> >works quite similar to DMA.
+> 
+> Well, I suppose, except for that I don't have all the table formats... I 
+> suppose I could guess at it but so far I have always guessed wrong ;]
+
+Try writing test programs to play around with HDMA
+> 
+> >> Also, what is "indirect" HDMA?
+> >
+> >Indirect HDMA points to memory which contains addresses which points to
+> >hdma data.  I forgot the exactly detail, but I think for the first 
+> line,
+> >you take an address, get the data from that address, then go back for 
+> the
+> >next line.
+> 
+> Arg.  Are there any docs on it other than the one?
+
+Nope.  I reversed engineered that one.
+
+> 
+> Check out these weird registers.
+> 
+> Address  : $43x5/$43x6/$43x7 (X: Channel Number 0-7)
+> Name     : Dasxl/dasxh/dasbx
+> Contents : Data Address Store by H-dma & Number of Byte to Be Transfered
+>         Settings by General Purpose Dma
+> 
+> Address  : $43x8/$43x9 (X: Channel Number 0-7)
+> Name     : A2axl/a2axh
+> Contents : Table Address of A-bus by Dma < A2 Table Address
+> 
+> These docs look like they were copied by some dude who can't speak 
+> english... but it looks like these registers are readable and can be 
+> used as some kind of workspace for the HDMA system.  However they are 
+> writable, too.. *shrug* I was planning on having some internal variables 
+> to store in-progress HDMA info, but now it looks like I have to deal 
+> with these regs?
+
+I guess so.
+
+> 
+> | w   |$43xA  |Number of lines for HDMA transfer [NTRLX]                 
+   
+> |
+> |     |       |cxxxxxxx              c: Continue (0=yes, 1=no (???)).    
+   
+> |
+> |     |       |                      x: # of lines to transfer.          
+   
+> |
+> 
+> can you give some info on these?
+
+The 65816 code doesn't write to this register.  How it works is that the
+snes writes the # of lines left from the HDMA data, since I believe the
+first byte in the HDMA is the # of lines left.  I almost forgot all of HDMA
+=(
+___________________________________________________________________________
+
+> >There aren't any bits that enable sprites though.  Most games hide 
+> sprites
+> >by putting it below the bottom of the screen.
+> But ATX1 has its sprites at 0,0. :/
+> 
+> I don't understand these HDMA tables in ATX1:
+> 
+> HDMA2121:
+>       dc.b    $01,$00,$01,$01,$01,$02,$01,$03,$01,$04,$01,$05,$01,$06,$01,$07
+> ...bla bla bla...
+>       dc.b    $01,$a0,$01,$a1,$01,$a2,$01,$a3,$01,$a4,$01,$a5,$01,$a6,$01,$a7
+>       dc.b    $02,$00,$01,$00,$01,$00
+> 
+> Ok, this line starts with a $02, and according to hdma.txt this would 
+> mean that $00 and $01 are the data, and that the next entry is $0, which 
+> would be interpreted as an end to the table but clearly the table is not 
+> over yet.
+> 
+>       dc.b    $25,$00,$01,$00,$01,$00
+>       dc.b    $01,$b0,$01,$b1,$01,$b2,$01,$b3,$01,$b4,$01,$b5,$01,$b6,$01,$b7
+>       dc.b    $01,$c0,$01,$c1,$01,$c2,$01,$c3,$01,$c4,$01,$c5,$01,$c6,$01,$c7
+>       dc.b $01,$d0,$01,$d1,$01,$d2,$01,$d3,$01,$d4,$01,$d5,$01,$d6,$01,$d7
+> 
+>       dc.b    $00,$00
+> hmm, I can't imagine what ATX1 is trying to do with the rest of this 
+> table... the next table starts right off the bat with the same problem:
+> 
+> HDMA2122:
+> dc.b  $01,$00,$00,$01,$8a,$30,$01,$cc,$40,$01,$50,$49,$01,$d4,$51
+>                ^--table ends here
+> 
+> so the question is: what don't I know about this situation?
+
+I forgot most of my HDMA so I don't really understand what's going on.
+___________________________________________________________________________
+
+> Date: Wednesday, March 11, 1998 3:26 AM
+> 
+> >> >There aren't any bits that enable sprites though.  Most games hide 
+> >> sprites
+> >> >by putting it below the bottom of the screen.
+> But ATX1 has its sprites at 0,0.
+
+So it somewhat hides the sprites at 0,0.  Probabily by making the sprites
+invisible (nothing in the character data)
+
+> 
+> >> I don't understand these HDMA tables in ATX1:
+> >> 
+> >> HDMA2121:
+> >>    dc.b    $01,$00,$01,$01,$01,$02,$01,$03,$01,$04,$01,$05,$01,$06,$01,$07
+> >> ...bla bla bla...
+> >>    dc.b    $01,$a0,$01,$a1,$01,$a2,$01,$a3,$01,$a4,$01,$a5,$01,$a6,$01,$a7
+> >>    dc.b    $02,$00,$01,$00,$01,$00
+> >> 
+> >> Ok, this line starts with a $02, and according to hdma.txt this would 
+> >> mean that $00 and $01 are the data, and that the next entry is $0, 
+> which 
+> >> would be interpreted as an end to the table but clearly the table is 
+> not 
+> >> over yet.
+> >> 
+> >>    dc.b    $25,$00,$01,$00,$01,$00
+> >>    dc.b    $01,$b0,$01,$b1,$01,$b2,$01,$b3,$01,$b4,$01,$b5,$01,$b6,$01,$b7
+> >>    dc.b    $01,$c0,$01,$c1,$01,$c2,$01,$c3,$01,$c4,$01,$c5,$01,$c6,$01,$c7
+> >>    dc.b $01,$d0,$01,$d1,$01,$d2,$01,$d3,$01,$d4,$01,$d5,$01,$d6,$01,$d7
+> >> 
+> >>    dc.b    $00,$00
+> >> hmm, I can't imagine what ATX1 is trying to do with the rest of this 
+> >> table... the next table starts right off the bat with the same 
+> problem:
+> >> 
+> >> HDMA2122:
+> >> dc.b  $01,$00,$00,$01,$8a,$30,$01,$cc,$40,$01,$50,$49,$01,$d4,$51
+> >>                ^--table ends here
+> >> 
+> >> so the question is: what don't I know about this situation?
+> >
+> >I forgot most of my HDMA so I don't really understand what's going on.
+> 
+> NEITHER DO I!!!
+___________________________________________________________________________
+
+> Hello.  I added another BG (BG2) to my demo, and got it to work on my 
+> own emulator, but the second BG won't show up in zSNES or SNES9X.  I 
+> have set the main screen designation to $3.  What else do I have to do?
+
+Set the all the BG2 addresses.  Check out infinity.smc.  It sets both bgs
+correctly.
+___________________________________________________________________________
+
+> >> What?? that's weird.  What do you mean by "the middle"?
+> >
+> >It's more like if HDMA is written in the middle of the screen, the only
+> >time when it's enabled is when it's written during HBlank.  I guess I 
+> was
+> >sleepy when I wrote that.
+> 
+> I think you're still sleeping!  It's 4:01 AM here..  anyways I don't get 
+> it.
+
+It's pretty clear to me and I'm not sleeping right now.
+
+> Okay, I finally took some initiative and wrote a SNES demo program.  It 
+> is supposed to have a 32x64 size and scroll up and down.  However, it 
+> isn't 32x64 in zSNES or NLKSNES (naturally it works right in my emu.)  
+> instead the screen gets repeated.  What don't I know about this?
+
+I have no idea.
+
+> Also in another message I believe I asked why an atx demo was using a 
+> 2048x2048 coordinate system.  Well... why?
+
+You don't necessarily have to worry if it's using it or not.  Just
+implement the scrolling and stuff and if it works, then it's all good.  I
+never worried about those questions when I wrote zsnes.
+___________________________________________________________________________
+
+> >That's some work to do.  I don't think I'll put it in since when I 
+> needed
+> >such a feature, I just edit the zsnes source code.  But I'll consider 
+> it.
+> >
+> Well, it shouldn't be much.  By the way, can you instant save while in 
+
+Gotta write a menu, user interface and stuff and it's all in pure asm.
+
+> the debugger?  because if you can, then I'd just need to know the 
+> offsets in the zst where the wram, oam, and vram is.
+
+Yes you can.  Just hit F2/F4
+
+> 
+> Meanwhile... I'm off to do a sprite with my demo...___________________________________________________________________________
+> Date: Wednesday, March 11, 1998 3:24 AM
+> 
+> >It's handled perfectly in zsnes using 65536 color mode.
+> 
+> that's funny... I tried it in 640x480x64K and didn't notice anything.
+
+Maybe it's not using it properly in that screen.  Check out other games
+such as DKC1, etc.  It uses it in the sky.
+
+> >> Well, I suppose, except for that I don't have all the table 
+> formats... I 
+> >> suppose I could guess at it but so far I have always guessed wrong ;]
+> >
+> >Try writing test programs to play around with HDMA
+> 
+> In fact it must be worse than I thought because even the formats in 
+> DMA.txt are WRONG.
+> 
+> >> Check out these weird registers.
+> >> 
+> >> Address  : $43x5/$43x6/$43x7 (X: Channel Number 0-7)
+> >> Name     : Dasxl/dasxh/dasbx
+> >> Contents : Data Address Store by H-dma & Number of Byte to Be 
+> Transfered
+> >>         Settings by General Purpose Dma
+> >> 
+> >> Address  : $43x8/$43x9 (X: Channel Number 0-7)
+> >> Name     : A2axl/a2axh
+> >> Contents : Table Address of A-bus by Dma < A2 Table Address
+> >> 
+> >> These docs look like they were copied by some dude who can't speak 
+> >> english... but it looks like these registers are readable and can be 
+> >> used as some kind of workspace for the HDMA system.  However they are 
+> >> writable, too.. *shrug* I was planning on having some internal 
+> variables 
+> >> to store in-progress HDMA info, but now it looks like I have to deal 
+> >> with these regs?
+> >
+> >I guess so.
+> >
+> >> 
+> >> | w   |$43xA  |Number of lines for HDMA transfer [NTRLX]              
+  
+> >> can you give some info on these?
+> >
+> >The 65816 code doesn't write to this register.  How it works is that 
+> the
+> >snes writes the # of lines left from the HDMA data, since I believe the
+> >first byte in the HDMA is the # of lines left.  I almost forgot all of 
+> HDMA
+> >=(
+> ?.  Hum.. I suppose I'll just wait for the SNES9X sourceto come 
+> out.......... :/
+
+Probabily
+___________________________________________________________________________
+
+> Date: Thursday, March 12, 1998 4:16 AM
+> 
+> >Set the all the BG2 addresses.  Check out infinity.smc.  It sets both 
+> bgs
+> >correctly.
+> 
+> I don't have it or the source code.  And I have set both the char and 
+> tile map addresses.  By the way, I also took the demo to a mac, and it 
+> didn't work in SNES9X but it *kinda* worked in Silouette: The BG was 
+> there, but the colors were all wrong.  Any ideas now?
+
+Probabily a corrupt rom
+___________________________________________________________________________
+
+> >> >Set the all the BG2 addresses.  Check out infinity.smc.  It sets 
+> both 
+> >> bgs
+> >> >correctly.
+> >> 
+> >> I don't have it or the source code.  And I have set both the char and 
+> >> tile map addresses.  By the way, I also took the demo to a mac, and 
+> it 
+> >> didn't work in SNES9X but it *kinda* worked in Silouette: The BG was 
+> >> there, but the colors were all wrong.  Any ideas now?
+> >
+> >Probabily a corrupt rom
+> >
+> What?! I WROTE THE DEMO.  it's not corrupt.  It traces correctly in all 
+> emu's, but the graphics don't display right.  I sent the src code 
+> remember?
+
+Doh!  Okay.  My mistake.  Sorry.  I don't necessarily remember receiving
+the code though.  Can you send it again?  Which compiler did you use for
+it?
+___________________________________________________________________________
+> Date: Saturday, March 14, 1998 7:51 PM
+> >Doh!  Okay.  My mistake.  Sorry.  I don't necessarily remember 
+> receiving
+> >the code though.  Can you send it again?  Which compiler did you use 
+> for
+> >it?
+> 
+> Assembler: X816 1.1x
+> Okay, that's fine because you have an old version of it anyway.  I added 
+> a nifty HDMA thing so I guess I have figured out how *one* HDMA mode 
+> works.  However, the case of the missing BG and the half-sized screen is 
+> still a mystery...
+
+All you need to do is turn BG1/2 bits on in the main screen.  Then make
+sure that the addresses are correct.  Those 2 bgs should display.
+___________________________________________________________________________
+> Date: Tuesday, March 17, 1998 2:47 PM
+> 
+> >> >All you need to do is turn BG1/2 bits on in the main screen.  Then 
+> make
+> >> >sure that the addresses are correct.  Those 2 bgs should display.
+> >> 
+> >> Look!
+> >> 
+> >>    sep #$30
+> >>    lda #$11                ; BG1 and BG2 chars at $2000
+> >>    sta $210B
+> >>    lda #1      ; BG1 32x64; starts at $0
+> >
+> >Are you assuming that x = 64 and y = 32?
+> no, width=32 height=64.  (btw I am positive that I don't have them 
+> backwards, because if I did then the BG should skip every other line and 
+> it doesn't.)  Can't you think of ANY reason why the BG would be only 32 
+> tiles high when I set that register to 64 high?
+
+Yes.  Since setting 1 to 2107 sets the BG to 64x32, not 32x64.  What you
+should also know is that when you set it to 64x32, it becomes 2 32x32 bg
+areas.  The first 32x32 bg area is for the left side and the second 32x32
+bg area is for the right side.
+
+> >
+> >>    sta $2107
+> >>    lda #8      ; BG2 32x32; starts at $800
+> >
+> >Try setting BG2 to the same as BG1 for this value.  If BG2 doesn't 
+> appear
+> >corrupt, then there's a problem with where you're addressing that 
+> value.
+> 
+> The problem has somehow changed.  I *never* changed that particular 
+> segment of code, but when I made some other changes, the display in 
+> zSNES became identical to the previous display in Silouette: the BG was 
+> there, but the colors were incorrect.
+> 
+> I tried what you said, and as expected I got a repetition of the first 
+> BG for the second BG.  There was, however, one important difference: the 
+> colors were totally wrong!!  what's going on?
+
+If the colors are incorrect, you're either not setting the palette values
+in the bg data correctly or you're not setting the right colors in CGRam.
+
+> >
+> >>    sta $2108
+> >> 
+> >> later on...
+> >>    ;whew. Screen on.
+> >>    sep #$20
+> >>    lda #$0F
+> >>    sta $2100
+> >>    lda #$81    ; NMI and Joypad enable
+> >>    sta $4200
+> >>    lda #$3         ; BG1&2
+> >>    sta $212C
+___________________________________________________________________________
+
+> Date: Wednesday, March 18, 1998 7:55 AM
+> 
+> >> >>         sep #$30
+> >> >>         lda #$11                ; BG1 and BG2 chars at $2000
+> >> >>         sta $210B
+> >> >>         lda #1      ; BG1 32x64; starts at $0
+> >> >
+> >> >Are you assuming that x = 64 and y = 32?
+> >> no, width=32 height=64.  (btw I am positive that I don't have them 
+> >> backwards, because if I did then the BG should skip every other line 
+> and 
+> >> it doesn't.)  Can't you think of ANY reason why the BG would be only 
+> 32 
+> >> tiles high when I set that register to 64 high>
+> >Yes.  Since setting 1 to 2107 sets the BG to 64x32, not 32x64.  What 
+> you
+> >should also know is that when you set it to 64x32, it becomes 2 32x32 
+> bg
+> >areas.  The first 32x32 bg area is for the left side and the second 
+> 32x32
+> >bg area is for the right side.
+> 
+> hey...you're RIGHT!  Well, when I asked specifically about that before, 
+> you said I had it right.  And how come the docs NEVER mentioned it... oh 
+> well, it works now.  Would a 64x64 BG would be stored in this order?
+> 
+> top-left 32x32,
+> bottom-left 32x32,
+> top-right 32x32,
+> bottom-right 32x32.
+
+I think the bottom-left and top-right are switched.
+
+> 
+> >> >
+> >> >>         sta $2107
+> >> >>         lda #8      ; BG2 32x32; starts at $800
+> >> >
+> >> I tried what you said, and as expected I got a repetition of the 
+> first 
+> >> BG for the second BG.  There was, however, one important difference: 
+> the 
+> >> colors were totally wrong!!  what's going on?
+> >
+> >If the colors are incorrect, you're either not setting the palette 
+> values
+> >in the bg data correctly or you're not setting the right colors in 
+> CGRam.
+> >
+> no... the CGRAM data is all uploaded correctly.  What I'm saying is, 
+> although BG1 and BG2 have _identical_ tile maps and tile sets (being at 
+> the same address), all of the colors for BG2 are DIFFERENT from BG1 (and 
+> wrong.)  My first guess is that it has something to do with color 
+> add/sub, but if that's the case... I would have no idea how to fix it...
+
+Are you using Mode 0?  If so, BG#2 starts at color #32, BG#3 starts at 64,
+etc.
+
+> 
+> >> >>         sta $2108
+> >> >> 
+> >> >>         sep #$20
+> >> >>         lda #$0F
+> >> >>         sta $2100
+> >> >>         lda #$81    ; NMI and Joypad enable
+> >> >>         sta $4200
+> >> >>         lda #$13                ; BG1&2,OAM
+> >> >>         sta $212C
+> 
+> 
+> 
+> 
+>     - Qwertie
+> 
+> 
+> 
+> Home page: http://www.sixtyfour.com/qwertie/
+> 
+> (Note!  May be /sneqr/ temporarily.)___________________________________________________________________________
+
+> >> hey...you're RIGHT!  Well, when I asked specifically about that 
+> before, 
+> >> you said I had it right.  And how come the docs NEVER mentioned it... 
+> oh 
+> >> well, it works now.  Would a 64x64 BG would be stored in this order?
+> >> 
+> >> top-left 32x32,
+> >> bottom-left 32x32,
+> >> top-right 32x32,
+> >> bottom-right 32x32.
+> >
+> >I think the bottom-left and top-right are switched.
+> 
+> Are you SURE?  That would be a slight pain to implement...
+
+I'm not 100% sure, but that's what's in my mind.
+
+> 
+> >> >> >>      sta $2107
+> >> >> >>      lda #8      ; BG2 32x32; starts at $800
+> >> >> >
+> >> >> I tried what you said, and as expected I got a repetition of the 
+> >> first 
+> >> >> BG for the second BG.  There was, however, one important 
+> difference: 
+> >> the 
+> >> >> colors were totally wrong!!  what's going on?
+> >> >
+> >> >If the colors are incorrect, you're either not setting the palette 
+> >> values
+> >> >in the bg data correctly or you're not setting the right colors in 
+> >> CGRam.
+> >> >
+> >> no... the CGRAM data is all uploaded correctly.  What I'm saying is, 
+> >> although BG1 and BG2 have _identical_ tile maps and tile sets (being 
+> at 
+> >> the same address), all of the colors for BG2 are DIFFERENT from BG1 
+> (and 
+> >> wrong.)  My first guess is that it has something to do with color 
+> >> add/sub, but if that's the case... I would have no idea how to fix 
+> it...
+> >
+> >Are you using Mode 0?  If so, BG#2 starts at color #32, BG#3 starts at 
+> 64,
+> >etc.
+> 
+> .....oh. okay. yeah, I'm using mode 0.  (How come nobody mentioned that 
+> either?)  Are there any other palette quirks you can tell me about?
+
+That's probabily the only palette quirk there is.  That took me a while to
+figure out (didn't fix that until like the 3rd public zsnes release)
+
+> 
+> After experimenting with sprites, I determined that the Y0shi doc had 
+> OAM bytes 3 and 4 reversed.  I have also determined that my guesses 
+> about calculating sprite addresses were _totally_ wrong.  I basically 
+> took 16 tiles, which were 8x8 bitmaps of "0" to "F", and repeated those 
+> tiles eight times in different combinations of bitplanes (colors).  So 
+> basically I could tell which chars were being displayed when I set up 
+> the sprite.  When I set up a 16x16 sprite with the OAM char bits set to 
+> 0, the tile in the top-left corner was a "0", as expected.  The tile 
+> below was "8" in the same color, which was unexpected, and it was 
+> definitely unexpected that the right side of the sprite wasn't there 
+> (black), and it was always black no matter what I set the char bits 
+> to.... anyways I played around with it for a long time without figuring 
+> out how the sprite tile arrangement must work :(
+> 
+> Well, There are 9 bits listed for the sprite's "character number":
+> byte #4:bit 0 and all of byte #3.
+> 
+> Right?  From these bits, how is the sprite data offset in the VRAM 
+> calculated?
+
+The byte address is calculated by the lower 2 bits of 2101h shl 14.
+
+> 
+> Also, do I have to worry about "Name Selection" in $2101 yet?
+
+Not yet.  Only a very few games uses it so once you get those working, then
+worry about it.
+___________________________________________________________________________
+
+> Date: Thursday, March 19, 1998 7:31 PM
+> 
+> >The byte address is calculated by the lower 2 bits of 2101h shl 14.
+> hmm, that's not what I asked but that's okay because I figured it all 
+> out anyway... I think.
+> 
+> You know the 2 sprite priority bits?  How do they work?
+
+Remember how there's a total of 8 bg layers (4 bgs with 2 priorities each).
+ I believe it draws like this :
+
+BG4
+BG3
+sprite0
+BG4
+BG3
+sprite1
+BG2
+BG1
+sprite2
+BG2
+BG1
+sprite3
+___________________________________________________________________________
+
+
+> I tried to add joypad support to my demo, but had problems:
+> 
+>       lda #$81    ; NMI and Joypad enable
+>       sta $4200
+> ....
+> --    lda $4212
+>       and.b #$1       ; Wait for joypad to be ready to read
+>       beq --
+> 
+>       lda $4218       ; button pressed?
+>       beq --          ; no
+> 
+> First of all, I noticed that the joypad was ALWAYS detected as ready at 
+> scanline 227 (huh? why?).  Then, when I added some more code to my NMI 
+> handler, the joypad was _NEVER_ ready.
+> 
+> Second, after the joypad was detected as ready, no buttons were ever 
+> picked up: $4218 ALWAYS returned 0.
+> 
+> Ideas?
+
+Nope.  I have no idea what's going on.
+___________________________________________________________________________
+
+> >BG4
+> >BG3
+> >sprite0
+> >BG4
+> >BG3
+> >sprite1
+> >BG2
+> >BG1
+> >sprite2
+> >BG2
+> >BG1
+> >sprite3
+> I suppose it works similarly (draw 2 BGs, draw some sprites, etc.) in 
+> Mode 1 when that special bit is set?
+
+Yes.  Just that BG3 will come after sprite3
+
+> 
+> Well, mario world STILL won't work, and I can't find the bug(s)!  I 
+> noticed that you can instant save in zSNES's debugger... cool.  So, can 
+> you tell me where the wram/oam/vram is stored in the zst file?
+
+I don't know since I don't necessarily have specific offsets for each.  You
+can just search through the zst file and search for a matching data from
+your emu and zsnes.
+___________________________________________________________________________
+
+> Date: Sunday, March 22, 1998 7:00 AM
+> 
+> >> I tried to add joypad support to my demo, but had problems:
+> >> 
+> >>    lda #$81    ; NMI and Joypad enable
+> >>    sta $4200
+> >> ....
+> >> -- lda $4212
+> >>    and.b #$1       ; Wait for joypad to be ready to read
+> >>    beq --
+> >> 
+> >>    lda $4218       ; button pressed?
+> >>    beq --          ; no
+> >> 
+> >> First of all, I noticed that the joypad was ALWAYS detected as ready 
+> at 
+> >> scanline 227 (huh? why?).  Then, when I added some more code to my 
+> NMI 
+> >> handler, the joypad was _NEVER_ ready.
+> >> 
+> >> Second, after the joypad was detected as ready, no buttons were ever 
+> >> picked up: $4218 ALWAYS returned 0.
+> >> 
+> >Nope.  I have no idea what's going on.
+> 
+> Huh?  How is that possible?  At least tell me what is supposed to 
+> happen--and when.
+
+I really have no idea.  I don't really understand how the joystick part
+works.
+___________________________________________________________________________
+> >Yes.  Just that BG3 will come after sprite3
+> uh... like this?
+> 
+> p (Priority) 0             1
+> Drawn first  BG4, o=0      BG4, o=0
+>    (Behind)  BG3, o=0      BG3, o=0
+>       .      Sprites with OAM priority 0 (%00)
+>       .      BG4, o=1      BG4, o=1
+>       .      BG3, o=1      BG2, o=0
+
+Only BG 4 is drawn in between OAM pr 0 and 1
+
+>       .      Sprites with OAM priority 1 (%01)
+>       .      BG2, o=0      BG1, o=0
+>       .      BG1, o=0      BG2, o=1
+>       .      Sprites with OAM priority 2 (%10)
+>       .      BG2, o=1      BG1, o=1
+> Drawn last   BG1, o=1      OAM pri. 3
+>   (in front) OAM pri. 3    BG3, o=1
+> >
+> >> noticed that you can instant save in zSNES's debugger... cool.  So, 
+> can 
+> >> you tell me where the wram/oam/vram is stored in the zst file?
+> >
+> >I don't know since I don't necessarily have specific offsets for each.  
+> You
+> >can just search through the zst file and search for a matching data 
+> from
+> >your emu and zsnes.
+> 
+> dang!  Well, doing an algorithmic search would be nearly impossible (and 
+> VERY slow), especially when you consider that my emu's data will NOT 
+> neccesarily match yours.  That's the whole point--to find what memory 
+> doesn't match to get a lead on CPU/MMIO bugs.
+
+If part of mario world runs well, then you can use that to calculate where
+the wram is.
+
+> 
+> So, I guess I'll request a CPU/VRAM/OAM dump feature again.
+> 
+> Oh, another just as useful feature to put in the debugger would be to 
+> have a command-line switch that makes there be a constant number of 
+> cycles per instruction.  Remember how I couldn't debug my emu with zSNES 
+> anymore because the NMI/VBLs were timed wrong, because our emus count 
+> cycles differently?  This would fix that problem, because I could set up 
+> the instructions-per-frame based on instructions instead of cycles.  It 
+> would be really helpful to me.
+
+The execution cycles part in zsnes isn't really flexible.  But I don't
+think I want to really look into the debugger.  I want to concentrate on
+the main emulation.
+___________________________________________________________________________
+> >> >> I tried to add joypad support to my demo, but had problems:
+> >> >> 
+> >> >>         lda #$81    ; NMI and Joypad enable
+> >> >>         sta $4200
+> >> >> ....
+> >> >> --      lda $4212
+> >> >>         and.b #$1       ; Wait for joypad to be ready to read
+> >> >>         beq --
+> >> >> 
+> >> >>         lda $4218       ; button pressed?
+> >> >>         beq --          ; no
+> >> >> 
+> >> >> First of all, I noticed that the joypad was ALWAYS detected as 
+> ready 
+> >> at 
+> >> >> scanline 227 (huh? why?).  Then, when I added some more code to my 
+> >> NMI 
+> >> >> handler, the joypad was _NEVER_ ready.
+> >> >> 
+> >> >> Second, after the joypad was detected as ready, no buttons were 
+> ever 
+> >> >> picked up: $4218 ALWAYS returned 0.
+> >> >> 
+> >> >Nope.  I have no idea what's going on.
+> >> 
+> >> Huh?  How is that possible?  At least tell me what is supposed to 
+> >> happen--and when.
+> >
+> >I really have no idea.  I don't really understand how the joystick part
+> >works.
+> >
+> I thought you WROTE zSNES.
+
+I wrote it, but I don't have a good memory on how I implemented it.
+___________________________________________________________________________
+> Three registers I'm not sure about:  $4210, $4211, and $4212.
+> Here's what I'm doing:
+> 
+>       case 0x4210: // Clear NMI int request?? zSNES often sets the bit only 
+> once--at scan 224-regardless (??) of whether NMIs are enabled.  Reading 
+> once clears the register.
+
+That's exactly how it works.
+
+>               *REG4210 = reg4210tmp;
+>               reg4210tmp &= ~0x80;
+>               break;
+>       case 0x4212: // V/HBlank/Joypad state
+>               *REG4212 = (scan_cycles < 40 ? 0x40 : 0) | (screen_scanline >= 
+> scans_before_vbl() ? 0x80 : 0) | ((screen_scanline >> 4) & 1);
+>               break;
+> 
+> This works in most cases, but I can't quite figure out what zsnes's 
+> behavior is... once in a while it deviates from this pattern.
+> 
+> As for $4211, I caught a demo reading from this reg, I can't imagine why 
+> since it isn't documented anywhere.  Know anything about it?
+
+It's documented, but very unclear.  I'm not really sure how it works
+either.  Zsnes doesn't implement it correctly since some games stalls from
+reading that register. (ie. DragonBallZ2)
+
+> 
+> ... I'm still not clear on Joypad behavior (although the support I added 
+> mostly works) so if you happen to find the time to look at your own 
+> code... I'd like to know.___________________________________________________________________________

@@ -1,0 +1,70 @@
+David,
+
+    Hi, yeah I'm doing a SNES doc, amongst the million other things, and
+also an emulator, sometimes working with JT and sometimes also with Savoury
+Snax of "SNEeSe"...
+
+    Answers to a few of your questions on your page...
+
+1. Yeah sorry all the dox assume you know 65c816 ASM. Hmm, bummer there
+since there aren't a whole lot of good references on that any more, although
+Snax sent me a good explanation of all the opcodes, that might help you out!
+
+2. VRAM - JT or Snax would be better to explain this.
+
+3. Addressing modes... meaning what? LoROM vs. HiROM? I know most of this,
+please refine the question... 8-)
+
+4. Assemblers... ah. This is personal preference. I personally don't write
+code for the SNES, I am just trying to reverse engineer it enough to
+emulate!
+
+5. 65816emu.zip is Joshua Thompson's portable 65c816 emulator - yes it's in
+GCC, yes it works for the purposes of running his Apple IIgs emulator, but
+there's a whole lot in there that is gross, and it's not really all that
+helpful for writing a SNES emulator, since he doesn't do stack the same, and
+there are a bunch of opcodes that have been customized on the SNES's CPU.
+
+6. Ports are simply hardware mapped memory ranges. On the SNES, in banks
+0x00 to 0x39, memory ranges 0x2000-0x5fff are memory mapped ports...
+
+7. The SMC file format, when you take away the header, isn't much! It's just
+the whole rest of the ROM in binary... 8-) Most ROM images nowadays are
+either SMC or can be easily converted with UCON, so I just assume that all
+ROMs have a header and are in SMC, which is basically 512byteheader+Image
+
+8. I dunno about interleaving, I haven't seen an interleaved ROM yet, and
+wouldn't know how to read it if I did... 8-(
+
+9. Oh dear, maybe I should send you my
+not-entirely-correct-but-better-than-most SNES Memory Map Document... the
+basics are that everything over 0x7f (0x80-0xff) is MOSTLY a mirror image of
+everything lower, only it... RUNS FASTER. Like 3.86 Mhz instead of 2.86 Mhz.
+That's "fast rom" vs. "slow rom" explained. Umm, the rest of memory is
+tricky... I can explain in detail if you like... but not at midnight...
+maybe in the morning when I've had a cup o' coffee, ok? 8-)
+
+10. Yes, the SPC700 blows chunks, but isn't QUITE as hard as everybody makes
+out... it's just a beast to work into an emu (a normal one, don't get me
+started on mine, which is multitasking multithreaded Win32 native with
+Z-Buffering and shit) and the worst part is all its instructions are fed to
+it through 4 BYTES. Bleah.
+
+As far as your platform (x86) questions, I can't help you since I've been
+out of the DOS programming loop since 1993. I do Win95 and NT now, it's much
+nicer, more elegant, etc. And I could go on for hours, but anybody who says
+that DOS games and emulators run faster than Win95 ones hasn't seen the
+newest crop of games. I've gotten 50fps in S40 racer at 640x480... without a
+3D card... using my ET6000 and Directx5. Dos can go suck it, since VESA
+can't even break 25fps. Hmm... anyway I could rant for a long time about
+Win95 and how my emulator will rule, but it's nowhere near running so I
+don't feel justified in that... YET.
+
+OK, ask away - I'm happy to help since most of the "scene" is comprised of
+narrow-minded idiots who want to keep their "hard-earned secrets" to
+themselves. Grr...
+
+    - Jason G.
+
+P.S. I'll be much more friendly in the morning, I swear! Midnight arguments
+with your wife really suck.

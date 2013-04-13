@@ -1,0 +1,11 @@
+------------------
+SNES Graphics/MMIO
+------------------
+(Come on, word wrap it.)
+
+The SNES's graphics are what sets it apart from the "other" 16-bit systems.  With up to four different, overlapping screens (BGs) that can scroll independantly and have a total of 256 colors (not including the color add/subtract mode which allows up to 15 bits of color on-screen), the SNES is the most difficult thing to emulate and the most beautiful thing to make a 16-bit game on.
+
+Since all the documents on SNES graphics were absolutely horrible, I made an absolutely awesome document on SNES graphics once I figured it all out.  My document is in the MMIO&PPU\ directory, and is in HTML format with lots of links (to anchors) for your surfing pleasure. :)
+
+Register notes:
+$4210: bit 7 is whether a VBL period is in progress, rather than having anything to do with a NMI interrupt.  It can be reset by reading OR when the VBL ends, it is automatically reset.

@@ -1,0 +1,97 @@
+From:     lca@gnu.ai.mit.edu (.oO| Spaceman Spiff |Oo.)
+To:       "Super Famicom Development Group" <famidev@busop.cit.wayne.edu>
+Subject:  Re: Samples on de SNEZ
+Date:     Tue, 11 Jan 94 14:34:35 EST
+
+> 
+> 
+> A while back someone mentioned that the SPC700 chip was the same sound chip
+> as in the <****> computer (forget which one), and that they had made a
+> really simple disassembler for it.  If someone could point me towards any
+> docs (books) on the spc700, or possibly if it isn't too much trouble, the
+> intruction set of the spc700 I would appreciate it.... I'm not looking for
+> "programming the spc700 on the snes" Maybe just a <****> book with a chapter
+> on programming sound using the spc700.... I realize that no one person out
+> there knows how to do the music, sample formats, etc, but I think if we had
+> a spc700 disassembler that a couple of us so inclined could start to work
+> on the whole sound driver problem....
+> 
+>       thanks in advance....
+> 
+>                   -jeremy
+> 
+> 
+Welp music doesn't seem to be too bad. There is a really good musik ripper
+on rhe Amiga that rips music out of SMC or BIN formats. I forgett the name,
+since I don't have an Amiga :( .. oh well .. anyhoo here is some sample
+source for playing a .SPC on the spc700 in the snez .. it's pretty
+choppy but it's what I use.
+
+        REP     #$30    ; X,Y FIXED -> 16 BIT MODE
+        SEP     #$20    ; ACCUMULATOR ->  8 BIT MODE
+
+        LDA     #$00
+        JSL     $1C8000
+        LDA     #$01
+        JSL     $1C8000
+        LDA     #$17
+        LDY     #$0001
+        JSL     $1C8000
+        LDA     #$13
+        LDY     #$003F
+        JSL     $1C8000
+        LDY     #$0004  ;<- Here Change your favourite TECHNO MuZaK
+        JSL     $1C8000
+
+        ...
+        ...
+        ...
+
+                        ;<- Here Your Source!
+
+        ...
+        ...
+        ...
+
+
+        ORG     $1C8000
+
+MUSIC  .BIN     C:\SNEZ\DEMUZAK.SPC
+
+-=-=-=-=-=-=-=-=-=-=-=
+
+or you could do it this way
+
+-=-=-=-=-=-=-=-=-=-=-=
+
+        PHB
+        REP     #$30    ;A,X,Y 16 BIT
+        JSL     $1F8000
+        PLB
+
+        PHB
+        REP     #$30    ;A,X,Y 16 BIT
+
+        LDA     #$01    ;<- CHANGE MUSIC
+        JSL     $1F8004
+        LDA     #$C0
+        JSL     $1F8008
+        PLB
+
+        CLC
+        JSL     $1F8014 ;STOP MUSIC
+
+
+        ORG     $1B8000
+
+        .BIN    C:\SNEZ\DEMUZIK.SPC
+
+-=-=-=-=-=-=-=-=
+
+Anhyhoo .. that's the same shit but a little clearer. Now the only propblem
+with all this is you can't use your own musak .. 'cuz I don't know anyonwe
+who knows the format or even if a composer exists. But, my original
+post refered to samples and sound effects. 'cuz I don't knowe  ANYONE
+wjho knows who those work 100% .. oh well .. ttyl
+
+-=SPiFF=-

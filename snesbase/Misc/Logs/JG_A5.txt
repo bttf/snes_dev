@@ -1,0 +1,41 @@
+>Okay, now I KNOW you're screwing with my mind!  I send a mail to
+>DuncanThrax at odin@ccs.neu.edu... and get a response from your address,
+>with your name!  ah, now thats a trick.  Split personality? heh? What's
+>going on now, fess up.
+
+
+I have like 8 e-mail addresses and one PC. Not too tough, really. 8-) You
+could also e-mail alison_miller@hotmail.com if you wanted... 8-) Actually,
+no don't I'd probably throw your mail away along with all the other perverts
+who send sex-mail to female e-mail addresses at hotmail... 8-)
+
+I have different accounts for different purposes. School, work, logging onto
+chatrooms as a female to get people to be more helpful... (IT WORKS!) etc...
+
+>oh yeah, that should be really easy.  Especially on my 14.4 connection.
+
+Oh well... don't say I didn't offer... I can give you an IP...
+
+>Oh, no, no no! I meant, how does the GAME tell what kind of SNES it's
+>running on?
+
+Umm... last time I checked you just wrote it one way and expected the SNES
+to work... because an American SNES won't play euro-games... you'll get a
+funny message.
+
+>That's WEIRD!  You mean...wow, weird...
+
+Umm... yeah, they just dumped the ROM into a file.
+
+>This was where I was thinking the inefficiency was... plus it's a bit
+>hard to debug... (isn't it?) and you always have to be sure and remember
+>to put that mutex code in the right places...
+
+Not too hard to debug, once it's set up you get the OS to ensure exclusivity
+on the mutex variables, and then you just check, it's really only a couple
+of lines... and the memory read/write code is a bit gross anyway, plus it
+can be optimized later.
+
+>I hate being a programmer.
+
+No you don't. 8-)

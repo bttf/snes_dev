@@ -1,0 +1,1564 @@
+<html>
+<title>The Western Design Center</title>
+<body bgcolor="#FFFFFF" text="#000000" link="AAAAFF">
+<h2>A 6502 Programmer's Introduction to the 65816</h2>
+<h3>by Brett Tabke</h3>
+<p>After programming in 6502 language for over a decade, I was getting 
+a bit BORED.  One can only code the same routines with the same opcodes 
+so many times before the nausea of repetition becomes overpowering.  When 
+I heard the news that CMD was building a cartridge based on a 20 MHz 65816 
+I was overjoyed.  For years I've heard those with 65816 bases systems brag 
+about its capabilities.  To us old 6502 programmers, the opportunity to 
+program the fabled 65816 is a new lease on life.
+<p>The 65816 is an 8-/16-bit register selectable upgrade to the 6502 
+series processor.  With 24 bit addressing of up to 16 Megabytes of RAM, 
+the powerful 65816 is a logical upgrade that leaves 6502 programmers 
+feeling right at home.  It is amazing how fast one can adapt to the new 
+processor.  It sounds funny to say it, but the only difficulty I have had 
+learning the 65816 is that there are so many options and choices to 
+complete the same task, that it is hard to decide which method is best.
+<p>To get started programming the 65816, I would recommend purchasing the 
+book, "Programming the 65816" from The Western Design Center, 
+manufacturer of the 65816.  While it is a bit pricey, the sheer quality 
+and content of the 600 page book is worth the money.  Rarely, if ever, 
+has there been a CPU manual as thorough and detailed as the Western Design 
+book.  If you know 6502 assembly, then Programming the 65816 is probably 
+the only 65816 book you will ever need.
+<h4>Getting a Feel for the Modes</h4>
+ <p>The 65816 may be operated in Native mode or 6502 Emulation mode.  
+Emulation mode is a 100% 6502 compatible mode where the whole processor 
+looks and feels like a vintage 6502.  Native mode offers 8- or 16-bit 
+user registers and full access to 24-bit addressing.
+<p>While in emulation mode, not only are all the 6502 opcodes present in 
+their virgin form, but the new 65816 instructions are also available for 
+usage.  In fact, the first lesson to learn about programming the 65816 is 
+that emulation mode is much more powerful than a stock 6502.  The only 
+true difference between emulation mode and our venerable C64's 6510 
+processor is that unimplemented opcodes will not produce the results 
+expected on the former.  Since all 256 of the potential opcodes are now 
+implemented on the 65816, older C64 software that uses previously 
+unimplemented opcodes will produce erratic results.
+<p>To select between emulation and native modes, a new phantom hidden 
+emulation bit (E) was added to the status register.  Shown in programming 
+models hanging on top of the Carry bit, the emulation bit is only 
+accessible by one instruction.  The new instruction (XCE) exchanges the 
+status of the Carry bit and Emulation bit.  To move to emulation mode, 
+set the carry and issue an XCE instruction.  To move to native mode, 
+clear the carry and issue the XCE instruction.
+<h4>My, How Your Index Registers Have Grown!</h4>
+While in native mode there are two new directly accessible bits present 
+in the status register.  The 65816 implements new hardware interrupt 
+vectors which include a new hardware BRK vector in ROM; therefore, the 
+old BRK bit of the status register is no longer needed.  The BRK bit is 
+replaced with the X bit to select either 8- or 16-bit index registers.  
+The former empty bit 5 is now filled with the M bit to specify the 
+accumulator and memory access as 8- or 16-bit.  
+<p>Two new instructions are used to clear or set bits within the status 
+register.  The SEP instruction sets bits, and REP clears bits.  SEP and 
+REP use a one byte immediate addressing mode operand to specify which 
+bits are to be set or cleared.  For example, to set the X bit for 8 bit 
+user registers:
+
+<br><br>
+<table border=0>
+<tr><td> SEP #%00010000 <td> ; set bit 4 for 8-bit index
+<tr><td><td> ; registers.
+</table>
+<br><br>
+Or to clear bit 4:
+<table border=0>
+<tr><td>REP #%00010000 <td>; clear bit 4 for 16-bit index
+<tr><td><td> ; registers.
+</table>
+<br><br>
+<p>When in 8 bit mode, the index registers perform their function in 
+standard 6502 form.  When status bit X is set to 0, both the X and Y 
+index registers become 16 bits wide. With a 16-bit index register you can 
+now reach out to a full 64K with the  various indexed addressing modes.  
+An absolute load to an index register in 16-bit mode will retrieve 2 bytes 
+of memory-the one at the effective address and the one at the effective 
+address plus one.  Simple things like INX or DEY work on a full 16 bit, 
+which means you no longer have to specify a memory location for various 
+counters, and loops based on index counters can now be coded in a more 
+efficient manner.
+<P>The formerly empty status register bit 5 is now referred to as bit M.  
+M is used to specify an 8- or 16-bit wide acculmulator and memory 
+accesses.  When in 8 bit mode, (M=1), the high order 8 bits are still 
+accessible by exchanging the low and high bytes with a XBA instruction-it 
+is like having two acculmulators!  However; when set for a full 16-bit 
+wide accumulator, all math and accumulator oriented logical intructions 
+operate on all 16 bits!  If you add up the clock cycles and bytes 
+required to perform a standard two byte addition, you can start to see 
+the true power of 16-bit registers.
+<h4>More Register Improvements</h4>
+<p>Zero Page has now been renamed to Direct Page-corporate thinking, go 
+figure.  A new processor register D was added to allow Direct Page to be
+moved anywhere within the first 64K of memory.  The direct page register 
+is 16 bits wide, so you can now specify the start of direct page at any 
+byte.  Several old instructions now include direct page addressing as 
+well.  To move direct page, just push the new value onto the stack (16 
+bits) and then PLD to pull it into the direct page register.  You may 
+also transfer the value from the 16-bit accumulator to the direct page 
+register with the TCD instruction.  Direct page may also be moved while 
+in emulation mode.
+<p>While in native mode, the stack pointer is a full 16 bits wide, which
+means the stack is no longer limited to just 256 bytes.  It can be moved 
+anywhere within the first 64K of memory (although while in emulation 
+mode, the stack is located at page one).  There are several new 
+addressing modes that can use the stack pointer as a quasi-index register 
+to access memory.  Numerous new push and pull instructions allow you to 
+manipulate the stack.  A few of the more useful stack intructions useful 
+to programmers, are the new instructions to push & pull index registers 
+with PHX/PHY and PLX/PLY.
+<p>Two other new processors registers are the Program Bank Register (PBR) 
+and the Data Bank Register (DBR).  The Program Bank Register can be 
+thought of as extending the program counter out to 24 bits.  Although you 
+can JSR and JMP to routines located in other RAM banks, individual 
+routines on the 65816 still must run within a single bank of 64K-there's 
+no automatic rollover from one bank of RAM to the next when executing 
+successive instructions.  In this sense, it may help to think of the 
+65816 processor as a marriage of Commodore's C128 Memory Management Unit 
+(MMU) and an 'enhanced' 6502-a very similar concept.
+<p>The Data Bank Register is used to reach out to any address within the 
+16 megabyte address space of the 65816.  When any of the addressing modes 
+that specify a 16-bit address are used, the Data Bank byte is appended to 
+the instruction address.  This allows access to all 16 megabytes without 
+having to resort to 24-bit addressing instruction, and helps enable code 
+that can operate from any bank.
+<h4>New Addressing Modes</h4>
+There are new addressing modes on the 65816.  Several new instructions 
+are designed to help relocatable code that can execute at any address.  
+The use of relocatable code on the 6502 was extremely limited.  With 16 
+megabytes of address space, writing relocatable code increases the 
+overall utility of the program.  To write relocatable code, several new 
+instructions use Program Counter Relative Long addressing.  This allows 
+relative branching within a 64K bank of RAM.  There's also Stack Relative 
+addressing, and a push instruction to place the program counter onto the 
+stack, so that a code fragment can pull it back off and can instantly 
+know its execution address.
+<p>Another new feature are two Block Move instructions, one for forward 
+MVP and one for backward MVN.  Simply load the 16-bit X register with the 
+starting address, the Y index register with the ending address, the 
+accumulator with the number of bytes to move, and issue the MVP or MVN 
+instructions.  MVN is for move negative, and MVP is for move positive, so 
+that your moves don't overwrite themselves.  Block Moves use two operand 
+bytes: one for the source bank of 64K and one for the destination bank.  
+Memory is moved at the rate of seven clock cycles per byte.
+<p>Several new addressing modes are used to access the full address 
+space.  A 65816 assembler would decode "long" addressing given this input:
+<br>
+<br>
+<table border=0>
+<tr><td>LDA $0445F2<td>; load byte from $45F2 of RAM
+<tr><td><td>; bank 4
+</table>
+<table border=0>
+<tr><td>LDA $03412F,x<td>; load byte from $412F of bank 3
+<tr><td><td>; plus x.
+</table>
+<br>
+Quite a few instructions have been given new addressing modes.  How many 
+times have you wanted to do this:
+<br><table border=0>
+<tr><td>LDA ($12)<td>; load indirect without an
+<tr><td><td>; offset.
+</table>
+<br><br>
+Or how about a table of routine addresses:
+<br><table border=0>
+<tr><td>JSR ($1234,x) <td> ; jump to a subroutine via
+<tr><td><td> ; indexed indirect addressing!
+</table>
+<br><br>
+Other fun new instructions:
+<br>
+<table border=0>
+<tr><td>TXY,TYX <td>Transfer directly between index registers
+<tr><td>BRA<td>Branch always regardless of status bits
+<tr><td>TSB<td>Test and set any bit of a byte
+<tr><td>TRB<td>Test and reset (clear) any bit of a byte
+<tr><td>INC A/DEC A<td>Increment or decrement the accumulator directly
+<tr><td>STZ<td>Store a zero to any byte
+</table>
+<h4>Summing Up</h4>
+As you can see, the 65816 opens up a whole new world of programming-it 
+feels like a new lease on life.  Of course, it's going to take some time 
+to learn the new processor.  But while the 20 MHz speed is a nice perk, I 
+believe that the real power of CMD's new peripheral is indeed the engine 
+under its hood: the 65816-a <i>super</i> CPU!
+<br><br>
+<center>
+<img src="./gfx/native.gif">
+<br>
+<img src="./gfx/nativeb.gif">
+<br>
+<font size=3><strong>Native Mode Options</strong></font></center>
+<br><font size=1>While in Native Mode, the m flag controls the size of 
+Accumulator A and most Memory Operations, while the x flag controls the 
+size of the X and Y Index Registers.  This provides 4 different 
+configuration possibilities, as charted below.  The REP and SEP 
+instructions are used in combination to swith configurations.
+<br>
+<center>
+<table border=0>
+<tr><th><font size=1>m</font><th><font 
+size=1>x</font><th><font size=1>A/M</font><th><font 
+size=1>X/Y</font><th><font size=1>Instructions</font> 
+<tr><th><font size=1>0</font><th><font 
+size=1>0</font><th><font size=1>15-bit</font><th><font 
+size=1>16-bit</font><th><font size=1>REP #$30</font> 
+<tr><th><font size=1>0</font><th><font 
+size=1>1</font><th><font size=1>16-bit</font><th><font 
+size=1>8-bit</font><th><font size=1>REP #$20</font> 
+<tr><th><th><th><th><th><font size=1>SEP 
+#$10</font>
+ <tr><th><font size=1>1</font><th><font 
+size=1>0</font><th><font size=1>8-bit</font><th><font 
+size=1>16-bit</font><th><font size=1>REP #$10</font> 
+<tr><th><th><th><th><th><font size=1>SEP 
+#$20</font> <tr><th><font size=1>1</font><th><font 
+size=1>1</font><th><font size=1>8-bit</font><th><font 
+size=1>8-bit</font><th><font size=1>SEP #$30</font> </table> </center>
+<br>It is important to note that the m flag will control the size of all 
+operations dealing with memory except in operations involving the X and Y 
+Index Registers (CPX, CPY, LDX, LDY, STX and STY) when the x flag 
+controls the size.
+<br><br>
+ <center> 
+<img src="./gfx/65816T.gif"> <br> <img src="./gfx/65816B.gif"><br>
+<font size=3><strong>Emulation Notes</strong></font></center>
+<br>
+<font size=1>While in Emulation Mode, Accumulator A is forced
+to 8-bit mode.  You can, however, access the
+upper 8 bits with instructions that specify
+Accumulator B, and all 16 bits at once
+with instructions that specify Accumulator C.  The X
+and Y Index Registers are also forced to 8-bit
+mode, with no means available to access the
+upper 8 bits.  To further assist in compatibility, the
+Stack is forced to Page 1 of Bank 0.  The Direct
+page Register (D) is fully functional in this mode,
+allowing direct page to be placed anywhere in
+Bank 0.  Likewise, the Program Bank Register
+(PBR) and Data Bank Register (DBR) are also 
+fully functional.  While it would seem that these
+latter items would allow programs to operate from
+any bank in Emulation mode, there are some
+caveats; interrups will force the program bank to
+zero without saving the PBR first, and RTI won't
+attempt to restore the bank.  Therefore, Native
+mode would be recommended to execute
+programs in other banks.
+<br>
+</center>
+
+<br>
+
+<center><h3>Guide to 6502/65C02/65816 
+Instructions</h3> |<a href="#a"> a </a>|
+|<a href="#b"> b </a>|
+|<a href="#c"> c </a>|
+|<a href="#d"> d </a>|
+|<a href="#e"> e </a>|
+|<a href="#i"> i </a>|
+|<a href="#j"> j </a>|
+|<a href="#l"> l </a>|
+|<a href="#m"> m </a>|
+|<a href="#n"> n </a>|
+|<a href="#o"> o </a>|
+|<a href="#p"> p </a>|
+|<a href="#r"> r </a>|
+|<a href="#s"> s </a>|
+|<a href="#t"> t </a>|
+|<a href="#w"> w </a>|
+|<a href="#x"> x </a>|
+</center>
+<br>
+<table border>
+<tr><th width=30%>Assembler Example<th>HEX<th width="45%">Addressing 
+Mode<th>02<th>C02<th>816<th>Bytes<th>Cycles
+<tr><td colspan="8">
+<a name="a">
+<b>ADC</b>  <i>Add With Carry</i> [Flags affected: 
+n,v,z,c]
+
+<tr><td><dd>ADC (<i>dp</i>,X)<td align=center>61<td>DP Indexed 
+Indirect,X<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2,4</sup></font>
+<tr><td><dd>ADC <i>sr</i>,S<td align=center>63<td>Stack Relative 
+<td align=center><td align=center><td align=center>x<td 
+align=center>2<td>4<sup><font 
+size=1>1,4</sup></font> 
+<tr><td><dd>ADC <i>dp</i><td align=center>65<td>Direct Page
+<td align=center>x<td align=center>x<td align=center>x<td 
+align=center>2<td>3<sup><font size=1>1,2,4</sup></font>
+
+<tr><td><dd>ADC [<i>dp</i>]<td align=center>67<td>DP Indirect Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2,4</sup></font>
+<tr><td><dd>ADC <i>#const</i><td align=center>69<td>Immediate<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<sup><font 
+size=1>17</sup></font><td>2<sup><font size=1>1,4</sup></font>
+<tr><td><dd>ADC <i>addr</i><td align=center>6D<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,4</sup></font>
+<tr><td><dd>ADC <i>long</i><td align=center>6F<td>Absolute Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>4<td>5<sup><font 
+size=1>1,4</sup></font>
+<tr><td><dd>ADC ( <i>dp</i>),Y<td align=center>71<td>DP Indirect Indexed, 
+Y<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>1,2,3,4</sup></font>
+<tr><td><dd>ADC (<i>dp</i>)<td align=center>72<td>DP Indirect<td 
+align=center><td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>1,2,4</sup></font>
+<tr><td><dd>ADC (<i>sr</i>,S),Y<td align=center>73<td>SR Indirect 
+Indexed,Y<td align=center><td 
+align=center><td align=center>x<td align=center>2<td>7<sup><font 
+size=1>1,4</sup></font>
+<tr><td><dd>ADC <i>dp</i>,X<td align=center>75<td>DP Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>4<sup><font 
+size=1>1,2,4</sup></font>
+<tr><td><dd>ADC [<i>dp</i>],Y<td align=center>77<td>DP Indirect Long 
+Indexed, Y<td align=center><td 
+align=center><td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2,4</sup></font>
+<tr><td><dd>ADC <i>addr</i>,Y<td align=center>79<td>Absolute Indexed,Y<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,3,4</sup></font>
+<tr><td><dd>ADC <i>addr</i>,X<td align=center>7D<td>Absolute Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,3,4</sup></font>
+<tr><td><dd>ADC  <i>long</i>,X<td align=center>7F<td>Absolute Long 
+Indexed,X<td align=center><td 
+align=center><td align=center>x<td align=center>4<td>5<sup><font 
+size=1>1,4</sup></font>
+
+
+
+<tr><td colspan="8"><b>AND</b> <i>AND Accumulator With Memory</i> [Flags 
+affected: n,z]
+<tr><td><dd>AND (<i>dp,</i>X)<td align=center>21<td>DP Indexed 
+Indirect,X<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<td>6<sup><font size=1>1,2</sup></font> 
+
+<tr><td><dd>AND <i>sr,S</i><td align=center>23<td>Stack Relative 
+<td align=center><td align=center><td align=center>x<td 
+align=center>2<td>4<sup><font 
+size=1>1</sup></font> 
+<tr><td><dd>AND <i>dp</i><td align=center>25<td>Direct Page
+<td align=center>x<td align=center>x<td align=center>x<td 
+align=center>2<td>3<sup><font size=1>1,2</sup></font>
+
+<tr><td><dd>AND [<i>dp</i>]<td align=center>27<td>DP Indirect Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>AND <i>#const</i><td align=center>29<td>Immediate<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<sup><font 
+size=1>17</sup></font><td>2<sup><font size=1>1</sup></font>
+<tr><td><dd>AND <i>addr</i><td align=center>2D<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>AND <i>long</i><td align=center>2F<td>Absolute Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>4<td>5<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>AND (<i>dp</i>),Y<td align=center>31<td>DP Indirect Indexed, 
+Y<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>1,2,3</sup></font>
+<tr><td><dd>AND (<i>dp</i>)<td align=center>32<td>DP Indirect<td 
+align=center><td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>AND (<i>sr</i>,S),Y<td align=center>33<td>SR Indirect 
+Indexed,Y<td align=center><td 
+align=center><td align=center>x<td align=center>2<td>7<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>AND <i>dp</i>,X<td align=center>35<td>DP Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>4<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>AND [<i>dp</i>],Y<td align=center>37<td>DP Indirect Long 
+Indexed, Y<td align=center><td 
+align=center><td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>AND <i>addr</i>,Y<td align=center>39<td>Absolute Indexed,Y<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,3</sup></font>
+<tr><td><dd>AND <i>addr</i>,X<td align=center>3D<td>Absolute Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,3</sup></font>
+<tr><td><dd>AND  <i>long</i>,X<td align=center>3F<td>Absolute Long 
+Indexed,X<td align=center><td 
+align=center><td align=center>x<td align=center>4<td>5<sup><font 
+size=1>1</sup></font>
+
+<tr><td colspan="8"><b>ASL</b> <i>Accumulator or Memory Shift Left</i> 
+[Flags affected: n,z,c]
+
+<tr><td><dd>ASL <i>dp</i><td align=center>06<td>Direct Page<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>2,5</sup></font>
+<tr><td><dd>ASL A <i></i><td align=center>0A<td>Accumulator<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>1<td>2<sup><font 
+size=1></sup></font>
+<tr><td><dd>ASL <i>addr</i><td align=center>0E<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>6<sup><font 
+size=1>5</sup></font>
+<tr><td><dd>ASL <i>dp</i>,X<td align=center>16<td>DP Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>6<sup><font 
+size=1>2,5</sup></font>
+<tr><td><dd>ASL <i>addr</i>,X<td align=center>1E<td>Absolute Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>7<sup><font 
+size=1>5,6</sup></font>
+
+
+<tr><td colspan="8">
+<a name="b">
+<b>BCC</b> <i>Branch if Carry Clear</i> 
+[Flags affected: none][Alias: BLT]
+
+<tr><td><dd>BCC <i>nearlabel</i><td align=center>90<td>Program Counter 
+Relative<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>2<sup><font 
+size=1>7,8</sup></font>
+<tr><td colspan="8"><b>BCS</b> <i>Branch if Carry Set</i> 
+[Flags affected: none][Alias: BGE]
+
+<tr><td><dd>BCS <i>nearlabel</i><td align=center>B0<td>Program Counter 
+Relative<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>2<sup><font 
+size=1>7,8</sup></font>
+<tr><td colspan="8"><b>BEQ</b> <i>Branch if Equal</i> 
+[Flags affected: none]
+
+<tr><td><dd>BEQ <i>nearlabel</i><td align=center>F0<td>Program Counter 
+Relative<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>2<sup><font 
+size=1>7,8</sup></font>
+
+<tr><td colspan="8"><b>BIT</b> <i>Test Bits</i> 
+[Flags affected: z (immediate mode) n,v,z (non-immediate modes)]
+
+<tr><td><dd>BIT <i>dp</i><td align=center>24<td>Direct Page<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>3<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>BIT <i>addr</i><td align=center>2C<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>BIT <i>dp</i>,X<td align=center>34<td>DP Indexed,X<td 
+align=center><td 
+align=center>x<td align=center>x<td align=center>2<td>4<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>BIT <i>addr</i>,X<td align=center>3C<td>Absolute Indexed,X<td 
+align=center><td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,3</sup></font>
+<tr><td><dd>BIT <i>#const</i><td align=center>89<td>Immediate<td 
+align=center><td 
+align=center>x<td align=center>x<td align=center>2<sup><font 
+size=1>17</sup></font><td>2<sup><font size=1>1</sup></font>
+
+<tr><td colspan="8"><b>BMI</b> <i>Branch if Minus</i> 
+[Flags affected: none]
+
+<tr><td><dd>BMI <i>nearlabel</i><td align=center>30<td>Program Counter 
+Relative<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>2<sup><font 
+size=1>7,8</sup></font>
+<tr><td colspan="8"><b>BNE</b> <i>Branch if Not Equal</i> 
+[Flags affected: none]
+
+<tr><td><dd>BNE <i>nearlabel</i><td align=center>D0<td>Program Counter 
+Relative<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>2<sup><font 
+size=1>7,8</sup></font>
+<tr><td colspan="8"><b>BPL</b> <i>Branch if Plus</i> 
+[Flags affected: none]
+
+<tr><td><dd>BPL <i>nearlabel</i><td align=center>10<td>Program Counter 
+Relative<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>2<sup><font 
+size=1>7,8</sup></font>
+<tr><td colspan="8"><b>BRA</b> <i>Branch Always</i> 
+[Flags affected: none]
+
+<tr><td><dd>BRA <i>nearlabel</i><td align=center>80<td>Program Counter 
+Relative<td align=center><td 
+align=center>x<td align=center>x<td align=center>2<td>3<sup><font 
+size=1>8</sup></font>
+<tr><td colspan="8"><b>BRK</b> <i>Break</i> 
+[Flags affected: b,i (6502) b,d,i (65C02/65816 Emulation) d,i (65816 Native)]
+
+<tr><td><dd>BRK <i></i><td align=center>00<td>Stack/Interrupt 
+<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2
+<sup><font size=1>18</sup></font>
+<td>7<sup><font size=1>9</sup></font>
+
+<tr><td colspan="8"><b>BRL</b> <i>Branch Long Always</i> 
+[Flags affected: none]
+
+<tr><td><dd>BRL <i>label</i><td align=center>82<td>Program Counter 
+Relative Long<td align=center><td 
+align=center><td align=center>x<td align=center>3<td>4<sup><font 
+size=1></sup></font>
+
+<tr><td colspan="8"><b>BVC</b> <i>Branch if Overflow Clear</i> 
+[Flags affected: none]
+
+<tr><td><dd>BVC <i>nearlabel</i><td align=center>50<td>Program Counter 
+Relative<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>2<sup><font 
+size=1>7,8</sup></font>
+<tr><td colspan="8"><b>BVS</b> <i>Branch if Overflow Set</i> 
+[Flags affected: none]
+
+<tr><td><dd>BVS <i>nearlabel</i><td align=center>70<td>Program Counter 
+Relative<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>2<sup><font 
+size=1>7,8</sup></font>
+
+<tr><td colspan="8"><a name="c">
+<b>CLC</b> <i>Clear Carry</i> 
+[Flags affected: c]
+<tr><td><dd>CLC <i></i><td align=center>18<td>Implied <td align=center>x<td 
+align=center>x<td align=center>x<td align=center>1<td>2<sup><font 
+size=1></sup></font>
+<tr><td colspan="8"><b>CLD</b> <i>Clear Decimal Mode Flag</i> 
+[Flags affected: d]
+<tr><td><dd>CLD <i></i><td align=center>D8<td>Implied <td align=center>x<td 
+align=center>x<td align=center>x<td align=center>1<td>2<sup><font 
+size=1></sup></font>
+<tr><td colspan="8"><b>CLI</b> <i>Clear Interrupt Disable Flag</i> 
+[Flags affected: i]
+<tr><td><dd>CLI <i></i><td align=center>58<td>Implied <td align=center>x<td 
+align=center>x<td align=center>x<td align=center>1<td>2<sup><font 
+size=1></sup></font>
+<tr><td colspan="8"><b>CLV</b> <i>Clear Overflow Flag</i> 
+[Flags affected: v]
+<tr><td><dd>CLV <i></i><td align=center>B8<td>Implied <td align=center>x<td 
+align=center>x<td align=center>x<td align=center>1<td>2<sup><font 
+size=1></sup></font>
+
+<tr><td colspan="8"><b>CMP</b> <i>Compare Accumulator With Memory</i> 
+[Flags affected: n,z,c]
+<tr><td><dd>CMP (<i>dp,</i>X)<td align=center>C1<td>DP Indexed 
+Indirect,X<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<td>6<sup><font size=1>1,2</sup></font> 
+
+<tr><td><dd>CMP <i>sr</i>,S<td align=center>C3<td>Stack Relative 
+<td align=center><td align=center><td align=center>x<td 
+align=center>2<td>4<sup><font 
+size=1>1</sup></font> 
+<tr><td><dd>CMP <i>dp</i><td align=center>C5<td>Direct Page
+<td align=center>x<td align=center>x<td align=center>x<td 
+align=center>2<td>3<sup><font size=1>1,2</sup></font>
+
+<tr><td><dd>CMP [<i>dp</i>]<td align=center>C7<td>DP Indirect Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>CMP <i>#const</i><td align=center>C9<td>Immediate<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<sup><font 
+size=1>17</sup></font><td>2<sup><font size=1>1</sup></font>
+<tr><td><dd>CMP <i>addr</i><td align=center>CD<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>CMP <i>long</i><td align=center>CF<td>Absolute Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>4<td>5<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>CMP (<i>dp</i>),Y<td align=center>D1<td>DP Indirect Indexed, 
+Y<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>1,2,3</sup></font>
+<tr><td><dd>CMP (<i>dp</i>)<td align=center>D2<td>DP Indirect<td 
+align=center><td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>CMP (<i>sr</i>,S),Y<td align=center>D3<td>SR Indirect 
+Indexed,Y<td align=center><td 
+align=center><td align=center>x<td align=center>2<td>7<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>CMP <i>dp</i>,X<td align=center>D5<td>DP Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>4<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>CMP [<i>dp</i>],Y<td align=center>D7<td>DP Indirect Long 
+Indexed, Y<td align=center><td 
+align=center><td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>CMP <i>addr</i>,Y<td align=center>D9<td>Absolute Indexed,Y<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,3</sup></font>
+<tr><td><dd>CMP <i>addr</i>,X<td align=center>DD<td>Absolute Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,3</sup></font>
+<tr><td><dd>CMP  <i>long</i>,X<td align=center>DF<td>Absolute Long 
+Indexed,X<td align=center><td 
+align=center><td align=center>x<td align=center>4<td>5<sup><font 
+size=1>1</sup></font>
+
+<tr><td colspan="8"><b>COP</b> <i>Co-Processor Enable</i> 
+[Flags affected: d,i]
+<tr><td><dd>COP <i>const</i><td align=center>02<td>Stack/Interrupt
+<td align=center><td align=center><td 
+align=center>x<td align=center>2<sup><font size=1>18</sup></font> 
+<td>7<sup><font size=1>9</sup></font> 
+
+<tr><td colspan="8"><b>CPX</b> <i>Compare Index Register X with Memory</i> 
+[Flags affected: n,z,c]
+<tr><td><dd>CPX <i>#const</i><td align=center>E0<td>Immediate
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<sup><font size=1>19</sup></font> 
+<td>2<sup><font size=1>10</sup></font> 
+<tr><td><dd>CPX <i>dp</i><td align=center>E4<td>Direct Page
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<sup><font size=1></sup></font> 
+<td>3<sup><font size=1>2,10</sup></font> 
+<tr><td><dd>CPX <i>addr</i><td align=center>EC<td>Absolute
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>3<sup><font size=1></sup></font> 
+<td>4<sup><font size=1>10</sup></font> 
+
+<tr><td colspan="8"><b>CPY</b> <i>Compare Index Register Y with Memory</i> 
+[Flags affected: n,z,c]
+<tr><td><dd>CPY <i>#const</i><td align=center>C0<td>Immediate
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<sup><font size=1>19</sup></font> 
+<td>2<sup><font size=1>10</sup></font> 
+<tr><td><dd>CPY <i>dp</i><td align=center>C4<td>Direct Page
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<sup><font size=1></sup></font> 
+<td>3<sup><font size=1>2,10</sup></font> 
+<tr><td><dd>CPY <i>addr</i><td align=center>CC<td>Absolute
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>3<sup><font size=1></sup></font> 
+<td>4<sup><font size=1>10</sup></font> 
+
+<tr><td colspan="8"><a name="d">
+<b>DEC</b> <i>Decrement</i> 
+[Flags affected: n,z]
+<tr><td><dd>DEC A<i></i><td align=center>3A<td>Accumulator
+<td align=center><td align=center>x<td 
+align=center>x<td align=center>1<sup><font size=1></sup></font> 
+<td>2<sup><font size=1></sup></font> 
+<tr><td><dd>DEC <i>dp</i><td align=center>C6<td>Direct Page
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<sup><font size=1></sup></font> 
+<td>5<sup><font size=1>2,5</sup></font> 
+<tr><td><dd>DEC <i>addr</i><td align=center>CE<td>Absolute
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>3<sup><font size=1></sup></font> 
+<td>6<sup><font size=1>5</sup></font> 
+
+<tr><td><dd>DEC <i>dp</i>,X<td align=center>D6<td>DP Indexed,X
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<sup><font size=1></sup></font> 
+<td>6<sup><font size=1>2,5</sup></font> 
+<tr><td><dd>DEC <i>addr</i>,X<td align=center>DE<td>Absolute Indexed,X
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>3<sup><font size=1></sup></font> 
+<td>7<sup><font size=1>5,6</sup></font> 
+
+<tr><td colspan="8"><b>DEX</b> <i>Decrement Index Register X</i> 
+[Flags affected: n,z]
+<tr><td><dd>DEX <i></i><td align=center>CA<td>Implied
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<sup><font size=1></sup></font> 
+<td>2<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>DEY</b> <i>Decrement Index Register Y</i> 
+[Flags affected: n,z]
+<tr><td><dd>DEY <i></i><td align=center>88<td>Implied
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<sup><font size=1></sup></font> 
+<td>2<sup><font size=1></sup></font> 
+
+<tr><td colspan="8"><a name="e">
+<b>EOR</b> <i>Exclusive-OR Accumulator with Memory</i> 
+[Flags affected: n,z]
+<tr><td><dd>EOR (<i>dp,</i>X)<td align=center>41<td>DP Indexed 
+Indirect,X<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<td>6<sup><font size=1>1,2</sup></font> 
+
+<tr><td><dd>EOR <i>sr</i>,S<td align=center>43<td>Stack Relative 
+<td align=center><td align=center><td align=center>x<td 
+align=center>2<td>4<sup><font 
+size=1>1</sup></font> 
+<tr><td><dd>EOR <i>dp</i><td align=center>45<td>Direct Page
+<td align=center>x<td align=center>x<td align=center>x<td 
+align=center>2<td>3<sup><font size=1>1,2</sup></font>
+
+<tr><td><dd>EOR [<i>dp</i>]<td align=center>47<td>DP Indirect Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>EOR <i>#const</i><td align=center>49<td>Immediate<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<sup><font 
+size=1>17</sup></font><td>2<sup><font size=1>1</sup></font>
+<tr><td><dd>EOR <i>addr</i><td align=center>4D<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>EOR <i>long</i><td align=center>4F<td>Absolute Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>4<td>5<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>EOR (<i>dp</i>),Y<td align=center>51<td>DP Indirect Indexed, 
+Y<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>1,2,3</sup></font>
+<tr><td><dd>EOR (<i>dp</i>)<td align=center>52<td>DP Indirect<td 
+align=center><td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>EOR (<i>sr</i>,S),Y<td align=center>53<td>SR Indirect 
+Indexed,Y<td align=center><td 
+align=center><td align=center>x<td align=center>2<td>7<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>EOR <i>dp</i>,X<td align=center>55<td>DP Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>4<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>EOR [<i>dp</i>],Y<td align=center>57<td>DP Indirect Long 
+Indexed, Y<td align=center><td 
+align=center><td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>EOR <i>addr</i>,Y<td align=center>59<td>Absolute Indexed,Y<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,3</sup></font>
+<tr><td><dd>EOR <i>addr</i>,X<td align=center>5D<td>Absolute Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,3</sup></font>
+<tr><td><dd>EOR  <i>long</i>,X<td align=center>5F<td>Absolute Long 
+Indexed,X<td align=center><td 
+align=center><td align=center>x<td align=center>4<td>5<sup><font 
+size=1>1</sup></font>
+
+<tr><td colspan="8"><a name="i">
+<b>INC</b> <i>Increment</i> 
+[Flags affected: n,z]
+<tr><td><dd>INC A <i></i><td align=center>1A<td>Accumulator<td 
+align=center><td 
+align=center>x<td align=center>x<td align=center>1<td>2<sup><font 
+size=1></sup></font>
+<tr><td><dd>INC <i>dp</i><td align=center>E6<td>Direct Page<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>2,5</sup></font>
+<tr><td><dd>INC <i>addr</i><td align=center>EE<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>6<sup><font 
+size=1>5</sup></font>
+<tr><td><dd>INC <i>dp</i>,X<td align=center>F6<td>DP Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>6<sup><font 
+size=1>2,5</sup></font>
+<tr><td><dd>INC <i>addr</i>,X<td align=center>FE<td>Absolute Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>7<sup><font 
+size=1>5,6</sup></font>
+
+<tr><td colspan="8"><b>INX</b> <i>Increment Index Register X</i> 
+[Flags affected: n,z]
+<tr><td><dd>INX<i></i><td align=center>E8<td>Implied<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>1<td>2<sup><font 
+size=1></sup></font>
+<tr><td colspan="8"><b>INY</b> <i>Increment Index Register Y</i> 
+[Flags affected: n,z]
+<tr><td><dd>INY <i></i><td align=center>C8<td>Implied<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>1<td>2<sup><font 
+size=1></sup></font>
+
+<tr><td colspan="8"><a name="j">
+<b>JMP</b> <i>Jump</i> 
+[Flags affected: none][Alias: JML for all Long addressing modes]
+<tr><td><dd>JMP <i>addr</i><td align=center>4C<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>3<sup><font 
+size=1></sup></font>
+<tr><td><dd>JMP <i>long</i><td align=center>5C<td>Absolute Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>4<td>4<sup><font 
+size=1></sup></font>
+<tr><td><dd>JMP (<i>addr</i>)<td align=center>6C<td>Absolute Indirect<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>5<sup><font 
+size=1>11,12</sup></font>
+<tr><td><dd>JMP (<i>addr,X</i>)<td align=center>7C<td>Absolute Indexed 
+Indirect<td align=center><td 
+align=center>x<td align=center>x<td align=center>3<td>6<sup><font 
+size=1></sup></font>
+<tr><td><dd>JMP <i>[addr]</i><td align=center>DC<td>Absolute Indirect 
+Long<td align=center><td 
+align=center><td align=center>x<td align=center>3<td>6<sup><font 
+size=1></sup></font>
+
+<tr><td colspan="8"><b>JSR</b> <i>Jump to Subroutine</i> 
+[Flags affected: none][Alias: JSL for Absolute Long]
+<tr><td><dd>JSR <i>addr</i><td align=center>20<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>6<sup><font 
+size=1></sup></font>
+<tr><td><dd>JSR <i>long</i><td align=center>22<td>Absolute Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>4<td>8<sup><font 
+size=1></sup></font>
+<tr><td><dd>JSR <i>(addr,X)</i>)<td align=center>FC<td>Absolute 
+Indexed Indirect<td align=center><td 
+align=center><td align=center>x<td align=center>3<td>8<sup><font 
+size=1></sup></font>
+
+<tr><td colspan="8"><a name="l">
+<b>LDA</b> <i>Load Accumulator from Memory</i> 
+[Flags affected: n,z]
+<tr><td><dd>LDA (<i>dp,</i>X)<td align=center>A1<td>DP Indexed 
+Indirect,X<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<td>6<sup><font size=1>1,2</sup></font> 
+
+<tr><td><dd>LDA <i>sr,S</i><td align=center>A3<td>Stack Relative 
+<td align=center><td align=center><td align=center>x<td 
+align=center>2<td>4<sup><font 
+size=1>1</sup></font> 
+<tr><td><dd>LDA <i>dp</i><td align=center>A5<td>Direct Page
+<td align=center>x<td align=center>x<td align=center>x<td 
+align=center>2<td>3<sup><font size=1>1,2</sup></font>
+
+<tr><td><dd>LDA [<i>dp</i>]<td align=center>A7<td>DP Indirect Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>LDA <i>#const</i><td align=center>A9<td>Immediate<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<sup><font 
+size=1>17</sup></font><td>2<sup><font size=1>1</sup></font>
+<tr><td><dd>LDA <i>addr</i><td align=center>AD<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>LDA <i>long</i><td align=center>AF<td>Absolute Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>4<td>5<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>LDA (<i>dp</i>),Y<td align=center>B1<td>DP Indirect Indexed, 
+Y<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>1,2,3</sup></font>
+<tr><td><dd>LDA (<i>dp</i>)<td align=center>B2<td>DP Indirect<td 
+align=center><td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>LDA (<i>sr</i>,S),Y<td align=center>B3<td>SR Indirect 
+Indexed,Y<td align=center><td 
+align=center><td align=center>x<td align=center>2<td>7<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>LDA <i>dp</i>,X<td align=center>B5<td>DP Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>4<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>LDA [<i>dp</i>],Y<td align=center>B7<td>DP Indirect Long 
+Indexed, Y<td align=center><td 
+align=center><td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>LDA <i>addr</i>,Y<td align=center>B9<td>Absolute Indexed,Y<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,3</sup></font>
+<tr><td><dd>LDA <i>addr</i>,X<td align=center>BD<td>Absolute Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,3</sup></font>
+<tr><td><dd>LDA  <i>long</i>,X<td align=center>BF<td>Absolute Long 
+Indexed,X<td align=center><td 
+align=center><td align=center>x<td align=center>4<td>5<sup><font 
+size=1>1</sup></font>
+
+<tr><td colspan="8"><b>LDX</b> <i>Load Index Register X from Memory</i> 
+[Flags affected: n,z]
+<tr><td><dd>LDX <i>#const</i><td align=center>A2<td>Immediate<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2
+<sup>19<font size=1></sup></font>
+<td>2<sup><font size=1>10</sup></font>
+<tr><td><dd>LDX <i>dp</i><td align=center>A6<td>Direct Page<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>3<sup><font 
+size=1>2,10</sup></font>
+<tr><td><dd>LDX <i>addr</i><td align=center>AE<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>10</sup></font>
+<tr><td><dd>LDX <i>dp</i>,Y<td align=center>B6<td>DP Indexed,Y<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>4<sup><font 
+size=1>2,10</sup></font>
+<tr><td><dd>LDX <i>addr</i>,Y<td align=center>BE<td>Absolute Indexed,Y<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>3,10</sup></font>
+
+<tr><td colspan="8"><b>LDY</b> <i>Load Index Register Y from Memory</i> 
+[Flags affected: n,z]
+<tr><td><dd>LDY <i>#const</i><td align=center>A0<td>Immediate<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2
+<sup>19<font size=1></sup></font>
+<td>2<sup><font size=1>10</sup></font>
+<tr><td><dd>LDY <i>dp</i><td align=center>A4<td>Direct Page<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>3<sup><font 
+size=1>2,10</sup></font>
+<tr><td><dd>LDY <i>addr</i><td align=center>AC<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>10</sup></font>
+<tr><td><dd>LDY <i>dp</i>,X<td align=center>B4<td>DP Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>4<sup><font 
+size=1>2,10</sup></font>
+<tr><td><dd>LDY <i>addr</i>,X<td align=center>BC<td>Absolute Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>3,10</sup></font>
+
+<tr><td colspan="8"><b>LSR</b> <i>Logical Shift Memory or Accumulator 
+Right</i> [Flags affected: n,z,c]
+<tr><td><dd>LSR <i>dp</i><td align=center>46<td>Direct Page<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2
+<sup><font size=1></sup></font>
+<td>5<sup><font size=1>2,5</sup></font>
+<tr><td><dd>LSR A <i></i><td align=center>4A<td>Accumulator<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>1<td>2<sup><font 
+size=1></sup></font>
+<tr><td><dd>LSR <i>addr</i><td align=center>4E<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>6<sup><font 
+size=1>5</sup></font>
+<tr><td><dd>LSR <i>dp</i>,X<td align=center>56<td>DP Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>6<sup><font 
+size=1>2,5</sup></font>
+<tr><td><dd>LSR <i>addr</i>,X<td align=center>5E<td>Absolute Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>7<sup><font 
+size=1>5,6</sup></font>
+
+<tr><td colspan="8"><a name="m">
+<b>MVN</b> <i>Block Move Negative 
+</i> [Flags affected: none][Registers: X,Y,C]
+<tr><td><dd>MVN <i>srcbk,destbk</i><td align=center>54<td>Block Move<td 
+align=center><td 
+align=center><td align=center>x<td align=center>3
+<sup><font size=1></sup></font>
+<td>1<sup><font size=1>3</sup></font>
+
+<tr><td colspan="8"><b>MVP</b> <i>Block Move Positive 
+</i> [Flags affected: none][Registers: X,Y,C]
+<tr><td><dd>MVN <i>srcbk,destbk</i><td align=center>44<td>Block Move<td 
+align=center><td 
+align=center><td align=center>x<td align=center>3
+<sup><font size=1></sup></font>
+<td>1<sup><font size=1>3</sup></font>
+
+<tr><td colspan="8"><a name="n">
+<b>NOP</b> <i>No Operation 
+</i> [Flags affected: none]
+<tr><td><dd>NOP <i></i><td align=center>EA<td>Implied<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>1
+<sup><font size=1></sup></font>
+<td>2<sup><font size=1></sup></font>
+
+<tr><td colspan="8"><a name="o">
+<b>ORA</b> <i>OR Accumulator with Memory</i> 
+[Flags affected: n,z]
+<tr><td><dd>ORA (<i>dp,</i>X)<td align=center>01<td>DP Indexed 
+Indirect,X<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<td>6<sup><font size=1>1,2</sup></font> 
+<tr><td><dd>ORA <i>sr</i>,S<td align=center>03<td>Stack Relative 
+<td align=center><td align=center><td align=center>x<td 
+align=center>2<td>4<sup><font 
+size=1>1</sup></font> 
+<tr><td><dd>ORA <i>dp</i><td align=center>05<td>Direct Page
+<td align=center>x<td align=center>x<td align=center>x<td 
+align=center>2<td>3<sup><font size=1>1,2</sup></font>
+<tr><td><dd>ORA [<i>dp</i>]<td align=center>07<td>DP Indirect Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>ORA <i>#const</i><td align=center>09<td>Immediate<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<sup><font 
+size=1>17</sup></font><td>2<sup><font size=1>1</sup></font>
+<tr><td><dd>ORA <i>addr</i><td align=center>0D<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>ORA <i>long</i><td align=center>0F<td>Absolute Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>4<td>5<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>ORA (<i>dp</i>),Y<td align=center>11<td>DP Indirect Indexed, 
+Y<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>1,2,3</sup></font>
+<tr><td><dd>ORA (<i>dp</i>)<td align=center>12<td>DP Indirect<td 
+align=center><td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>ORA (<i>sr</i>,S),Y<td align=center>13<td>SR Indirect 
+Indexed,Y<td align=center><td 
+align=center><td align=center>x<td align=center>2<td>7<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>ORA <i>dp</i>,X<td align=center>15<td>DP Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>4<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>ORA [<i>dp</i>],Y<td align=center>17<td>DP Indirect Long 
+Indexed, Y<td align=center><td 
+align=center><td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>ORA <i>addr</i>,Y<td align=center>19<td>Absolute Indexed,Y<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,3</sup></font>
+<tr><td><dd>ORA <i>addr</i>,X<td align=center>1D<td>Absolute Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,3</sup></font>
+<tr><td><dd>ORA  <i>long</i>,X<td align=center>1F<td>Absolute Long 
+Indexed,X<td align=center><td 
+align=center><td align=center>x<td align=center>4<td>5<sup><font 
+size=1>1</sup></font>
+
+<tr><td colspan="8"><a name="p">
+<b>PEA</b> <i>Push Effective Absolute Address</i> 
+[Flags affected: none]
+<tr><td><dd>PEA <i>addr</i><td align=center>F4<td>Stack (Absolute) 
+<td align=center><td align=center><td 
+align=center>x<td align=center>3<td>5<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>PEI</b> <i>Push Effective Indirect Address</i> 
+[Flags affected: none]
+<tr><td><dd>PEI <i>(dp)</i><td align=center>D4<td>Stack (DP Indirect) 
+<td align=center><td align=center><td 
+align=center>x<td align=center>2<td>6<sup><font size=1>2</sup></font> 
+<tr><td colspan="8"><b>PER</b> <i>Push Effective PC Relative Indirect 
+Address</i> [Flags affected: none]
+<tr><td><dd>PER <i>label</i><td align=center>62<td>Stack (PC Relative Long) 
+<td align=center><td align=center><td 
+align=center>x<td align=center>3<td>6<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>PHA</b> <i>Push Accumulator</i> 
+[Flags affected: none]
+<tr><td><dd>PHA <i></i><td align=center>48<td>Stack (Push) 
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<td>3<sup><font size=1>1</sup></font> 
+<tr><td colspan="8"><b>PHB</b> <i>Push Data Bank Register</i> 
+[Flags affected: none]
+<tr><td><dd>PHB <i></i><td align=center>8B<td>Stack (Push) 
+<td align=center><td align=center><td 
+align=center>x<td align=center>1<td>3<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>PHD</b> <i>Push Direct Page Register</i> 
+[Flags affected: none]
+<tr><td><dd>PHD <i></i><td align=center>0B<td>Stack (Push) 
+<td align=center><td align=center><td 
+align=center>x<td align=center>1<td>4<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>PHK</b> <i>Push Program Bank Register</i> 
+[Flags affected: none]
+<tr><td><dd>PHK <i></i><td align=center>4B<td>Stack (Push) 
+<td align=center><td align=center><td 
+align=center>x<td align=center>1<td>3<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>PHP</b> <i>Push Processor Status Register</i> 
+[Flags affected: none]
+<tr><td><dd>PHP <i></i><td align=center>08<td>Stack (Push) 
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<td>3<sup><font size=1></sup></font>
+
+
+ 
+<tr><td colspan="8"><b>PHX</b> <i>Push Index Register X</i> 
+[Flags affected: none]
+<tr><td><dd>PHX <i></i><td align=center>DA<td>Stack (Push) 
+<td align=center><td align=center>x<td 
+align=center>x<td align=center>1<td>3<sup><font size=1>10</sup></font> 
+<tr><td colspan="8"><b>PHY</b> <i>Push Index Register Y</i> 
+[Flags affected: none]
+<tr><td><dd>PHY <i></i><td align=center>5A<td>Stack (Push) 
+<td align=center><td align=center>x<td 
+align=center>x<td align=center>1<td>3<sup><font size=1>10</sup></font> 
+<tr><td colspan="8"><b>PLA</b> <i>Pull Accumulator</i> 
+[Flags affected: n,z]
+<tr><td><dd>PLA <i></i><td align=center>68<td>Stack (Pull) 
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<td>4<sup><font size=1>1</sup></font> 
+<tr><td colspan="8"><b>PLB</b> <i>Pull Data Bank Register</i> 
+[Flags affected: n,z]
+<tr><td><dd>PLB <i></i><td align=center>AB<td>Stack (Pull) 
+<td align=center><td align=center><td 
+align=center>x<td align=center>1<td>4<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>PLD</b> <i>Pull Direct Page Register</i> 
+[Flags affected: n,z]
+<tr><td><dd>PLD <i></i><td align=center>2B<td>Stack (Pull) 
+<td align=center><td align=center><td 
+align=center>x<td align=center>1<td>5<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>PLP</b> <i>Pull Processor Status Register</i> 
+[Flags affected: n,z]
+<tr><td><dd>PLP <i></i><td align=center>28<td>Stack (Pull) 
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<td>4<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>PLX</b> <i>Pull Index Register X</i> 
+[Flags affected: n,z]
+<tr><td><dd>PLX <i></i><td align=center>FA<td>Stack (Pull) 
+<td align=center><td align=center>x<td 
+align=center>x<td align=center>1<td>4<sup><font size=1>10</sup></font> 
+<tr><td colspan="8"><b>PLY</b> <i>Pull Index Register Y</i> 
+[Flags affected: n,z]
+<tr><td><dd>PLY <i></i><td align=center>7A<td>Stack (Pull) 
+<td align=center><td align=center>x<td 
+align=center>x<td align=center>1<td>4<sup><font size=1>10</sup></font> 
+<tr><td colspan="8"><a name="r">
+<b>REP</b> <i>Reset Processor Status Bits</i> 
+[Flags affected: all except b per operand]
+<tr><td><dd>REP <i>#const</i><td align=center>C2<td>Immediate 
+<td align=center><td align=center><td 
+align=center>x<td align=center>2<td>3<sup><font size=1></sup></font> 
+
+<tr><td colspan="8"><b>ROL</b> <i>Rotate Memory or Accumulator Left</i> 
+[Flags affected: 
+n,z,c] <tr><td><dd>ROL <i>dp</i><td align=center>26<td>Direct Page<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2
+<sup><font size=1></sup></font>
+<td>5<sup><font size=1>2,5</sup></font>
+<tr><td><dd>ROL A <i></i><td align=center>2A<td>Accumulator<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>1<td>2<sup><font 
+size=1></sup></font>
+<tr><td><dd>ROL <i>addr</i><td align=center>2E<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>6<sup><font 
+size=1>5</sup></font>
+<tr><td><dd>ROL <i>dp</i>,X<td align=center>36<td>DP Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>6<sup><font 
+size=1>2,5</sup></font>
+<tr><td><dd>ROL <i>addr</i>,X<td align=center>3E<td>Absolute Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>7<sup><font 
+size=1>5,6</sup></font>
+<tr><td colspan="8"><b>ROR</b> <i>Rotate Memory or Accumulator Right</i> 
+[Flags affected: 
+n,z,c] <tr><td><dd>ROR <i>dp</i><td align=center>66<td>Direct Page<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2
+<sup><font size=1></sup></font>
+<td>5<sup><font size=1>2,5</sup></font>
+<tr><td><dd>ROR A <i></i><td align=center>6A<td>Accumulator<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>1<td>2<sup><font 
+size=1></sup></font>
+<tr><td><dd>ROR <i>addr</i><td align=center>6E<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>6<sup><font 
+size=1>5</sup></font>
+<tr><td><dd>ROR <i>dp</i>,X<td align=center>76<td>DP Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>6<sup><font 
+size=1>2,5</sup></font>
+<tr><td><dd>ROR <i>addr</i>,X<td align=center>7E<td>Absolute Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>7<sup><font 
+size=1>5,6</sup></font>
+
+<tr><td colspan="8"><b>RTI</b> <i>Return from Interrupt</i> 
+[Flags affected: all except b]
+<tr><td><dd>RTI <i></i><td align=center>40<td>Stack (RTI) 
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<td>6<sup><font size=1>9</sup></font> 
+<tr><td colspan="8"><b>RTL</b> <i>Return from Subroutine Long</i> 
+[Flags affected: none]
+<tr><td><dd>RTL <i></i><td align=center>6B<td>Stack (RTL) 
+<td align=center><td align=center><td 
+align=center>x<td align=center>1<td>6<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>RTS</b> <i>Return from Subroutine</i> 
+[Flags affected: none]
+<tr><td><dd>RTS <i></i><td align=center>60<td>Stack (RTS) 
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<td>6<sup><font size=1></sup></font> 
+
+<tr><td colspan="8"><a name="s">
+<b>SBC</b> <i>Subtract with Borrow from Accumulator</i> 
+[Flags affected: n,v,z,c]
+<tr><td><dd>SBC (<i>dp,</i>X)<td align=center>E1<td>DP Indexed 
+Indirect,X<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<td>6<sup><font size=1>1,2,4</sup></font> 
+<tr><td><dd>SBC <i>sr</i>,S<td align=center>E3<td>Stack Relative 
+<td align=center><td align=center><td align=center>x<td 
+align=center>2<td>4<sup><font 
+size=1>1,4</sup></font> 
+<tr><td><dd>SBC <i>dp</i><td align=center>E5<td>Direct Page
+<td align=center>x<td align=center>x<td align=center>x<td 
+align=center>2<td>3<sup><font size=1>1,2,4</sup></font>
+<tr><td><dd>SBC [<i>dp</i>]<td align=center>E7<td>DP Indirect Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2,4</sup></font>
+<tr><td><dd>SBC <i>#const</i><td align=center>E9<td>Immediate<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<sup><font 
+size=1>17</sup></font><td>2<sup><font size=1>1,4</sup></font>
+<tr><td><dd>SBC <i>addr</i><td align=center>ED<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,4</sup></font>
+<tr><td><dd>SBC <i>long</i><td align=center>EF<td>Absolute Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>4<td>5<sup><font 
+size=1>1,4</sup></font>
+<tr><td><dd>SBC (<i>dp</i>),Y<td align=center>F1<td>DP Indirect Indexed, 
+Y<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>1,2,3,4</sup></font>
+<tr><td><dd>SBC (<i>dp</i>)<td align=center>F2<td>DP Indirect<td 
+align=center><td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>1,2,4</sup></font>
+<tr><td><dd>SBC (<i>sr</i>,S),Y<td align=center>F3<td>SR Indirect 
+Indexed,Y<td align=center><td 
+align=center><td align=center>x<td align=center>2<td>7<sup><font 
+size=1>1,4</sup></font>
+<tr><td><dd>SBC <i>dp</i>,X<td align=center>F5<td>DP Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>4<sup><font 
+size=1>1,2,4</sup></font>
+<tr><td><dd>SBC [<i>dp</i>],Y<td align=center>F7<td>DP Indirect Long 
+Indexed, Y<td align=center><td 
+align=center><td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2,4</sup></font>
+<tr><td><dd>SBC <i>addr</i>,Y<td align=center>F9<td>Absolute Indexed,Y<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,3,4</sup></font>
+<tr><td><dd>SBC <i>addr</i>,X<td align=center>FD<td>Absolute Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1,3,4</sup></font>
+<tr><td><dd>SBC  <i>long</i>,X<td align=center>FF<td>Absolute Long 
+Indexed,X<td align=center><td 
+align=center><td align=center>x<td align=center>4<td>5<sup><font 
+size=1>1,4</sup></font>
+
+<tr><td colspan="8"><b>SEC</b> <i>Set Carry Flag</i> 
+[Flags affected: c]
+<tr><td><dd>SEC <i></i><td align=center>38<td>Implied 
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<td>2<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>SED</b> <i>Set Decimal Flag</i> 
+[Flags affected: d]
+<tr><td><dd>SED <i></i><td align=center>F8<td>Implied 
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<td>2<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>SEI</b> <i>Set Interrupt Disable Flag</i> 
+[Flags affected: i]
+<tr><td><dd>SEI <i></i><td align=center>78<td>Implied 
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<td>2<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>SEP</b> <i>Set Processor Status Bits</i> 
+[Flags affected: all except b per operand]
+<tr><td><dd>SEP <i></i><td align=center>E2<td>Immediate 
+<td align=center><td align=center><td 
+align=center>x<td align=center>2<td>3<sup><font size=1></sup></font> 
+ 
+<tr><td colspan="8"><b>STA</b> <i>Store Accumulator to Memory</i> 
+[Flags affected: none]
+<tr><td><dd>STA (<i>dp,</i>X)<td align=center>81<td>DP Indexed 
+Indirect,X<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<td>6<sup><font size=1>1,2</sup></font>
+<tr><td><dd>STA <i>sr</i>,S<td align=center>83<td>Stack Relative 
+<td align=center><td align=center><td align=center>x<td 
+align=center>2<td>4<sup><font 
+size=1>1</sup></font> 
+<tr><td><dd>STA <i>dp</i><td align=center>85<td>Direct Page
+<td align=center>x<td align=center>x<td align=center>x<td 
+align=center>2<td>3<sup><font size=1>1,2</sup></font>
+<tr><td><dd>STA [<i>dp</i>]<td align=center>87<td>DP Indirect Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>STA <i>addr</i><td align=center>8D<td>Absolute<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>4<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>STA <i>long</i><td align=center>8F<td>Absolute Long<td 
+align=center><td 
+align=center><td align=center>x<td align=center>4<td>5<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>STA (<i>dp</i>),Y<td align=center>91<td>DP Indirect Indexed, 
+Y<td align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>STA (<i>dp</i>)<td align=center>92<td>DP Indirect<td 
+align=center><td 
+align=center>x<td align=center>x<td align=center>2<td>5<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>STA (<i>sr</i>,S),Y<td align=center>93<td>SR Indirect 
+Indexed,Y<td align=center><td 
+align=center><td align=center>x<td align=center>2<td>7<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>STA <i>dp</i>X<td align=center>95<td>DP Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>2<td>4<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>STA [<i>dp</i>],Y<td align=center>97<td>DP Indirect Long 
+Indexed, Y<td align=center><td 
+align=center><td align=center>x<td align=center>2<td>6<sup><font 
+size=1>1,2</sup></font>
+<tr><td><dd>STA <i>addr</i>,Y<td align=center>99<td>Absolute Indexed,Y<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>5<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>STA <i>addr</i>,X<td align=center>9D<td>Absolute Indexed,X<td 
+align=center>x<td 
+align=center>x<td align=center>x<td align=center>3<td>5<sup><font 
+size=1>1</sup></font>
+<tr><td><dd>STA  <i>long</i>,X<td align=center>9F<td>Absolute Long 
+Indexed,X<td align=center><td 
+align=center><td align=center>x<td align=center>4<td>5<sup><font 
+size=1>1</sup></font>
+ 
+<tr><td colspan="8"><b>STP</b> <i>Stop Processor</i> 
+[Flags affected: none]
+<tr><td><dd>STP <i></i><td align=center>DB<td>Implied 
+<td align=center><td align=center><td 
+align=center>x<td align=center>1<td>3<sup><font size=1>14</sup></font>
+
+<tr><td colspan="8"><b>STX</b> <i>Store Index Register X to Memory</i> 
+[Flags affected: none]
+<tr><td><dd>STX <i>dp</i><td align=center>86<td>Direct Page
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<td>3<sup><font size=1>2,10</sup></font>
+<tr><td><dd>STX <i>addr</i><td align=center>8E<td>Absolute
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>3<td>4<sup><font size=1>10</sup></font>
+<tr><td><dd>STX <i>dp</i>,Y<td align=center>96<td>DP Indexed,Y
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<td>4<sup><font size=1>2,10</sup></font>
+
+<tr><td colspan="8"><b>STY</b> <i>Store Index Register Y to Memory</i> 
+[Flags affected: none]
+<tr><td><dd>STY <i>dp</i><td align=center>84<td>Direct Page
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<td>3<sup><font size=1>2,10</sup></font>
+<tr><td><dd>STY <i>addr</i><td align=center>8C<td>Absolute
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>3<td>4<sup><font size=1>10</sup></font>
+<tr><td><dd>STY <i>dp</i>,X<td align=center>94<td>DP Indexed,X
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>2<td>4<sup><font size=1>2,10</sup></font>
+
+<tr><td colspan="8"><b>STZ</b> <i>Store Zero to Memory</i> 
+[Flags affected: none]
+<tr><td><dd>STZ <i>dp</i><td align=center>64<td>Direct Page
+<td align=center><td align=center>x<td 
+align=center>x<td align=center>2<td>3<sup><font size=1>1,2</sup></font>
+<tr><td><dd>STZ <i>dp</i>,X<td align=center>74<td>DP Indexed,X
+<td align=center><td align=center>x<td 
+align=center>x<td align=center>2<td>4<sup><font size=1>1,2</sup></font>
+<tr><td><dd>STZ <i>addr</i><td align=center>9C<td>Absolute
+<td align=center><td align=center>x<td 
+align=center>x<td align=center>3<td>4<sup><font size=1>1</sup></font>
+<tr><td><dd>STZ <i>addr</i>,X<td align=center>9E<td>Absolute Indexed,X
+<td align=center><td align=center>x<td 
+align=center>x<td align=center>3<td>5<sup><font size=1>1</sup></font>
+
+<tr><td colspan="8"><a name="t">
+<b>TAX</b> <i>Transfer Accumulator to Index Register 
+X</i> [Flags affected: n,z]
+<tr><td><dd>TAX <i></i><td align=center>AA<td>Implied 
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<td>2<sup><font size=1></sup></font> 
+ 
+<tr><td colspan="8"><b>TAY</b> <i>Transfer Accumulator to Index Register 
+Y</i> [Flags affected: n,z]
+<tr><td><dd>TAY <i></i><td align=center>A8<td>Implied 
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<td>2<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>TCD</b> <i>Transfer 16-bit Accumulator to Direct 
+Page Register </i> [Flags affected: n,z]
+<tr><td><dd>TCD <i></i><td align=center>5B<td>Implied 
+<td align=center><td align=center><td 
+align=center>x<td align=center>1<td>2<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>TCS</b> <i>Transfer 16-bit Accumulator to Stack 
+Pointer</i> [Flags affected: none]
+<tr><td><dd>TCS <i></i><td align=center>1B<td>Implied 
+<td align=center><td align=center><td 
+align=center>x<td align=center>1<td>2<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>TDC</b> <i>Transfer Direct Page Register to 16-bit 
+Accumulator </i> [Flags affected: n,z]
+<tr><td><dd>TDC <i></i><td align=center>7B<td>Implied 
+<td align=center><td align=center><td 
+align=center>x<td align=center>1<td>2<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>TRB</b> <i>Test and Reset Memory Bits Against 
+Accumulator</i> [Flags affected: z] 
+<tr><td><dd>TRB <i>dp</i><td align=center>14<td>Direct Page 
+<td align=center><td align=center>x<td 
+align=center>x<td align=center>2<td>5<sup><font size=1>2,5</sup></font> 
+<tr><td><dd>TRB <i>addr</i><td align=center>1C<td>Absolute 
+<td align=center><td align=center>x<td 
+align=center>x<td align=center>3<td>6<sup><font size=1>3</sup></font> 
+<tr><td colspan="8"><b>TSB</b> <i>Test and Set Memory Bits Against 
+Accumulator</i> [Flags 
+affected: z] <tr><td><dd>TSB <i>dp</i><td align=center>04<td>Direct Page 
+<td align=center><td align=center>x<td 
+align=center>x<td align=center>2<td>5<sup><font size=1>2,5</sup></font> 
+<tr><td><dd>TSB <i>addr</i><td align=center>0C<td>Absolute 
+<td align=center><td align=center>x<td 
+align=center>x<td align=center>3<td>6<sup><font size=1>5</sup></font> 
+
+<tr><td colspan="8"><b>TSC</b> <i>Transfer Stack Pointer to 16-bit 
+Accumulator </i> [Flags affected: n,z]
+<tr><td><dd>TSC <i></i><td align=center>3B<td>Implied 
+<td align=center><td align=center><td 
+align=center>x<td align=center>1<td>2<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>TSX</b> <i>Transfer Stack Pointer to Index 
+Register X</i> [Flags affected: n,z]
+<tr><td><dd>TSX <i></i><td align=center>BA<td>Implied 
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<td>2<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>TXA</b> <i>Transfer Index Register X to 
+Accumulator </i> [Flags affected: n,z]
+<tr><td><dd>TXA <i></i><td align=center>8A<td>Implied 
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<td>2<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>TXS</b> <i>Transfer Index Register X to Stack 
+Pointer</i> [Flags affected: none]
+<tr><td><dd>TXS <i></i><td align=center>9A<td>Implied 
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<td>2<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>TXY</b> <i>Transfer Index Register X to Index 
+Register Y</i> [Flags affected: n,z]
+<tr><td><dd>TXY <i></i><td align=center>9B<td>Implied 
+<td align=center><td align=center><td 
+align=center>x<td align=center>1<td>2<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>TYA</b> <i>Transfer Index Register Y to 
+Accumulator </i> [Flags affected: n,z]
+<tr><td><dd>TYA <i></i><td align=center>98<td>Implied 
+<td align=center>x<td align=center>x<td 
+align=center>x<td align=center>1<td>2<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>TYX</b> <i>Transfer Index Register Y to Index 
+Register X</i> [Flags 
+affected: n,z] <tr><td><dd>TYX <i></i><td align=center>BB<td>Implied 
+<td align=center><td align=center><td 
+align=center>x<td align=center>1<td>2<sup><font size=1></sup></font> 
+<tr><td colspan="8"><a name="w">
+<b>WAI</b> <i>Wait for Interrupt</i> [Flags affected: 
+none] <tr><td><dd>WAI <i></i><td align=center>CB<td>Implied 
+<td align=center><td align=center><td 
+align=center>x<td align=center>1<td>3<sup><font size=1>15</sup></font> 
+<tr><td colspan="8"><b>WDM</b> <i>Reserved for Future Expansion</i> 
+[Flags affected: none (subject to change)]
+<tr><td><dd>WDM <i></i><td align=center>42<td>n/a 
+<td align=center><td align=center><td 
+align=center>x<td align=center>2
+<sup><font size=1>16</sup></font> 
+<td>n/a<sup><font size=1>16</sup></font> 
+<tr><td colspan="8"><a name="x">
+<b>XBA</b> <i>Exchange B and A 8-bit Accumulators</i> 
+[Flags 
+affected: n,z] <tr><td><dd>XBA <i></i><td align=center>EB<td>Implied 
+<td align=center><td align=center><td 
+align=center>x<td align=center>1<td>3<sup><font size=1></sup></font> 
+<tr><td colspan="8"><b>XCE</b> <i>Exchange Carry and Emulation Flags</i> 
+[Flags affected: m,b/x,c,e] <tr><td><dd>XCE <i></i><td 
+align=center>FB<td>Implied <td align=center><td align=center><td 
+align=center>x<td align=center>1<td>2<sup><font size=1></sup></font> 
+
+</table>
+
+<h3>NOTES</h3>
+
+<sup><font size=1>1</sup></font>
+Add 1 cycle if m=0 (16-bit memory/accumulator)
+<br><sup><font size=1>2</sup></font>
+Add 1 cycle if low byte of Direct Page Register is non-zero
+<br><sup><font size=1>3</sup></font>
+Add 1 cycle if adding index crosses a page boundary
+<br><sup><font size=1>4</sup></font>
+Add 1 cycle if 65C02 and d=1 (65C02 in decimal mode)
+<br><sup><font size=1>5</sup></font>
+Add 2 cycles if m=0 (16-bit memory/accumulator)
+<br><sup><font size=1>6</sup></font>
+Subtract 1 cycle if 65C02 and no page boundary crossed
+<br><sup><font size=1>7</sup></font>
+Add 1 cycle if branch is taken
+<br><sup><font size=1>8</sup></font>
+Add 1 cycle if branch taken crosses page boundary on 6502, 65C02, or 
+65816's 6502 emulation mode (e=1)
+<br><sup><font size=1>9</sup></font>
+Add 1 cycle for 65816 native mode (e=0)
+<br><sup><font size=1>10</sup></font>
+Add 1 cycle if x=0 (16-bit index registers)
+<br><sup><font size=1>11</sup></font>
+Add 1 cycle if 65C02
+<br><sup><font size=1>12</sup></font>
+6502: Yields incorrect results if low byte of operand is $FF (i.e., 
+operand is $xxFF)
+<br><sup><font size=1>13</sup></font>
+7 cycles per byte moved
+<br><sup><font size=1>14</sup></font>
+Uses 3 cycles to shut the processor down: additional cycles are required 
+by reset to restart it
+<br><sup><font size=1>15</sup></font>
+Uses 3 cycles to shut the processor down: additional cycles are required 
+by interrupt to restart it
+<br><sup><font size=1>16</sup></font>
+Byte and cycle counts subject to change in future processors which expand 
+WDM into 2-byte opcode portions of instructions of varying 
+lengths
+<br><sup><font size=1>17</sup></font>
+Add 1 byte if m=0 (16-bit memory/accumulator)
+<br><sup><font size=1>18</sup></font>
+Opcode is 1 byte, but program counter value pushed onto stack is 
+incremented by 2 allowing for optional signature byte
+<br><sup><font size=1>19</sup></font>
+Add 1 byte if x=0 (16-bit index registers)
+<br><br>
+<font size="2"><i>Copyright &#169 1996 Creative Micro Designs, Inc. <br> 
+Reprinted 
+with permission from Commodore World magazine, Issue #16.</i></font>
+
+
+</body></html>

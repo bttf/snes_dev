@@ -1,0 +1,49 @@
+Fiscal wrote:
+
+   
+  Qwertie-
+   
+  I want to start programming an emulator, but have no clue where to begin. I know C++, but I'd rather write the emulator in ASM. All I 
+  want to know is if you have any tips, suggestions, or anything for me. Also, what did you use to make your GUI for snesr??
+   
+  thanks
+   
+  email me back
+
+  
+Well, I'd say you should write it in C++ at first except for the CPU emulation core, which you should write in assembly 
+language.  I wrote my first CPU core in C++ and it was *extremely* slow, and had lots of bugs.  What exactly do you 
+want to emulate?  Anyway, it's best to write the CPU in asm because of flag settings--e.g. when you do an operation on 
+the x86, the flags are often set the same way as they would be set on the processor you're emulating.
+
+Maybe it's easier with an example:
+
+cmp8 macro imm
+ ifb <imm>
+  trapandread8 ebx ; read memory byte
+ endif
+ and cl, 0FFh-FNEGATIVE-FZERO-FCARRY  ; clear flags affected
+ cmp byte [_reg.A], bl         ; compare operand with A
+ ; set complement of carry (cmp and sub differ on x86 machines)
+ setnc al
+ setz ch
+ sets ah
+ shl ch, 1
+ shl ah, 7
+ or  cl, ch
+ or  cl, al
+ or  cl, ah
+endm cmp8
+
+In C you have to worry about HOW to set the flags, but in ASM the processor does it for you.  When writing in asm, you 
+can also store the most important emulated registers in x86 registers.  For example, I use EDX to store the program 
+counter, ESI for the cycle count, and CL for the processor's status flags.  If you don't know assembly already, get a book 
+on it; the internet tutorials are all very out of date. :(
+
+As for the rest, I think it's best to start in C and convert to asm one piece at a time so that you get the logic working right 
+first.
+
+You should also write some kind of integrated debugger like SNEqr's (Shift+Return to game).  Writing an emu is NOT 
+easy, and gets harder for more advanced systems (SNES is VERY hard, but NES is much easier.)
+
+SNEqr's GUI is written in C++; I did all the program logic myself.

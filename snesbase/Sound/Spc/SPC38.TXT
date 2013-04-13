@@ -1,0 +1,49 @@
+
+1. 8-bit Data Transmission Commands. Group I
+
+------------------------------------------------------------------------
+Mnemonic  Operand  Code Bytes Cycles Operation                    Flag
+------------------------------------------------------------------------
+  MOV    A, #inm    E8    2     2     A <- inm                  N......Z
+  MOV    A, (X)     E6    1     3     A <- (X)                  N......Z
+  MOV    A, (X)+    BF    1     4     A <- (X) with auto inc    N......Z
+  MOV    A, dp      E4    2     3     A <- (dp)                 N......Z
+  MOV    A, dp+X    F4    2     4     A <- (dp+X)               N......Z
+  MOV    A, labs    E5    3     4     A <- (abs)                N......Z
+  MOV    A, labs+X  F5    3     5     A <- (abs+X)              N......Z
+  MOV    A, labs+Y  F6    3     5     A <- (abs+Y)              N......Z
+  MOV    A, (dp+X)  E7    2     6     A <- ((dp+X+1)(dp+X))     N......Z
+  MOV    A, (dp)+Y  F7    2     6     A <- ((dp+1)(dp)+Y)       N......Z
+  MOV    X, #inm    CD    2     2     X <- inm                  N......Z
+  MOV    X, dp      F8    2     3     X <- (dp)                 N......Z
+  MOV    X, dp+Y    F9    2     4     X <- (dp+Y)               N......Z
+  MOV    X, labs    E9    3     4     X <- (abs)                N......Z
+  MOV    Y, #inm    8D    2     2     Y <- inm                  N......Z
+  MOV    Y, dp      EB    2     3     Y <- (dp)                 N......Z
+  MOV    Y, dp+X    FB    2     4     Y <- (dp+X)               N......Z
+  MOV    Y, labs    EC    3     4     Y <- (abs)                N......Z
+------------------------------------------------------------------------
+
+2. 8-BIT DATA TRANSMISSION COMMANDS. GROUP 2.
+
+------------------------------------------------------------------------
+Mnemonic  Operand  Code Bytes Cycles Operation                    Flag
+------------------------------------------------------------------------
+  MOV    (X),A      C6    1     4     A -> (X)                  ........
+  MOV    (X)+,A     AF    1     4     A -> (X) with auto inc    ........
+  MOV    dp,A       C4    2     4     A -> (dp)                 ........
+  MOV    dp+X,A     D4    2     5     A -> (dp+X)               ........
+  MOV    labs,A     C5    3     5     A -> (abs)                ........
+  MOV    labs+X,A   D5    3     6     A -> (abs+X)              ........
+  MOV    labs+Y,A   D6    3     6     A -> (abs+Y)              ........
+  MOV    (dp+X),A   C7    2     7     A -> ((dp+X+1)(dp+X))     ........
+  MOV    (dp)+Y,A   D7    2     7     A -> ((dp+1)(dp)+Y)       ........
+  MOV    dp,X       D8    2     4     X -> (dp)                 ........
+  MOV    dp+Y,X     D9    2     5     X -> (dp+Y)               ........
+  MOV    labs,X     C9    3     5     X -> (abs)                ........
+  MOV    dp,Y       CB    2     4     X -> (dp)                 ........
+  MOV    dp+X,Y     DB    2     5     X -> (dp+X)               ........
+  MOV    labs,Y     CC    3     5     X -> (abs)                ........
+------------------------------------------------------------------------
+
+

@@ -1,0 +1,32 @@
+Qwertie's SNES CPU Notes
+------------------------
+(Set Word Wrap on NOW)
+
+The Super Nintendo has a CPU called the 65c816.  This is a fairly generic processor, which could be used in other systems.  This CPU has 24 addressing lines (addressing bits), so it is capable of accessing up to 16 MB of memory.  It has two basic modes of operation: Native 16-bit mode and Emulation 8-bit mode.  The CPU behaves similarly in both modes, except in Native mode you can do only 16-bit calculatons and in Emulation mode you can do only 8-bit calculations.  It is difficult to mix 8-bit and 16-bit calculations.  BTW, the reason 8-bit mode is called "Emulation Mode" is because it is almost 100% compatible with the 8-bit 6502 processor, which was used in the NES and some other early computer systems and consoles. This has the consequence that Emulation mode means more than just using 8-bit calculations.  Oh well...
+
+I planned to make a big tutorial on the processor, since there were no tutorials available ANYWHERE on the net.  But how could I write a tutorial, when I myself didn't know anything about the processor?
+
+I found the ONLY two books on the 65816 in my city's library, and discovered (hold your breath) that they were 686 and 370 pages.  After reading some of these books, I realized two things:
+1) I couldn't possibly write a good tutorial on the processor without wasting the whole rest of my life, and
+2) The CPU "reference" documents in my knowledge base were very incomplete.
+Mind you, you will only ever need to read about a quarter of those 1056 pages, since some of the information is irrelevant to coding an emulator, and some of the information is irrellevant for a coder wanting to program the 65816.  If you want to do both (code an emu AND write a SNES game) you're best off reading about 3/4 of those books.
+
+The most useful book I used in coding my emu was "65816/65802 ASSEMBLY LANGUAGE PROGRAMMING", by Micheal Fischer.  This is a really excellent reference book, completely covering (with lots of words, examples and diagrams) the addressing modes and every instruction.  Also, it includes an "improved" version of the GTE 65816 document that can be found in this knowledge base.
+
+The other book was "Programming the 65816", by William Labiak.  It's a good tutorial book, but it has incomplete reference information.
+
+I have written some extra notes on addressing modes, which can be horribly confusing.
+See CPU\Qaddress.txt for the info.
+
+.........................
+65816 Internal Registers:
+- A is THE math register
+- X and Y are generally used for indexing
+- DB (Data Bank) and D (Direct) are used for calculating memory addresses
+- P (Processor status) register holds the CPU's flags
+- PB (Program Bank) and PC (program counter) keep track of where code
+  is executing and [are not directly accessable to the running program.]
+- S (Stack pointer) helps in managing the stack.
+
+When the M bit is set in P, A is 8 bits instead of 16, and any instruction that involves the accumulator uses 8-bit values.  For example, if A is 16-bit and you use an instruction like AND ($ABCD), the final value loaded after the indirection will be 16 bits.
+When the X bit is set in P, X and Y are 8 bits instead of 16.

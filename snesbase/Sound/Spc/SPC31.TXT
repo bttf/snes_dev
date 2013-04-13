@@ -1,0 +1,61 @@
+
+(6) PROGRAM STATUS WARD (PSW)
+
+The program status ward is made up of the various flags which are
+set and reset according to the results of the execution of 8-bit
+register commads and the various flags which determine the
+activities of the CPU. When reset it veocnes "000-0-00".
+
+    7    6     5     4     3     2     1     0
+  -----------------------------------------------
+ |   N    V     P     -     H     -     Z     C  |
+  ----------------------------------------------
+
+Carry Flag (C).
+
+After operation execution, this is set when there has been a carry
+from the uppermost bit of the arithmetic logic unit (ALU) or when
+there has been no borrow. It is even altered with shift or rotate
+commands. It also acts as an bit accumulator of Boolean bit operation
+commands. It is set at the SETC commads and reset at the CLRC commads.
+In addition, the carry flag inverts at the NOTC commads.
+
+Zero Flag (Z)
+
+Alter operation execution, this flag is set when the result is
+zero and is reset whens the result is not zero. Even with 16-bity
+operation commands, zero detection is carried out. It is possible
+to carry out tests with conditional branching commands.
+
+Half Carry Flag (H)
+
+After operation execution, this flag is set when there has been
+a carry from form bit 3 of the ALU to bit 4, or when there has
+not been any borrow. There is no command to set, however, it is
+reset by reset by means of the CLRV commad. At his time, the
+overflow flag is also set.
+
+Direct Page Flag (P)
+
+This is the flaq which designates the direct page to which many
+addressing mode are applicable, such as direct page addressing
+etc. When 0, the direct page becomes the addresses of the
+region 0000-00ff and when 1, it becomes the addresses of the
+region 0100-01ff. It is set by the STEP command and reset by the
+CLRP command.
+
+Overflow Flag (V).
+
+After arithmetic operation execution, this flag is set when
+overflow or underflow has been produced. At this time, influence
+is extended simultaneously to the H flag.
+It is possible to carry out tests with conditional branching 
+commads.
+
+Negative Flag (N)
+
+After operation execution, this flag is set when the values of
+the result of MSD is 1 and reset when that values is 0. It is
+possible to carry out tests with conditinal branching commads.
+
+

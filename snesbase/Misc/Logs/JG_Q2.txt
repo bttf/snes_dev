@@ -1,0 +1,71 @@
+I got some more questions... let's start with the easy ones first:
+1. Where does the code start executing?  It runs directly from ROM, correct? If so the addresses would have to be different in HiROM than in LoROM (they are in a different set of banks, after all).  So, what are they?
+2. How much basic RAM does the SNES have?
+3. The crappy GTE 65c816 doc often refers to "inputs" such as "/ABORT", "/NMI", "/IRQ", etc.  What the heck is that all about?
+4. What is supposed to happen if a program makes a write to someplace in the ROM address space? What if a read-only port is written to? What if you read or write to an address in a bank that is past the end of the RAM address space?
+
+>Snax sent me a good explanation of all the opcodes, that might help you out!
+it just might!
+>
+>2. VRAM - JT or Snax would be better to explain this.
+How could I get in touch with them?
+
+>3. Addressing modes... meaning what? LoROM vs. HiROM? I know most of this,
+>please refine the question... 8-)
+Gee whiz, what do addressing modes have to do with Lo/HiROM?  I mean the addressing modes that are refered to in the GTE 85c816 doc.  _Demo_ tells me they are built into the opcode... like, the opcode number determines which addressing mode is used to access memory? What are these addressing modes?
+
+>4. Assemblers... ah. This is personal preference. I personally don't write
+>code for the SNES, I am just trying to reverse engineer it enough to
+>emulate!
+Well, I was trying to compile the .S files from the Anthrox site and the assemblers I tried (SNESASM, TRASM) wouldn't work (I figured if I could get their code to work it would help me understand the SNES a bit more, and maybe write some code...)
+
+>there are a bunch of opcodes that have been customized on the SNES's CPU.
+uh-oh.
+
+>6. Ports are simply hardware mapped memory ranges. On the SNES, in banks
+>0x00 to 0x39, memory ranges 0x2000-0x5fff are memory mapped ports...
+0x00 to 0x39?? I protest! My calculator says that that would be a whole megabyte of space reserved for hardware ports.  Besides the SNES doesn't even have 40h banks of RAM, does it?  Oh, and are the memory mapped ports set up any differently in HiROM?
+>
+>7. The SMC file format, when you take away the header, isn't much! It's just
+>the whole rest of the ROM in binary... 8-) Most ROM images nowadays are
+>either SMC or can be easily converted with UCON, so I just assume that all
+>ROMs have a header and are in SMC, which is basically 512byteheader+Image
+Erm...no... on most of my ROMs the first 512 bytes are filled with zeroes... the actual "header" information starts at "about" 32 or 64K (by the way, how can you tell where the header is supposed to be?  I was thinking maybe of checking that there was alphanumeric chars at 32K, and if not it would be HiROM? Would that work ok?)  So tell me if I have this right: the header is stored, then the first ROM bank, then the actual useful information, followed by the rest of the banks?  If this is the case, exactly how many bytes of this useful information is inserted between banks 0 and 1?
+
+>8. I dunno about interleaving, I haven't seen an interleaved ROM yet, and
+>wouldn't know how to read it if I did... 8-(
+doh...
+
+>9. Oh dear, maybe I should send you my
+>not-entirely-correct-but-better-than-most SNES Memory Map Document... the
+>basics are that everything over 0x7f (0x80-0xff) is MOSTLY a mirror image of
+Mostly, eh?
+>everything lower, only it... RUNS FASTER. Like 3.86 Mhz instead of 2.86 Mhz.
+>That's "fast rom" vs. "slow rom" explained. Umm, the rest of memory is
+>tricky... I can explain in detail if you like... but not at midnight...
+>maybe in the morning when I've had a cup o' coffee, ok? 8-)
+ok, was the coffee good?
+>
+>10. Yes, the SPC700 blows chunks, but isn't QUITE as hard as everybody makes
+>out... it's just a beast to work into an emu (a normal one, don't get me
+>started on mine, which is multitasking multithreaded Win32 native with
+>Z-Buffering and shit) and the worst part is all its instructions are fed to
+>it through 4 BYTES. Bleah.
+AAAhhh! whoa, tell me some more about this emu of your... it sounds kinda good... (I have Watcom C++ so I can develop for about any platform I like, but I'm pretty new to Windoze.)
+>
+>out of the DOS programming loop since 1993. I do Win95 and NT now, it's much
+>nicer, more elegant, etc. And I could go on for hours, but anybody who says
+>that DOS games and emulators run faster than Win95 ones hasn't seen the
+>newest crop of games. I've gotten 50fps in S40 racer at 640x480... without a
+>3D card... using my ET6000 and Directx5. Dos can go suck it, since VESA
+>can't even break 25fps. Hmm... anyway I could rant for a long time 
+Hmm.. I want a video driver as good as yours...
+
+>OK, ask away - I'm happy to help since most of the "scene" is comprised of
+>narrow-minded idiots who want to keep their "hard-earned secrets" to
+>themselves. Grr...
+I know!  I seem to be stuck asking q's to the people who don't know all that much themselves!  Well, gotta go to school... thanks for the help and there'll be more questions l8r... =)
+>
+>P.S. I'll be much more friendly in the morning, I swear! Midnight arguments
+>with your wife really suck.
+Lucky me, I'm still in High School :)

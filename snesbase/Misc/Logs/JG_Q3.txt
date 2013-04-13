@@ -1,0 +1,104 @@
+By the way, do you know where I can get a good GREP type thing with a text file viewer, so I can search the docs for stuff easier?  It's not so easy finding stuff in my collection...
+
+>Oh ah... yes, it runs from ROM, and the program, unless specified
+>otherwise by the "reset vector" in the game header (not the SMC
+>header, but the game header which comprises the last 64 bytes of the
+>first bank of the ROM), starts execution at 0x8000 in bank 0x00. Both
+>in LoROM and in HiROM
+But wait a minute... 0x00-8000 is not a ROM address in LoROM, is it?  I thought it was a RAM address, because HiROM starts at bank 0x40 doesn't it?
+
+>128k. However, it can have some expansion RAM, which is mapped at
+>locations 0x6000-0x7FFF in LoROM mode in banks 0x00-0x39. I'm not,
+>however, sure if it's a whole 64 banks of 8k (or is that 16k) or if
+>it's just one bank mapped 64 times... like the "shadow" ram at
+>0x0000-0x1fff, which is shadowed from bank 0x7e.
+Oh boy, I think I need your memory doc badly!  As long as it covers both HiROM and LoROM...
+>
+>These are actual pins on the processor, presumably a hardware clock
+>generates these signals. Most emulators just treat these as a special
+>case... NMI is a strobe that triggers the nonmaskable interrupt, which
+>is specified by the NMI vector (also in the header), and the IRQ
+>signal triggers regular interrupts, which can be masked out by the
+>processor status register.
+are these "vectors" simply memory addresses?  I rummaged through the sneskart doc, which says that the NMI/VBL vector (what's VBL?) and the Reset vector are only two bytes... uh oh, a SNES address is 3 bytes! Maybe, do you think, it is a ROM address (when I say ROM address I mean eg 0x0105 = real address 0x00-8105 in LoROM or 0x40-0105 in HiROM) and the code has to start in the first 64K?
+
+>> it just might!
+>OK I'll try to forward that to you along with my memory map doc.
+goodie...
+>
+>JT's email is on his page EPR (Emulation Programmer's Resource).
+>Snax's email is on his sneese page.
+Oh duh, somehow I didn't realize JT=John Turner...
+>
+>> >3. Addressing modes... meaning what? LoROM vs. HiROM? I know most of 
+>> this,
+>> >please refine the question... 8-)
+>> Gee whiz, what do addressing modes have to do with Lo/HiROM?  I mean the 
+>> addressing modes that are refered to in the GTE 85c816 doc.  _Demo_ 
+>> tells me they are built into the opcode... like, the opcode number 
+>> determines which addressing mode is used to access memory? What are 
+>> these addressing modes?
+>
+>Oh ah. This is a case of "indirect" "direct" "absolute", etc... right?
+Yep, that's what I meant.
+>This is basic Assembly language stuff, and you'd need to get a
+>reference for it. 
+Well, I've never found one...
+>I think that's what you're talking about... maybe
+>Snax's doc will explain it better.
+
+>Hehe. The SNES has banks 0x00-0xFF (256 of them) with RAM addresses
+>0x0000-0xFFFF in each bank (64k) for a total addressing space of
+>16Megabytes. Of course it doesn't actually have 16 Megs, and the
+>hardware registers in each bank all map to the same hardware... so
+>there's really only like 16k of them, maybe much less since nowhere
+>near all of them were ever used - a lot were set aside for expansion
+>options.
+wowzers.  Time for a good memory map document.
+
+>OK, this is the deal - the "SMC header" is the 1st 512 bytes, yes it's
+>usually just set to mostly 0's to avoid messing up most copiers which
+>will only accept .smc files... the "real header" is part of the ROM
+>image, has nothing to do with the format, and makes up the last 64
+>bytes (is that number right? it might be 128 bytes) of the first bank
+>- 32k for Lorom mode and 64k for hirom mode.
+Hmm... <please wait an hour while I check out these DOCs>...
+I count that there are 36 bytes of "real" header data starting at 32704 or 65472... BUT!! Then it says that the reset vector is at 33276 (and is 2 bytes, so must end at 33277) or 66042 (to 66043).
+And, 33277-32704=573?! And for HiROM, 66043-65472=571.  Uh-oh, there has GOT to be something wrong here... BUT WAIT! It looks like the 66042 in HiROM must be a TYPO because it is in the same position as the NMI vector....which means the position is actually 66044, making the size 573... okay.  Does 573 bytes sound right?
+
+>Here's the bad news... there's NO easy way to figure out which it
+>is... doesn't that suck? It's a hardware signal in the real
+>machine... and the easiest way is to look for english text (21 bytes
+>of it, check out the sneskart.txt document) but that won't work for
+>any international games. You can also use the checksums, and simply
+>hope that nobody messed them up...
+>
+>And last but not least, if the game is real small, it's definitely
+>lorom. So there you go. And if it's real big, it's definitely hirom,
+>since no lorom games over like 16mb were ever made.
+Yeah, that will work "most" of the time cuz anything over 16mbit MUST be HiROM.  On the other hand if it is <= 16Mb it could be either type.
+I also read somewhere that several ROMs have bad checksums...whoa, that could be a problem...
+
+>OK, there's a whole lot more, if you want to join up with the team and
+Which team? I take it your emu is separate from Snax's because SNEeSe is for DOS and yours is for Windows...?
+>help out with our emu you can - or if you just want info I'll try to
+>help as much as possible. Our emulator is going to work on the threads...
+>And that's just for starters... that way everything can run in a
+>separate process, and it'll all be timed properly... from square
+>one. Plus I'm going to use snax's CPU code which is pretty much 100%
+um... last time I checked SNEeSE was so utterly SLOW!! I mean uh.. unoptimised!
+>right now, the portable one sucked to try to use (too many levels of
+>MACRO indirection! BLEAH!)
+well, I would like to partner up to share the workload, but I don't know the way the Win32 threads and stuff work... also, I thought multiple threads are inefficient in emu's because of the "syncing" problems.  Plus you have to worry about ... oh what was it called ... something to do with mutual exclusivity ... Then there's the horrible Win32 overhead for the task-switching... eww...
+
+Um, and what is your compiler? I bought Watcom C++, still looking for some good use for the thing... And where do you live?  Discussing code over the phone would be a lot easier, if it's affordable.
+>
+>OK, I'll e-mail you the web address once I get it uploaded to the
+>right place (I have a LOT of work to do tonite!)
+ok...
+>
+final thoughts...
+
+I've been thinking how there's all these emu authors who say they just "hacked" their emulator to make it run correctly.  But when you are just starting an emu, how do you test if you've done something right? I mean, if all the ROMs you try just freeze/crash on startup, how can you possibly tell what you've done wrong?  I just got a new emulator source code which emulates the CPU - the entire instruction set - yet doesn't display ANYTHING on the screen.  What?  how did this author know it worked?!
+
+This was after I thought to myself, "gee, why am I pestering these poor emu authors, instead of hacking it up myself."  Well... because if I don't have a good idea of how the system works it won't run anything!  Which then got me to wondering... how did people like Y0shi and The_Brain do their emu's?

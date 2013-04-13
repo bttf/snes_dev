@@ -1,0 +1,9 @@
+-----------
+SNES Memory
+-----------
+
+For information about the SNES memory map, the best place to look is Memory\SNESMem.txt.  THANK YOU Duncanthrax FOR THIS EXCELLENT DOC!  Although the info is not TOTALLY complete, it's much better than anything else out there.  :)
+
+...Now, if only it was accurate...
+
+4/1 Yep, I found a NEW doc, which I'm naming SNESMem2.txt.  It is probably more accurate than the first one.

@@ -1,0 +1,6 @@
+Debug Draw Sprite
+      OAM.Open
+      OAM.Close
+      
+      Add variable joy hold/cooldown timers
+      Expand Sine/Cosine/Angle

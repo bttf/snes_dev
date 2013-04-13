@@ -1,0 +1,10 @@
+data = `{echo *.dat}
+
+all:V: jormungandr.smc
+clean:V:
+	rm -f jormungandr.smc
+test:V: all
+	bsnes jormungandr.smc
+
+jormungandr.smc: $data jormungandr.asm
+	65816a jormungandr.asm

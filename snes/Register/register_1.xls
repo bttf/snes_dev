@@ -1,0 +1,1654 @@
+					Phoenix		
+
+				;	#HiROM		
+
+				;	# SNES Registers ================== Size ====		
+				;	#Name $2100 INIDISP_R		b
+				;	#Name $2101 OBJSEL_R		b
+				;	#Name $2102 OAMADD_R		w
+				;	#Name $2104 OAMDATA_R		"b,LH"
+				;	#Name $2105 BGMODE_R		b
+				;	#Name $2106 MOSAIC_R		b
+				;	#Name $2107 BG1SC_R		b
+				;	#Name $2108 BG2SC_R		b
+				;	#Name $2109 BG3SC_R		b
+				;	#Name $210A BG4SC_R		b
+				;	#Name $210B BG12NBA_R		"b,LH"
+				;	#Name $210C BG34NBA_R		"b,LH"
+				;	#Name $210D BG1HOFS_R		"b,LH"
+				;	#Name $210E BG1VOFS_R		"b,LH"
+				;	#Name $210F BG2HOFS_R		"b,LH"
+				;	#Name $2110 BG2VOFS_R		"b,LH"
+				;	#Name $2111 BG3HOFS_R		"b,LH"
+				;	#Name $2112 BG3VOFS_R		"b,LH"
+				;	#Name $2113 BG4HOFS_R		"b,LH"
+				;	#Name $2114 BG4VOFS_R		"b,LH"
+				;	#Name $2115 VMAINC_R		b
+				;	#Name $2116 VMADD_R		w
+				;	#Name $2118 VMDATA_R		w
+				;	#Name $211A M7SEL_R		b
+				;	#Name $211B M7A_R		"b,LH"
+				;	#Name $211C M7B_R		"b,LH"
+				;	#Name $211D M7C_R		"b,LH"
+				;	#Name $211E M7D_R		"b,LH"
+				;	#Name $211F M7X_R		"b,LH"
+				;	#Name $2120 M7Y_R		"b,LH"
+				;	#Name $2121 CGADD_R		b
+				;	#Name $2122 CGDATA_R		"b,LH"
+				;	#Name $2123 W12SEL_R		b
+				;	#Name $2124 W34SEL_R		b
+				;	#Name $2125 WOBJSEL_R		b
+				;	#Name $2126 WH0_R		b
+				;	#Name $2127 WH1_R		b
+				;	#Name $2128 WH2_R		b
+				;	#Name $2129 WH3_R		b
+				;	#Name $212A WBGLOG_R		b
+				;	#Name $212B WOBJLOG_R		b
+				;	#Name $212C TM_R		b
+				;	#Name $212D TS_R		b
+				;	#Name $212E TMW_R		b
+				;	#Name $212F TSW_R		b
+				;	#Name $2130 CGWSEL_R		b
+				;	#Name $2131 CGADSUB_R		b
+				;	#Name $2132 COLDATA_R		b
+				;	#Name $2133 SETINI_R		b
+				;	#Name $2134 .MPY_R		l
+				;	#Name $2137 .SLHV_R		b
+				;	#Name $2138 .OAMDATA_R		"b,LH"
+				;	#Name $2139 .VMDATA_R		w
+				;	#Name $213B .CGDATA_R		"b,LH"
+				;	#Name $213C .OPHCT_R		"b,LH"
+				;	#Name $213D .OPVCT_R		"b,LH"
+				;	#Name $213E .STAT77_R		b
+				;	#Name $213F .STAT78_R		b
+				;	#Name $2140 APUIO0_R		b
+				;	#Name $2141 APUIO1_R		b
+				;	#Name $2142 APUIO2_R		b
+				;	#Name $2143 APUIO3_R		b
+				;	#Name $2180 WMDATA_R		b
+				;	#Name $2181 WMADD_R		l
+				;	#Name $4200 NMITIMEN_R		b
+				;	#Name $4201 WRIO_R		b
+				;	#Name $4202 WRMPYA_R		b
+				;	#Name $4203 WRMPYB_R		b
+				;	#Name $4204 WRDIV_R		w
+				;	#Name $4206 WRDIVB_R		b
+				;	#Name $4207 HTIME_R		w
+				;	#Name $4209 VTIME_R		w
+				;	#Name $420B MDMAEN_R		b
+				;	#Name $420C HDMAEN_R		b
+				;	#Name $420D MEMSEL_R		b
+				;	#Name $4210 .RDNMI_R		b
+				;	#Name $4211 .TIMEUP_R		b
+				;	#Name $4212 .HVBJOY_R		b
+				;	#Name $4213 .RDIO_R		b
+				;	#Name $4214 .RDDIV_R		w
+				;	#Name $4216 .RDMPY_R		w
+				;	#Name $4218 JOY1_R		w
+				;	#Name $421A JOY2_R		w
+				;	#Name $421C JOY3_R		w
+				;	#Name $421E JOY4_R		w
+				;	#Name $4300 DMAP_R		b
+				;	#Name $4301 BBADD_R		b
+				;	#Name $4302 ABADD_R		l
+				;	#Name $4305 DMAARG_R		l
+				;	#Name $4308 ABTADD_R		W
+				;	#Name $430A HDMAS_R		b
+				;	#Name $4300 DMAP0_R		b
+				;	#Name $4301 BBADD0_R		b
+				;	#Name $4302 ABADD0_R		l
+				;	#Name $4305 DMAARG0_R		l
+				;	#Name $4308 ABTADD0_R		W
+				;	#Name $430A HDMAS0_R		b
+
+
+				;	# WRAM $7E:0000-$7F:0000 ======================		
+				;	# Direct Page ===================== Size ======		
+				;	# $00-$0F  Scratch Pad		10
+				;	#Name $10 INIDISP_WR		b
+				;	#Name $11 OBJSEL_WR		b
+				;	#Name $12 OAMADD_WR		w
+				;	#Name $14 OAMDATA_WR		w
+				;	#Name $16 BGMODE_WR		b
+				;	#Name $17 MOSAIC_WR		b
+				;	#Name $18 BG1SC_WR		b
+				;	#Name $19 BG2SC_WR		b
+				;	#Name $1A BG3SC_WR		b
+				;	#Name $1B BG4SC_WR		b
+				;	#Name $1C BG12NBA_WR		w
+				;	#Name $1E BG34NBA_WR		w
+				;	#Name $20 BG1HOFS_WR		w
+				;	#Name $22 BG1VOFS_WR		w
+				;	#Name $24 BG2HOFS_WR		w
+				;	#Name $26 BG2VOFS_WR		w
+				;	#Name $28 BG3HOFS_WR		w
+				;	#Name $2A BG3VOFS_WR		w
+				;	#Name $2C BG4HOFS_WR		w
+				;	#Name $2E BG4VOFS_WR		w
+				;	#Name $30 VMAINC_WR		b
+				;	#Name $31 VMADD_WR		w
+				;	#Name $33 VMDATA_WR		w
+				;	#Name $35 M7SEL_WR		b
+				;	#Name $36 M7A_WR		w
+				;	#Name $38 M7B_WR		w
+				;	#Name $3A M7C_WR		w
+				;	#Name $3C M7D_WR		w
+				;	#Name $3E M7X_WR		w
+				;	#Name $40 M7Y_WR		w
+				;	#Name $42 CGADD_WR		b
+				;	#Name $43 CGDATA_WR		w
+				;	#Name $45 W12SEL_WR		b
+				;	#Name $46 W34SEL_WR		b
+				;	#Name $47 WOBJSEL_WR		b
+				;	#Name $48 WH0_WR		b
+				;	#Name $49 WH1_WR		b
+				;	#Name $4A WH2_WR		b
+				;	#Name $4B WH3_WR		b
+				;	#Name $4C WBGLOG_WR		b
+				;	#Name $4D WOBJLOG_WR		b
+				;	#Name $4E TM_WR		b
+				;	#Name $4F TS_WR		b
+				;	#Name $50 TMW_WR		b
+				;	#Name $51 TSW_WR		b
+				;	#Name $52 CGWSEL_WR		b
+				;	#Name $53 CGADSUB_WR		b
+				;	#Name $54 COLDATA_WR_Blue		b
+				;	#Name $55 COLDATA_WR_Green		b
+				;	#Name $56 COLDATA_WR_Red		b
+				;	#Name $57 SETINI_WR		b
+				;	#Name $58 .MPY_WR		l
+				;	#Name $5B .SLHV_WR		b
+				;	#Name $5C .OAMDATA_WR		w
+				;	#Name $5E .VMDATA_WR		w
+				;	#Name $60 .CGDATA_WR		w
+				;	#Name $62 .OPHCT_WR		w
+				;	#Name $64 .OPVCT_WR		w
+				;	#Name $66 .STAT77_WR		b
+				;	#Name $67 .STAT78_WR		b
+				;	#Name $68 APUIO0_WR		b
+				;	#Name $69 APUIO1_WR		b
+				;	#Name $6A APUIO2_WR		b
+				;	#Name $6B APUIO3_WR		b
+				;	#Name $6C WMDATA_WR		b
+				;	#Name $6D WMADD_WR		l
+				;	#Name $70 NMITIMEN_WR		b
+				;	#Name $71 WRIO_WR		b
+				;	#Name $72 WRMPYA_WR		b
+				;	#Name $73 WRMPYB_WR		b
+				;	#Name $74 WRDIV_WR		w
+				;	#Name $76 WRDIVB_WR		b
+				;	#Name $77 HTIME_WR		w
+				;	#Name $79 VTIME_WR		w
+				;	#Name $7B MDMAEN_WR		b
+				;	#Name $7C HDMAEN_WR		b
+				;	#Name $7D MEMSEL_WR		b
+				;	#Name $7E .RDNMI_WR		b
+				;	#Name $7F .TIMEUP_WR		b
+				;	#Name $80 .HVBJOY_WR		b
+				;	#Name $81 .RDIO_WR		b
+				;	#Name $82 .RDDIV_WR		w
+				;	#Name $84 .RDMPY_WR		w
+				;	#Name $86 JOY1_WR		w
+				;	#Name $88 JOY2_WR		w
+				;	#Name $8A JOY3_WR		w
+				;	#Name $8C JOY4_WR		w
+
+				;	#Name $8E Joy_1_Previous		w
+				;	#Name $90 Joy_2_Previous		w
+				;	#Name $92 Joy_3_Previous		w
+				;	#Name $94 Joy_4_Previous		w
+				;	#Name $96 Joy_1_Trigger		w
+				;	#Name $98 Joy_2_Trigger		w
+				;	#Name $9A Joy_3_Trigger		w
+				;	#Name $9C Joy_4_Trigger		w
+				;	#Name $9E Joy_1_Hold_Timer		b
+				;	#Name $9F Joy_2_Hold_Timer		b
+				;	#Name $A0 Joy_3_Hold_Timer		b
+				;	#Name $A1 Joy_4_Hold_Timer		b
+				;	#Name $A2 Joy_1_Cooldown_Timer		b
+				;	#Name $A3 Joy_2_Cooldown_Timer		b
+				;	#Name $A4 Joy_3_Cooldown_Timer		b
+				;	#Name $A5 Joy_4_Cooldown_Timer		b
+
+				;	#Name $A6 NMI_Ready_F		b
+				;	#Name $A7 NMI_Count		w
+				;	#Name $A9 NMI_HDMA_Data		l
+				;	#Name $AC NMI_VRAM_DMA_Data		l
+				;	#Name $AF NMI_VRAM_DMA_Data_OS		w
+				;	#Name $B1 NMI_VRAM_Write_Data		l
+				;	#Name $B4 NMI_VRAM_Write_Data_OS		w
+
+				;	#Name $B6 IRQ_Program		l
+
+				;	#Name $B9 Main_Program_Count		w
+				;	#Name $BB Main_Program_Mode		w
+				;	#Name $BD Sub_Program_Mode		w
+
+
+
+
+
+
+
+
+
+
+
+
+						Indirect_Jump	
+						DMA(Indexed)Base	
+						DMA(Dynamic)[DMAP#]	
+						DMA(Dynamic)[BBADD#]
+						DMA(Dynamic)[ABADD#]
+						DMA(Dynamic)[DMAARG#]
+						Compressed_Data_Address
+						Decompression_Destination_Address
+						OAM_OS
+						OAM_II_OS(Byte)
+						OAM_II_OS(Bit)
+						Draw_Sprite_Data_OS
+						Draw_Sprite_Data_Bank
+						Draw_Sprite_OBJ_Count
+						Draw_Sprite_X_Pos
+						Draw_Sprite_Y_Pos
+						Draw_Sprite_Character_OS
+						Draw_Sprite_Settings_Override
+						Random_Number
+
+
+
+				;	#Code w RESET_Vector
+				;	#Code w NMI_Vector
+				;	#Code w IRQ_Vector
+				;	#Code l Reset
+				;	#Code w Clear_Registers
+				;	#Code w Clear_VRAM
+				;	#Code w Clear_OAM
+				;	#Code w Clear_CGRAM
+				;	#Code w Clear_ARAM
+
+				;	#Code l Nmi
+				;	#Code w NMI_Refresh_Registers
+				;	#Code w NMI_HDMA
+				;	#Code w NMI_VRAM_DMA
+				;	#Code w NMI_VRAM_Write
+
+				;	#Code l Main_Program
+				;	#Code w Game_Engine
+				;	#Code w Game_Engine.Initiate_Engine
+				;	#Code w Game_Engine.Initiate_Game
+				;	#Code w Game_Engine.Run
+				;	#Code w Game_Engine.Game_Over
+
+				;	#Code l Immediate_DMA
+
+
+				;	#Data w Main_Program_PT
+				;	#Data w Vector_PT
+				;	#Data w Game_Engine_Sub_Program_PT
+
+
+
+				;	# Program ============================	
+				;	# $80:8000	
+
+				;	#Code w {RESET_Vector}	
+				;	SEI	
+				;	CLC	
+				;	XCE	
+				;	JML	Reset
+
+				;	#Code w {NMI_Vector}	
+				;	JML	Nmi
+
+				;	#Code w {IRQ_Vector}	
+				;	JML	Reset	
+
+				;	#Code l {Reset}		
+				;	REP	#$38	
+				;	PHK		
+				;	PLB		
+				;	LDA	#$0000	
+				;	TCD		
+				;	LDX	#$1FFF	
+				;	TXS		
+				;	JSR	Clear_Registers	
+				;	JSR	Clear_VRAM	
+				;	JSR	Clear_OAM	
+				;	JSR	Clear_CGRAM	
+				;	JSR	Clear_ARAM	
+				;	LDA	#$0000	// Clear_WRAM
+				;	LDX	#$4000
+;	{-}			;	DEX	
+				;	DEX	
+				;	STA	"$7E:0000,X"
+				;	STA	"$7E:4000,X"
+				;	STA	"$7E:8000,X"
+				;	STA	"$7E:C000,X"
+				;	STA	"$7F:0000,X"
+				;	STA	"$7F:4000,X"
+				;	STA	"$7F:8000,X"
+				;	STA	"$7F:C000,X"
+				;	BNE	{-}
+				;	TAX	
+				;	TAY	
+				;	JML	Main_Program
+
+				;	#Code w {Clear_Registers}	
+				;	PHP	
+				;	SEP	#$20
+				;	LDA	#$01
+				;	STA	MEMSEL_R
+				;	LDA	#$80
+				;	STA	INIDISP_R
+				;	STZ	OBJSEL_R
+				;	STZ	OAMADD_R.l
+				;	STZ	OAMADD_R.h
+				;	STZ	BGMODE_R
+				;	STZ	MOSAIC_R
+				;	STZ	BG1SC_R
+				;	STZ	BG2SC_R
+				;	STZ	BG3SC_R
+				;	STZ	BG4SC_R
+				;	STZ	BG12NBA_R
+				;	STZ	BG34NBA_R
+				;	STZ	BG1HOFS_R
+				;	STZ	BG1HOFS_R
+				;	STZ	BG1VOFS_R
+				;	STZ	BG1VOFS_R
+				;	STZ	BG2HOFS_R
+				;	STZ	BG2HOFS_R
+				;	STZ	BG2VOFS_R
+				;	STZ	BG2VOFS_R
+				;	STZ	BG3HOFS_R
+				;	STZ	BG3HOFS_R
+				;	STZ	BG3VOFS_R
+				;	STZ	BG3VOFS_R
+				;	STZ	BG4HOFS_R
+				;	STZ	BG4HOFS_R
+				;	STZ	BG4VOFS_R
+				;	STZ	BG4VOFS_R
+				;	STZ	VMAINC_R
+				;	STZ	VMADD_R.l
+				;	STZ	VMADD_R.h
+				;	STZ	M7SEL_R
+				;	STZ	M7A_R
+				;	STZ	M7A_R
+				;	STZ	M7B_R
+				;	STZ	M7B_R
+				;	STZ	M7C_R
+				;	STZ	M7C_R
+				;	STZ	M7D_R
+				;	STZ	M7D_R
+				;	STZ	M7X_R
+				;	STZ	M7X_R
+				;	STZ	M7Y_R
+				;	STZ	M7Y_R
+				;	STZ	CGADD_R
+				;	STZ	W12SEL_R
+				;	STZ	W34SEL_R
+				;	STZ	WOBJSEL_R
+				;	STZ	WH0_R
+				;	STZ	WH1_R
+				;	STZ	WH2_R
+				;	STZ	WH3_R
+				;	STZ	WBGLOG_R
+				;	STZ	WOBJLOG_R
+				;	STZ	TM_R
+				;	STZ	TS_R
+				;	STZ	TMW_R
+				;	STZ	TSW_R
+				;	STZ	CGWSEL_R
+				;	STZ	CGADSUB_R
+				;	STZ	COLDATA_R
+				;	STZ	SETINI_R
+				;	LDA	.STAT78_R
+				;	STZ	WMADD_R.l
+				;	STZ	WMADD_R.h
+				;	STZ	WMADD_R.b
+				;	STZ	NMITIMEN_R
+				;	STZ	WRIO_R
+				;	STZ	WRMPYA_R
+				;	STZ	WRMPYB_R
+				;	STZ	WRDIV_R.l
+				;	STZ	WRDIV_R.h
+				;	STZ	WRDIVB_R
+				;	STZ	HTIME_R.l
+				;	STZ	HTIME_R.h
+				;	STZ	VTIME_R.l
+				;	STZ	VTIME_R.h
+				;	STZ	MDMAEN_R
+				;	STZ	HDMAEN_R
+				;	LDA	.RDNMI_R
+				;	LDA	.TIMEUP_R
+				;	PLP	
+				;	RTS	
+
+				;	#Code w {Clear_VRAM}	
+				;	PHP	
+				;	SEP	#$20
+				;	LDA	#$80
+				;	STA	VMAINC_R
+				;	REP	#$20
+				;	STZ	VMADD_R
+				;	JSL	Immediate_DMA
+				;	#Data {$09 $18 $80:FFF0 $0000}	
+				;	PLP	
+				;	RTS	
+
+				;	#Code w {Clear_OAM}	
+				;	PHP	
+				;	REP	#$20
+				;	STZ	OAMADD_R
+				;	JSL	Immediate_DMA
+				;	#Data {$0A $04 $80:FFF0 $0220}	
+				;	PLP	
+				;	RTS	
+
+				;	#Code w {Clear_CGRAM}	
+				;	PHP	
+				;	SEP	#$20
+				;	STZ	CGADD_R
+				;	JSL	Immediate_DMA
+				;	#Data {$0A $22 $80:FFF0 $0200}	
+				;	PLP	
+				;	RTS	
+
+				;	#Code w {Clear_ARAM}	
+				;	RTS	
+
+
+
+				;	# NMI ================================	
+
+				;	#Code l {Wait_For_NMI}	
+				;	PHP	
+				;	SEP	#$20
+				;	LDA	#$FF
+				;	STA	NMI_Ready_F
+;	{Wait}			;	LDA	NMI_Ready_F
+				;	BNE	{Wait}
+				;	PLP	
+				;	RTL	
+
+				;	#Code l {Nmi}	
+				;	SEI	
+				;	PHA	
+				;	PHX	
+				;	PHY	
+				;	PHP	
+				;	PHB	
+				;	PHK	
+				;	PLB	
+				;	SEP	#$20
+				;	LDA	NMI_Ready_F
+				;	BEQ	{+}
+				;	STZ	CGADD_R
+				;	JSL	Immediate_DMA
+				;	#Data {$02 $22 $7E:0320 $0200}	
+				;	REP	#$20
+				;	LDA	#$8000
+				;	STA	OAMADD_R
+				;	JSL	Immediate_DMA
+				;	#Data {$02 $04 $7E:0100 $0220}	
+				;	JSR	NMI_Refresh_Registers
+				;	JSR	NMI_HDMA
+				;	JSR	NMI_VRAM_DMA
+				;	JSR	NMI_VRAM_Write
+				;	INC	NMI_Count
+				;	SEP	#$20
+				;	STZ	NMI_Ready_F
+;	{+}			;	PLB	
+				;	PLP	
+				;	PLY	
+				;	PLX	
+				;	PLA	
+				;	CLI	
+				;	RTI	
+
+				;	#Code w {NMI_Refresh_Registers}	
+				;	PHP	
+				;	SEP	#$20
+				;	LDA	INIDISP_WR
+				;	STA	INIDISP_R
+				;	LDA	OBJSEL_WR
+				;	STA	OBJSEL_R
+				;	LDA	BGMODE_WR
+				;	STA	BGMODE_R
+				;	LDA	MOSAIC_WR
+				;	STA	MOSAIC_R
+				;	LDA	BG1SC_WR
+				;	STA	BG1SC_R
+				;	LDA	BG2SC_WR
+				;	STA	BG2SC_R
+				;	LDA	BG3SC_WR
+				;	STA	BG3SC_R
+				;	LDA	BG4SC_WR
+				;	STA	BG4SC_R
+				;	LDA	BG12NBA_WR
+				;	STA	BG12NBA_R
+				;	LDA	BG34NBA_WR
+				;	STA	BG34NBA_R
+				;	LDA	BG1HOFS_WR.l
+				;	STA	BG1HOFS_R
+				;	LDA	BG1HOFS_WR.h
+				;	STA	BG1HOFS_R
+				;	LDA	BG1VOFS_WR.l
+				;	STA	BG1VOFS_R
+				;	LDA	BG1VOFS_WR.h
+				;	STA	BG1VOFS_R
+				;	LDA	BG2HOFS_WR.l
+				;	STA	BG2HOFS_R
+				;	LDA	BG2HOFS_WR.h
+				;	STA	BG2HOFS_R
+				;	LDA	BG2VOFS_WR.l
+				;	STA	BG2VOFS_R
+				;	LDA	BG2VOFS_WR.h
+				;	STA	BG2VOFS_R
+				;	LDA	BG3HOFS_WR.l
+				;	STA	BG3HOFS_R
+				;	LDA	BG3HOFS_WR.h
+				;	STA	BG3HOFS_R
+				;	LDA	BG3VOFS_WR.l
+				;	STA	BG3VOFS_R
+				;	LDA	BG3VOFS_WR.h
+				;	STA	BG3VOFS_R
+				;	LDA	BG4HOFS_WR.l
+				;	STA	BG4HOFS_R
+				;	LDA	BG4HOFS_WR.h
+				;	STA	BG4HOFS_R
+				;	LDA	BG4VOFS_WR.l
+				;	STA	BG4VOFS_R
+				;	LDA	BG4VOFS_WR.h
+				;	STA	BG4VOFS_R
+				;	LDA	VMAINC_WR
+				;	STA	VMAINC_R
+				;	LDA	M7SEL_WR
+				;	STA	M7SEL_R
+				;	LDA	M7A_WR.l
+				;	STA	M7A_R
+				;	LDA	M7A_WR.h
+				;	STA	M7A_R
+				;	LDA	M7B_WR.l
+				;	STA	M7B_R
+				;	LDA	M7B_WR.h
+				;	STA	M7B_R
+				;	LDA	M7C_WR.l
+				;	STA	M7C_R
+				;	LDA	M7C_WR.h
+				;	STA	M7C_R
+				;	LDA	M7D_WR.l
+				;	STA	M7D_R
+				;	LDA	M7D_WR.h
+				;	STA	M7D_R
+				;	LDA	M7X_WR.l
+				;	STA	M7X_R
+				;	LDA	M7X_WR.h
+				;	STA	M7X_R
+				;	LDA	M7Y_WR.l
+				;	STA	M7Y_R
+				;	LDA	M7Y_WR.h
+				;	STA	M7Y_R
+				;	LDA	W12SEL_WR
+				;	STA	W12SEL_R
+				;	LDA	W34SEL_WR
+				;	STA	W34SEL_R
+				;	LDA	WOBJSEL_WR
+				;	STA	WOBJSEL_R
+				;	LDA	WH0_WR
+				;	STA	WH0_R
+				;	LDA	WH1_WR
+				;	STA	WH1_R
+				;	LDA	WH2_WR
+				;	STA	WH2_R
+				;	LDA	WH3_WR
+				;	STA	WH3_R
+				;	LDA	WBGLOG_WR
+				;	STA	WBGLOG_R
+				;	LDA	WOBJLOG_WR
+				;	STA	WOBJLOG_R
+				;	LDA	TM_WR
+				;	STA	TM_R
+				;	LDA	TS_WR
+				;	STA	TS_R
+				;	LDA	TMW_WR
+				;	STA	TMW_R
+				;	LDA	TSW_WR
+				;	STA	TSW_R
+				;	LDA	CGWSEL_WR
+				;	STA	CGWSEL_R
+				;	LDA	CGADSUB_WR
+				;	STA	CGADSUB_R
+				;	LDA	COLDATA_WR_Blue
+				;	STA	COLDATA_R
+				;	LDA	COLDATA_WR_Green
+				;	STA	COLDATA_R
+				;	LDA	COLDATA_WR_Red
+				;	STA	COLDATA_R
+				;	LDA	SETINI_WR
+				;	STA	SETINI_R
+				;	LDA	.STAT77_WR
+				;	STA	.STAT77_R
+				;	LDA	.STAT78_WR
+				;	STA	.STAT78_R
+				;	LDA	NMITIMEN_WR
+				;	STA	NMITIMEN_R
+				;	LDA	WRIO_WR
+				;	STA	WRIO_R
+				;	LDA	HTIME_WR.l
+				;	STA	HTIME_R.l
+				;	LDA	HTIME_WR.h
+				;	STA	HTIME_R.h
+				;	LDA	VTIME_WR.l
+				;	STA	VTIME_R.l
+				;	LDA	VTIME_WR.h
+				;	STA	VTIME_R.h
+				;	LDA	MEMSEL_WR
+				;	STA	MEMSEL_R
+				;	LDA	.RDNMI_R
+				;	STA	.RDNMI_WR
+				;	LDA	.TIMEUP_R
+				;	STA	.TIMEUP_WR
+				;	LDA	.RDIO_R
+				;	STA	.RDIO_WR
+;	{Wait}			;	LDA	.HVBJOY_R
+				;	STA	.HVBJOY_WR
+				;	AND	#$01
+				;	BNE	{Wait}
+				;	REP	#$20
+				;	LDA	JOY1_R
+				;	STA	JOY1_WR
+				;	LDA	JOY2_R
+				;	STA	JOY2_WR
+				;	LDA	JOY3_R
+				;	STA	JOY3_WR
+				;	LDA	JOY4_R
+				;	STA	JOY4_WR
+				;	PLP	
+				;	RTS	
+
+				;	#Code w {NMI_HDMA}	
+				;	PHP	
+				;	SEP	#$10
+				;	LDX	#$10
+				;	LDY	#$00
+;	{-}			;	REP	#$20
+				;	LDA	"[NMI_HDMA_Data],Y"
+				;	CMP	#$0000
+				;	BEQ	{+}
+				;	STA	"DMAP_R,X"
+				;	INY	
+				;	INY	
+				;	LDA	"[NMI_HDMA_Data],Y"
+				;	INY	
+				;	INY	
+				;	STA	"ABADD_R.l,X"
+				;	LDA	"[NMI_HDMA_Data],Y"
+				;	INY	
+				;	INY	
+				;	STA	"ABADD_R.b,X"
+				;	LDA	"[NMI_HDMA_Data],Y"
+				;	INY	
+				;	INY	
+				;	STA	"DMAARG_R,X"
+;	{+}			;	SEP	#$20
+				;	TXA	
+				;	CLC	
+				;	ADC	#$10
+				;	CMP	#$80
+				;	BEQ	{+}
+				;	TAX	
+				;	BRA	{-}
+;	{+}			;	LDA	HDMAEN_WR
+				;	STA	HDMAEN_R
+				;	PLP	
+				;	RTS	
+
+				;	#Code w {NMI_VRAM_DMA}	
+				;	PHP	
+;	{-}			;	REP	#$30
+				;	LDA	NMI_VRAM_DMA_Data_OS
+				;	BEQ	{+}
+				;	SEC	
+				;	SBC	#$000A
+				;	STA	NMI_VRAM_DMA_Data_OS
+				;	TAY	
+				;	SEP	#$20
+				;	LDA	"[NMI_VRAM_DMA_Data],Y"
+				;	INY	
+				;	STA	VMAINC_R
+				;	REP	#$20
+				;	LDA	"[NMI_VRAM_DMA_Data],Y"
+				;	INY	
+				;	INY	
+				;	STA	VMADD_R
+				;	LDA	"[NMI_VRAM_DMA_Data],Y"
+				;	INY	
+				;	INY	
+				;	STA	DMAP_R
+				;	LDA	"[NMI_VRAM_DMA_Data],Y"
+				;	INY	
+				;	INY	
+				;	STA	ABADD_R.l
+				;	LDA	"[NMI_VRAM_DMA_Data],Y"
+				;	INY	
+				;	INY	
+				;	STA	ABADD_R.b
+				;	SEP	#$20
+				;	LDA	"[NMI_VRAM_DMA_Data],Y"
+				;	STA	DMAARG_R
+				;	LDA	#$01
+				;	STA	MDMAEN_R
+				;	BRA	{-}
+;	{+}			;	PLP	
+				;	RTS	
+
+				;	#Code w {NMI_VRAM_Write}	
+				;	PHP	
+				;	REP	#$30
+;	{-}			;	LDA	NMI_VRAM_Write_Data_OS
+				;	BEQ	{+}
+				;	SEC	
+				;	SBC	#$0004
+				;	STA	NMI_VRAM_Write_Data_OS
+				;	TAY	
+				;	SEP	#$20
+				;	LDA	#$80
+				;	STA	VMAINC_R
+				;	REP	#$20
+				;	LDA	"[NMI_VRAM_Write_Data],Y"
+				;	INY	
+				;	INY	
+				;	STA	VMADD_R
+				;	LDA	"[NMI_VRAM_Write_Data],Y"
+				;	STA	VMDATA_R
+				;	BRA	{-}
+;	{+}			;	PLP	
+				;	RTS	
+
+
+
+
+				;	# Main Program =======================	
+
+				;	#Code l {Main_Program}	
+				;	REP	#$30
+;	{Loop}			;	LDA	Main_Program_Mode
+				;	ASL	A
+				;	TAX	
+				;	JSR	"(Main_Program_PT,X)"
+				;	INC	Main_Program_Count
+				;	BRA	{Loop}
+				;	#Data w Main_Program_PT	
+					{Game_Engine}	
+
+
+
+
+				;	#Code w {Game_Engine}	
+				;	PHP	
+				;	REP	#$30
+				;	LDX	Sub_Program_Mode
+				;	JSR	"(Game_Engine_Sub_Program_PT,X)"
+				;	PLP	
+				;	RTS	
+				;	#Data w Game_Engine_Sub_Program_PT	
+					{Game_Engine.Initiate_Engine	
+					 Game_Engine.Initiate_Game	
+					 Game_Engine.Run	
+					 Game_Engine.Game_Over}	
+
+				;	#Code w {Game_Engine.Initiate_Engine}
+
+				;	RTS
+
+
+
+
+
+
+				;	#Code w {Game_Engine.Initiate_Game}
+
+				;	RTS
+
+
+				;	#Code w {Game_Engine.Run}
+
+				;	RTS
+
+
+				;	#Code w {Game_Engine.Game_Over}
+
+				;	RTS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				;	#Code l {Immediate_DMA}
+				;	PHP	
+				;	PHB	
+				;	SEP	#$20
+				;	LDA	"$05,S"
+				;	PHA	
+				;	PLB	
+				;	REP	#$20
+				;	LDA	"$03,S"
+				;	INC	A
+				;	TAX	
+				;	LDA	"$0000,X"
+				;	STA	DMAP0_R
+				;	LDA	"$0002,X"
+				;	STA	ABADD0_R.l
+				;	LDA	"$0004,X"
+				;	STA	ABADD0_R.b
+				;	SEP	#$20
+				;	LDA	"$0006,X"
+				;	STA	DMAARG0_R.h
+				;	LDA	#$01
+				;	STA	MDMAEN_R
+				;	REP	#$20
+				;	TXA	
+				;	CLC	
+				;	ADC	#$0006
+				;	STA	"$03,S"
+				;	PLB	
+				;	PLP	
+				;	RTL	
+
+
+				;	#Data $80:FFE0 Vector_Table	
+					{$0000 $0000 $8000 $8000 $8000 $8000 $0000 $8000		
+					 $0000 $0000 $8000 $0000 $8000 $8000 $8000 $8000}		
+
+
+
+
+
+
+
+
+
+
+			+	;	#Name	$01	OBJSEL
+			+	;	#Name	$02	BGMODE
+			+	;	#Name	$03	MOSAIC
+			+	;	#Name	$04	BG1SC
+			+	;	#Name	$05	BG2SC
+			+	;	#Name	$06	BG3SC
+			+	;	#Name	$07	BG4SC
+			+	;	#Name	$08	BG12NBA
+			+	;	#Name	$09	BG34NBA
+			+	;	#Name	$0A	BG1HOFS
+			+	;	#Name	$0C	BG1VOFS
+			+	;	#Name	$0E	BG2HOFS
+			+	;	#Name	$10	BG2VOFS
+			+	;	#Name	$12	BG3HOFS
+			+	;	#Name	$14	BG3VOFS
+			+	;	#Name	$16	BG4HOFS
+			+	;	#Name	$18	BG4VOFS
+			+	;	#Name	$1A	M7SEL
+			+	;	#Name	$1B	M7A
+			+	;	#Name	$1D	M7B
+			+	;	#Name	$1F	M7C
+			+	;	#Name	$21	M7D
+			+	;	#Name	$23	M7X
+			+	;	#Name	$25	M7Y
+				;	#Name	$27	W12SEL
+				;	#Name	$28	W23SEL
+				;	#Name	$29	WOBJSEL
+				;	#Name	$2A	WH0
+				;	#Name	$2B	WH1
+				;	#Name	$2C	WH2
+				;	#Name	$2D	WH3
+				;	#Name	$2E	WBGLOG
+				;	#Name	$2F	WOBJLOG
+			+	;	#Name	$30	TM
+				;	#Name	$31	TS
+				;	#Name	$32	TMW_
+				;	#Name	$33	TSW_
+				;	#Name	$34	CGSWSEL
+				;	#Name	$35	CGADSUB
+				;	#Name	$36	COLDATA_blue
+				;	#Name	$37	COLDATA_green
+				;	#Name	$38	COLDATA_red
+				;	#Name	$39	SETINI
+			+	;	#Name	$80	Wait_For_NMI_F
+			+	;	#Name	$82	JOY1
+			+	;	#Name	$84	Trigger_1
+			+	;	#Name	$86	Register_Select
+			+	;	#Name	$88	Modification_Bit_Select
+			+	;	#Name	$8A	Modification_Byte
+			+	;	#Name	$8C	Bit_Select_Mask
+			+	;	#Name	$8E	Next_OAM_OS
+			+	;	#Name	$90	Next_OAM_II_Byte_OS
+			+	;	#Name	$92	Next_OAM_II_Bit_OS
+			+	;	#Name	$94	Draw_Sprite_X
+			+	;	#Name	$96	Draw_Sprite_Y
+			+	;	#Name	$98	Draw_Sprite_Data_P
+			+	;	#Name	$9A	Draw_Sprite_OBJ_Count
+
+			+	;	#Name	w	OAM_
+			+	;	#Name	$3000	OAM_II
+			+	;	#Name	$0100	OAM_X
+			+	;	#Name	$0101	OAM_Y
+			+	;	#Name	$0102	OAM_Char
+			+	;	#Name	$0103	OAM_Settings
+
+			+	;	#Name	$2100	INIDISP_R
+			+	;	#Name	$2101	OBJSEL_R
+			+	;	#Name	$2102	OAMADD_R
+			+	;	#Name	$2105	BGMODE_R
+			+	;	#Name	$2106	MOSAIC_R
+			+	;	#Name	$2107	BG1SC_R
+			+	;	#Name	$2108	BG2SC_R
+			+	;	#Name	$2109	BG3SC_R
+			+	;	#Name	$210A	BG4SC_R
+			+	;	#Name	$210B	BG12NBA_R
+			+	;	#Name	$210C	BG34NBA_R
+			+	;	#Name	$210D	BG1HOFS_R
+			+	;	#Name	$210E	BG1VOFS_R
+			+	;	#Name	$210F	BG2HOFS_R
+			+	;	#Name	$2110	BG2VOFS_R
+			+	;	#Name	$2111	BG3HOFS_R
+			+	;	#Name	$2112	BG3VOFS_R
+			+	;	#Name	$2113	BG4HOFS_R
+			+	;	#Name	$2114	BG4VOFS_R
+			+	;	#Name	$2115	VMAINC_R
+			+	;	#Name	$2116	VMADD_R
+			+	;	#Name	$211A	M7SEL_R
+			+	;	#Name	$211B	M7A_R
+			+	;	#Name	$211C	M7B_R
+			+	;	#Name	$211D	M7C_R
+			+	;	#Name	$211E	M7D_R
+			+	;	#Name	$211F	M7X_R
+			+	;	#Name	$2120	M7Y_R
+			+	;	#Name	$2121	CGADD_R
+			+	;	#Name	$2123	W12SEL_R
+			+	;	#Name	$2124	W23SEL_R
+			+	;	#Name	$2125	WOBJSEL_R
+			+	;	#Name	$2126	WH0_R
+			+	;	#Name	$2127	WH1_R
+			+	;	#Name	$2128	WH2_R
+			+	;	#Name	$2129	WH3_R
+			+	;	#Name	$212A	WBGLOG_R
+			+	;	#Name	$212B	WOBJLOG_R
+			+	;	#Name	$212C	TM_R
+			+	;	#Name	$212D	TS_R
+			+	;	#Name	$212E	TMW_R
+			+	;	#Name	$212F	TSW_R
+			+	;	#Name	$2130	CGSWSEL_R
+			+	;	#Name	$2131	CGADSUB_R
+			+	;	#Name	$2132	COLDATA_R
+			+	;	#Name	$2133	SETINI_R
+			+	;	#Name	$4200	NMITIMEN_R
+			+	;	#Name	$420B	MDMAEN_R
+			+	;	#Name	$420D	MEMSEL_R
+			+	;	#Name	$4210	RDNMI_R
+			+	;	#Name	$4212	HVBJOY_R
+			+	;	#Name	$4218	JOY1_R
+			+	;	#Name	$4300	DMAP0_R
+			+	;	#Name	$4301	DMAB0_R
+			+	;	#Name	$4302	DMAA0_R
+			+	;	#Name	$4305	DMAD0_R
+
+			+	;	#Name	$00	Register_Data
+			+	;	#Name	$00	Register_Array
+
+			+	;	#Code	w	RESET_Vector
+			+	;	#Code	w	NMI_Vector
+			+	;	#Code	l	Reset
+			+	;	#Code	w	Reset_II
+			+	;	#Code	w	Initiate_WRAM
+			+	;	#Code	w	Initiate_Hardware
+			+	;	#Code	w	Load_Graphics
+			+	;	#Code	w	Program_Loop
+			+	;	#Code	w	Refresh_Register_Select
+			+	;	#Code	w	Refresh_Modification_Byte
+			+	;	#Code	w	Modify_Register_Data
+			+	;	#Code	w	Clear_OAM
+			+	;	#Code	w	Draw_Interface
+			+	;	#Code	w	Wait_For_NMI
+			+	;	#Code	w	Draw_Sprite
+			+	;	#Code	l	Nmi
+			+	;	#Code	w	NMI_Refresh_Registers
+			+	;	#Code	w	NMI_Refresh_OAM
+			+	;	#Code	w	NMI_Refresh_CGRAM
+			+	;	#Code	w	NMI_Read_Joy
+
+			+	;	#Data	$80:8300	Register_Sprite_PT
+			+	;	#Data	$80:FFB0	ROM_Header
+			+	;	#Data	$80:FFE0	Vector_Table
+
+
+
+
+
+				;	#Code	w	{RESET_Vector}
+				;	SEI		
+				;	CLC		
+				;	XCE		
+				;	JML	Reset	
+
+				;	#Code	w	{NMI_Vector}
+				;	SEI		
+				;	JML	Nmi	
+
+				;	#Code	l	{Reset}
+				;	SEP	#$30	
+				;	PHK		
+				;	PLB		
+				;	LDY	#$80	
+				;	STY	INIDISP_R	
+				;	STZ	NMITIMEN_R	
+				;	REP	#$30	
+				;	JMP	Initiate_WRAM	
+
+		;#m	;#x	;	#Code	w	{Reset_II}
+				;	JSR	Initiate_Hardware	
+;	{GFX}			;	JSR	Load_Graphics	
+				;	CLI		
+				;	SEP	#$30	
+				;	LDA	#$81	
+				;	STA	NMITIMEN_R	
+				;	LDA	#$0F	
+				;	STA	INIDISP_R	
+				;	STA	INIDISP	
+				;	JMP	Program_Loop	
+
+		;#m	;#x	;	#Code	w	{Initiate_WRAM}
+				;	PEA	$7E00	
+				;	PLB		
+				;	PLB		
+				;	LDX	#$1FFE	
+;	{-}			;	STZ	"$0000,X"	
+				;	STZ	"$2000,X"	
+				;	STZ	"$4000,X"	
+				;	STZ	"$6000,X"	
+				;	STZ	"$8000,X"	
+				;	STZ	"$A000,X"	
+				;	STZ	"$C000,X"	
+				;	STZ	"$E000,X"	
+				;	DEX		
+				;	DEX		
+				;	BPL	{-}	
+				;	LDX	#$1FFF	
+				;	TXS		
+				;	PHY		
+				;	PLB		
+				;	PLB		
+				;	JMP	{GFX}	
+
+				;	#Code	w	{Initiate_Hardware}
+				;	PHP		
+				;	SEP	#$20	
+				;	LDA	#$01	
+				;	STA	MEMSEL_R	
+				;	LDA	RDNMI_R	
+				;	LDA	#$10	
+				;	STA	TM_R	
+				;	STA	TM	
+				;	PLP		
+				;	RTS		
+
+				;	#Code	w	{Load_Graphics}
+				;	PHP		
+				;	SEP	#$20	
+				;	LDA	#$10	
+				;	STA	VMAINC_R	
+				;	REP	#$20	
+				;	STZ	VMADD_R	
+				;	LDA	#$1801	
+				;	STA	DMAP0_DMAB0_R	
+				;	LDA	#$80F0	
+				;	STA	DMAA0_R.h	
+				;	LDA	#$F000	
+				;	STA	DMAA0_R.l	
+				;	LDA	#$0A90	
+				;	STA	DMAD0_R	
+				;	SEP	#$20	
+				;	LDA	#$01	
+				;	STA	MDMAEN_R	
+				;	PLP		
+				;	RTS		
+
+				;	#Code	w	{Program_Loop}
+				;	REP	#$30	
+				;	PHK		
+				;	PLB		
+;	{-}			;	JSR	Refresh_Register_Select	
+				;	JSR	Refresh_Modification_Byte	
+				;	JSR	Modify_Register_Data	
+				;	JSR	Clear_OAM	
+				;	JSR	Draw_Interface	
+				;	JSR	Wait_For_NMI	
+				;	BRA	{-}	
+
+		;#m		;	#Code	w	{Refresh_Register_Select}
+				;	PHP		
+				;	LDA	Trigger_1	
+				;	AND	#$0800	
+				;	BEQ	{+}	
+				;	LDA	Register_Select	
+				;	INC	A
+				;	CMP	#$003A
+				;	BNE	{++}
+				;	LDA	#$0000
+				;	BRA	{++}
+;	{+}			;	LDA	Trigger_1
+				;	AND	#$0400
+				;	BEQ	{+RTS}
+				;	LDA	Register_Select
+				;	DEC	A
+				;	BPL	{++}
+				;	LDA	#$0039
+;	{++}			;	STA	Register_Select
+;	{+RTS}			;	PLP	
+				;	RTS	
+
+				;	#Code	w	{Refresh_Modification_Byte}
+				;	PHP		
+				;	SEP	#$30	
+				;	LDA	Trigger_1.h	
+				;	AND	#$03	
+				;	BEQ	{+RTS}	
+				;	LDA	Trigger_1.l	
+				;	AND	#$02	
+				;	BEQ	{+}	
+				;	LDA	Modification_Bit_Select	
+				;	DEC	A	
+				;	BRA	{++}	
+;	{+}			;	LDA	Modification_Bit_Select	
+				;	INC	A	
+;	{++}			;	AND	#$07	
+				;	STA	Modification_Bit_Select	
+				;	TAX		
+				;	LDA	#$00	
+				;	SEC		
+;	{-}			;	ROR	A	
+				;	DEX		
+				;	BPL	{-}	
+				;	STA	Modification_Byte	
+;	{+RTS}			;	PLP		
+				;	RTS		
+
+			;#x	;	#Code	w	{Modify_Register_Data}
+				;	PHP		
+				;	SEP	#$20	
+				;	LDA	Trigger_1.l	
+				;	AND	#$80	
+				;	BEQ	{+RTS}	
+				;	LDX	Register_Select	
+				;	LDA	"Register_Data,X"	
+				;	EOR	Modification_Byte	
+				;	STA	"Register_Array,X"	
+;	{+RTS}			;	PLP		
+				;	RTS		
+
+			;#x	;	#Code	w	{Clear_OAM}
+				;	PHP		
+				;	SEP	#$20	
+				;	LDA	#$F0	
+				;	LDX	#$007C	
+;	{-}			;	STA	"$0101,X"	
+				;	STA	"$0181,X"	
+				;	STA	"$0201,X"	
+				;	STA	"$0281,X"	
+				;	DEX	
+				;	DEX	
+				;	DEX	
+				;	DEX	
+				;	BPL	{-}
+				;	REP	#$20
+				;	LDX	#$001E
+;	{-}			;	STZ	"OAM_II,X"
+				;	DEX	
+				;	BPL	{-}
+				;	REP	#$20
+				;	STZ	Next_OAM_OS
+				;	STZ	Next_OAM_II_Byte_OS
+				;	STZ	Next_OAM_II_Bit_OS
+				;	PLP	
+				;	RTS	
+
+		;#m	;#x	;	#Code	w	{Draw_Interface}
+				;	PHP		
+				;	LDA	#$0010	
+				;	STA	Draw_Sprite_X	
+				;	STA	Draw_Sprite_Y	
+				;	LDA	Register_Select	
+				;	ASL	A	
+				;	TAX		
+				;	LDA	"Register_Sprite_PT,X"	
+				;	STA	Draw_Sprite_Data_P	
+				;	JSR	Draw_Sprite	
+				;	LDA	#$0010	
+				;	STA	Draw_Sprite_X	
+				;	LDA	#$0030	
+				;	STA	Draw_Sprite_Y	
+				;	SEP	#$20
+				;	LDA	#$00
+				;	SEC	
+;	{-}			;	ROR	A
+				;	STA	Bit_Select_Mask
+				;	LDX	Register_Select
+				;	AND	"Register_Data,X"
+				;	BEQ	{+}
+				;	LDY	#$A007
+				;	STY	Draw_Sprite_Data_P
+				;	BRA	{++}
+;	{+}			;	LDY	#$A000
+				;	STY	Draw_Sprite_Data_P
+;	{++}			;	JSR	Draw_Sprite
+				;	LDA	Draw_Sprite_X
+				;	CLC	
+				;	ADC	#$08
+				;	STA	Draw_Sprite_X
+				;	CLC	
+				;	LDA	Bit_Select_Mask
+				;	CMP	#$01
+				;	CLC	
+				;	BNE	{-}
+				;	REP	#$20
+				;	LDX	Modification_Bit_Select
+				;	LDA	#$0008
+;	{-}			;	CLC	
+				;	ADC	#$0008
+				;	DEX	
+				;	BPL	{-}
+				;	STA	Draw_Sprite_X
+				;	LDA	#$0038
+				;	STA	Draw_Sprite_Y	
+				;	LDA	#$A00C	
+				;	STA	Draw_Sprite_Data_P	
+				;	JSR	Draw_Sprite	
+				;	PLP		
+				;	RTS		
+
+				;	#Data	$80:8300	Register_Sprite_PT
+				{	$A012		
+					$A072		
+					$A0CD		
+					$A128		
+					$A183		
+					$A1D9		
+					$A22F		
+					$A285		
+					$A2DB
+					$A33B
+					$A39B
+					$A400
+					$A465
+					$A4CA
+					$A52F
+					$A594
+					$A5F9
+					$A95E
+					$A9C3
+					$A728
+					$A78D
+					$A7F2
+					$A857
+					$A8BC
+					$A921
+					$A986
+					$A9EB
+					$AA41
+					$AA92
+					$AAE3
+					$AB34
+					$AB85
+					$ABD6
+					$AC27
+					$AC78
+					$ACC8
+					$AD1A
+					$AD6B
+					$ADBC
+					$AE0D
+					$AE68
+					$AEC3
+					$AF23
+					$AF6F
+					$AFBB
+					$B007
+					$B053
+					$B0AE
+					$B10E
+					$B155
+					$B19C
+					$B1E8
+					$B234
+					$B294
+					$B2F4
+					$B359
+					$B3BE		
+					$B423		
+					$A000		
+					$A006		
+					$A00C	}	
+
+
+		;#m		;	#Code	w	{Wait_For_NMI}
+				;	PHP		
+				;	INC	Wait_For_NMI_F	
+;	{-}			;	LDA	Wait_For_NMI_F	
+				;	BNE	{-}	
+				;	PLP		
+				;	RTS		
+
+			;#x	;	#Code	w	{Draw_Sprite}
+				;	PHP	
+				;	SEP	#$20
+				;	LDX	Draw_Sprite_Data_P
+				;	LDY	Next_OAM_OS
+				;	LDA	"$0000,X"
+				;	INX	
+;	{--}			;	STA	Draw_Sprite_OBJ_Count
+				;	LDA	"$0000,X"
+				;	CLC	
+				;	ADC	Draw_Sprite_X
+				;	STA	"OAM_X,Y"
+				;	LDA	"$0005,X"
+				;	AND	#$03
+				;	BCC	{+}
+				;	EOR	#$01
+;	{+}			;	STY	Next_OAM_OS
+				;	STX	Draw_Sprite_Data_P
+				;	SEP	#$10
+				;	LDY	Next_OAM_II_Bit_OS
+;	{-}			;	BEQ	{+}
+				;	ASL	A
+				;	ASL	A
+				;	DEY	
+				;	DEY	
+				;	BRA	{-}
+;	{+}			;	LDY	Next_OAM_II_Bit_OS
+				;	INY	
+				;	INY	
+				;	BNE	{+}
+				;	INC	Next_OAM_II_Byte_OS
+;	{+}			;	STY	Next_OAM_II_Bit_OS
+				;	LDY	Next_OAM_II_Byte_OS
+				;	AND	"OAM_II,Y"
+				;	STA	"OAM_II,Y"
+				;	REP	#$10
+				;	LDX	Draw_Sprite_Data_P
+				;	LDY	Next_OAM_OS
+				;	LDA	"$0001,X"
+				;	CLC	
+				;	ADC	Draw_Sprite_Y
+				;	STA	"OAM_Y,Y"
+				;	LDA	"$0002,X"
+				;	STA	"OAM_Char,Y"
+				;	LDA	"$0003,X"
+				;	STA	"OAM_Settings,Y"
+				;	INY	
+				;	INY	
+				;	INY	
+				;	INY	
+				;	INX	
+				;	INX	
+				;	INX	
+				;	INX	
+				;	INX	
+				;	LDA	Draw_Sprite_OBJ_Count
+				;	SEC	
+				;	SBC	#$01
+				;	BPL	{--}
+				;	STY	Next_OAM_OS
+				;	PLP	
+				;	RTS	
+
+				;	#PC	$80:8500
+				;	#File	Color_Data.dat
+
+				;	#PC	$80:A000	
+				;	#File	Sprite_Data.dat	
+
+				;	#PC	$80:F000	
+				;	#File	Font_GFX.dat	
+
+				;	#Data	$80:FFB0	ROM_Header
+				{	$86 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00		
+					$53 $4E $45 $53 $20 $48 $61 $72 $64 $77 $61 $72 $65 $20 $44 $65		
+					$6D $6F $20 $20 $20 $30 $02 $0C $03 $00 $01 $00 $20 $07 $DF $F8 }		
+
+				;	#Data	$80:FFE0	Vector_Table
+				{	$00 $80 $00 $80 $00 $80 $00 $80 $00 $80 $07 $80 $00 $80 $00 $80		
+					$00 $80 $00 $80 $00 $80 $00 $80 $00 $80 $00 $80 $00 $80 $00 $80 }		
+
+
+
+				;	#PC	$81:9000	
+
+				;	#Code	l	{Nmi}
+				;	SEI		
+				;	REP	#$30	
+				;	PHK		
+				;	PLB		
+				;	JSR	NMI_Read_Joy	
+				;	JSR	NMI_Refresh_OAM	
+				;	JSR	NMI_Refresh_CGRAM	
+				;	JSR	NMI_Refresh_Registers	
+				;	STZ	Wait_For_NMI_F	
+				;	LDA	RDNMI_R	
+				;	CLI		
+				;	RTI		
+
+				;	#Code	w	{NMI_Refresh_Registers}
+				;	PHP		
+				;	SEP	#$20	
+				;	LDA	INIDISP	
+				;	STA	INIDISP_R	
+				;	LDA	OBJSEL	
+				;	STA	OBJSEL_R	
+				;	LDA	BGMODE	
+				;	STA	BGMODE_R	
+				;	AND	#$07	
+				;	CMP	#$07	
+				;	BNE	{+}	
+				;	LDA	M7SEL	
+				;	STA	M7SEL_R	
+				;	LDA	M7A.l
+				;	STA	M7A_R
+				;	LDA	M7A.h
+				;	STA	M7A_R
+				;	LDA	M7B.l
+				;	STA	M7B_R
+				;	LDA	M7B.h
+				;	STA	M7B_R
+				;	LDA	M7C.l
+				;	STA	M7C_R
+				;	LDA	M7C.h
+				;	STA	M7C_R
+				;	LDA	M7D.l
+				;	STA	M7D_R
+				;	LDA	M7D.h
+				;	STA	M7D_R
+				;	LDA	M7X.l
+				;	STA	M7X_R
+				;	LDA	M7X.h
+				;	STA	M7X_R
+				;	LDA	M7Y.l
+				;	STA	M7Y_R
+				;	LDA	M7Y.h
+				;	STA	M7Y_R
+;	{+}			;	LDA	MOSAIC
+				;	STA	MOSAIC_R
+				;	LDA	BG1SC
+				;	STA	BG1SC_R
+				;	LDA	BG2SC
+				;	STA	BG2SC_R
+				;	LDA	BG3SC
+				;	STA	BG3SC_R
+				;	LDA	BG4SC
+				;	STA	BG4SC_R
+				;	LDA	BG12NBA
+				;	STA	BG12NBA_R
+				;	LDA	BG34NBA
+				;	STA	BG34NBA_R
+				;	LDA	BG1HOFS.l
+				;	STA	BG1HOFS_R
+				;	LDA	BG1HOFS.h
+				;	STA	BG1HOFS_R
+				;	LDA	BG1VOFS.l
+				;	STA	BG1VOFS_R
+				;	LDA	BG1VOFS.h
+				;	STA	BG1VOFS_R
+				;	LDA	BG2HOFS.l
+				;	STA	BG2HOFS_R
+				;	LDA	BG2HOFS.h
+				;	STA	BG2HOFS_R
+				;	LDA	BG2VOFS.l
+				;	STA	BG2VOFS_R
+				;	LDA	BG2VOFS.h
+				;	STA	BG2VOFS_R
+				;	LDA	BG3HOFS.l
+				;	STA	BG3HOFS_R
+				;	LDA	BG3HOFS.h
+				;	STA	BG3HOFS_R
+				;	LDA	BG3VOFS.l
+				;	STA	BG3VOFS_R
+				;	LDA	BG3VOFS.h
+				;	STA	BG3VOFS_R
+				;	LDA	BG4HOFS.l
+				;	STA	BG4HOFS_R
+				;	LDA	BG4HOFS.h
+				;	STA	BG4HOFS_R
+				;	LDA	BG4VOFS.l
+				;	STA	BG4VOFS_R
+				;	LDA	BG4VOFS.h
+				;	STA	BG4VOFS_R
+				;	LDA	W12SEL
+				;	STA	W12SEL_R
+				;	LDA	W23SEL
+				;	STA	W23SEL_R
+				;	LDA	WOBJSEL
+				;	STA	WOBJSEL_R
+				;	LDA	WH0
+				;	STA	WH0_R
+				;	LDA	WH1
+				;	STA	WH1_R
+				;	LDA	WH2
+				;	STA	WH2_R
+				;	LDA	WH3
+				;	STA	WH3_R
+				;	LDA	WBGLOG
+				;	STA	WBGLOG_R
+				;	LDA	WOBJLOG
+				;	STA	WOBJLOG_R
+				;	LDA	TM
+				;	STA	TM_R
+				;	LDA	TS
+				;	STA	TS_R
+				;	LDA	TMW
+				;	STA	TMW_R
+				;	LDA	TSW
+				;	STA	TSW_R
+				;	LDA	CGSWSEL	
+				;	STA	CGSWSEL_R	
+				;	LDA	CGADSUB	
+				;	STA	CGADSUB_R	
+				;	LDA	COLDATA_blue	
+				;	STA	COLDATA_R	
+				;	LDA	COLDATA_green	
+				;	STA	COLDATA_R	
+				;	LDA	COLDATA_red	
+				;	STA	COLDATA_R	
+				;	LDA	SETINI	
+				;	STA	SETINI_R	
+				;	PLP		
+				;	RTS		
+
+		;#m		;	#Code	w	{NMI_Refresh_OAM}
+				;	PHP	
+				;	STZ	OAMADD_R
+				;	LDA	#$0402
+				;	STA	DMAP0_DMAB0_R
+				;	LDA	#$7E01
+				;	STA	DMAA0_R.h
+				;	LDA	#$0100
+				;	STA	DMAA0_R.l
+				;	LDA	#$0220
+				;	STA	DMAD0_R
+				;	SEP	#$20
+				;	LDA	#$01
+				;	STA	MDMAEN_R
+				;	PLP	
+				;	RTS	
+
+				;	#Code	w	{NMI_Refresh_CGRAM}
+				;	PHP		
+				;	SEP	#$20	
+				;	STZ	CGADD_R	
+				;	REP	#$20	
+				;	LDA	#$0422	
+				;	STA	DMAP0_DMAB0_R	
+				;	LDA	#$8085	
+				;	STA	DMAA0_R.h	
+				;	LDA	#$8500	
+				;	STA	DMAA0_R.l	
+				;	LDA	#$0200	
+				;	STA	DMAD0_R	
+				;	SEP	#$20	
+				;	LDA	#$01	
+				;	STA	MDMAEN_R	
+				;	PLP		
+				;	RTS		
+
+				;	#Code	w	{NMI_Read_Joy}
+				;	PHP		
+				;	SEP	#$20	
+;	{-}			;	LDA	HVBJOY_R	
+				;	AND	#$01	
+				;	BEQ	{-}	
+;	{-}			;	LDA	HVBJOY_R	
+				;	AND	#$01	
+				;	BNE	{-}	
+				;	REP	#$30	
+				;	LDX	JOY1	
+				;	LDA	JOY1_R	
+				;	STA	JOY1	
+				;	TXA	
+				;	EOR	JOY1
+				;	AND	JOY1
+				;	STA	Trigger_1
+				;	PLP	
+				;	RTS	

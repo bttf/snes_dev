@@ -1,0 +1,50 @@
+
+7.2.3. Area of Applicable Bit Operation Commads.
+
+(i)   The commads SET1 (set memory bit) and CLR1 (clear memory bit)
+      are applicable to one-bit data with the direct page.
+
+(ii)  The commands TSET1 (test and set bit) and TCLR1 ( test and
+      clear bit) are applicable to the total 64K byte region.
+
+(iii) The Boolean operation commands (AND1, OR1, EOR1, MOV1, NOT1)
+      are applicable to the 8K byte region of 0000 - 1FFF.
+
+
+        Fig. 7.2.3. Region of Applicable Bit Operation Commands.
+
+     ----------------------------------------------------------
+0000 |  |             |   |                |     |             |
+     |  |  SET1, CLR1 |   | AND1,OR1,EOR1, |     | TSET1,TCLR1 |
+     |  |  applicable |   | MOV1,NOT1      |     |             |
+     |  |  to direct  |   |                |     |             |
+00FF |  |  page.      |   |                |     |             |
+     |  |             |   |                |     |             |
+     |  |             |   |                |     |             |
+     |  |             |   |                |     |             |
+     |  |             |   |                |     |             |
+01FF |   -------------    |                |     |             |
+     |                    |                |     |             |
+     |                    |                |     |             |
+     |                    |                |     |             |
+     |                    |                |     |             |
+     |                    |                |     |             |
+     |                    |                |     |             |
+1FFF |                    ------------------     |             |
+     |                                           |             |
+     |                                           |             |
+     |                                           |             |
+     |                                           |             |
+     |                                           |             |
+     |                                           |             |
+7FFF |                                            -------------
+     |                                           |             |
+     |                                           |  Unusuable  |
+FFBF |                                           |             |
+FFC0 |                                            -------------
+     |                                           |             |
+     |                                           |   IPL-ROM   |
+     |                                           |             |
+FFFF |                                           |             |
+     ----------------------------------------------------------
+

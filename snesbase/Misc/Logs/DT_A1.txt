@@ -1,0 +1,88 @@
+> First of all, YES!!!  Finally a *COMPLETE* SNES doc... thank you!!!
+
+Why thank you! It's nice to be appreciated, even a little.
+
+> This DOC finally clarifies some things I've been trying to figure for 
+> days... but, there are some *small* things I'd like to mention:
+> 
+> -This has to be a typo: in your HiROM overview there's a line that says:
+> 40-7D 0000-7FFF       64k ROM Chunk
+
+Typo... ought to be:
+
+40-7D 0000-FFFF 64k ROM Chunk
+
+> Are these some kind of mirrors of the previous ROM (in 0-39h)? 
+
+In Lo ROM the ROM just continues at 0x40, but now it goes 2 chunks to
+a bank... in Hi ROM it does in fact start over at 0x40, for reasons
+Nintendo has chosen not to share.
+
+> 00-3F 6000-7FFF Expansion RAM <-Do you happen to know whether this RAM 
+> is mirrored like the Shadow RAM or does each bank have different RAM?
+
+Hah! I dunno that. I don't know how many games even use expansion
+RAM. This is one to try to weasel out of the gurus...
+
+> -And, for that 1Mhz speed increase in FastROM, the program has to do a 
+> jump to the mirror of its code at a bank >= 80h?  In HiROM, does 
+> accessing that last chunk of ROM at bank 0xFE-0xFF provide some kind of 
+> speed increase?
+
+That's a really good question... actually what happens is that the
+machine (or emulator) reads the header to find out if the game is fast
+or slow ROM, and then sets the Reset vector intelligently, so if it's
+written for 0x00.8000 it'll put it at 0x80.8000 instead... and so
+forth. 
+
+> -I read that a 48 Mbit ROM exists somewhere.  Any thoughts on that?
+
+Haven't seen one, and don't know where they'd put the extra 16Mbit. As
+far as I know 32 Mbit was in fact the biggest production ROM
+ever. There are odd expansion ports if you read the SnesKart and
+SnesROM documents, there are hardware expansions available that
+somebody could, I suppose, write a bank-switching scheme for... but
+that would be evil and wrong and stuff. Capcom decided NOT to do Super
+Turbo (SF2) because it wouldn't fit in 32Mbit... which tells you
+something.
+
+> -Can you help me a bit with the SMC file format?  Here's the LoROM 
+> format map as I have figured out... now, where the question marks are is 
+> where I don't understand...
+> bytes 0-511 - Header, mostly 0's. 
+> bytes 512-32703 (32192 bytes) - ????? This space is smaller than a full 
+> ROM bank, so...?
+
+Hmm... I'll go look at a couple of ROMs, I had this figured out at one
+point. The ROM you're looking at may be corrupt, usually it is in fact
+the right amount, like 32768+512-64.
+
+> bytes 32736-33273 (538 bytes) - ????? 
+
+Hehe more confusion here. Nobody knows what this crap is for, I've
+seen it set to all kinds of goofy numbers... it doesn't seem to be
+useful, or maybe it's a nice sneaky place to put code... 8-)
+
+> bytes 33274-33277 (4 bytes) - NMI/VBL and Reset Vectors
+> bytes 33278-EOF - ROM?
+
+Yes, the ROM just keeps going and going...
+
+> -The NMI & Reset vectors are only 2 bytes (instead of 3...) so what kind 
+> of address do they specify?  An offset into the ROM address space? (i.e. 
+> vector 0x0105->0x00.8105)
+
+A lot of the Reset Vectors I've seen are like 00 80, which is 0x8000,
+which makes perfect sense... but yeah, it's assumed to be in bank
+0x00.
+
+> -Oh wow, a "Dr. Duncanthrax teaches CPU!" doc? That would be great since 
+> there doesn't seem to be _ANY_ in existance.
+>       -Qwertie
+
+Hmm... I have to make sure I understand Snax's doc before that
+happens. He seems to really be on top of this shit, I don't know how
+since as far as I know he's doing this the same way we are... but I
+think he's got 65c816 Assembler licked...
+
+        - Jason

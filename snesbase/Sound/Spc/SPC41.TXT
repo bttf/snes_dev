@@ -1,0 +1,46 @@
+
+5. 8-BIT LOGIC OPERATION COMMANDS.
+
+------------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                    Flag
+------------------------------------------------------------------------
+  AND    A,#inm      28    2     2     A <- A AND inm           N......Z.
+  AND    A,(X)       26    1     3     A <- A AND (X)           N......Z.
+  AND    A,dp        24    2     3     A <- A AND (dp)          N......Z.
+  AND    A,dp+X      34    2     4     A <- A AND (dp+X)        N......Z.
+  AND    A,labs      25    3     4     A <- A AND (abs)         N......Z.
+  AND    A,labs+X    35    3     5     A <- A AND (abs+X)       N......Z.
+  AND    A,labs+Y    36    3     5     A <- A AND (abs+Y)       N......Z.
+  AND    A,(dp+X)    27    2     6  A <- A AND ((dp+X+1)(dp+X)) N......Z.
+  AND    A,(dp)+Y    37    2     6   A <- A AND ((dp+1)(dp)+Y)  N......Z.
+  AND    (X),(Y)     39    1     5   (X) <- (X) AND (Y)         N......Z.
+  AND    dp(d),dp(s) 29    3     6 (dp(d))<-(dp(d)) AND (dp(s)) N......Z.
+  AND    dp,#inm     38    3     5  (dp) <- (dp) AND inm        N......Z.
+------------------------------------------------------------------------
+  OR     A,#inm      08    2     2     A <- A OR inm            N......Z.
+  OR     A,(X)       06    1     3     A <- A OR (X)            N......Z.
+  OR     A,dp        04    2     3     A <- A OR (dp)           N......Z.
+  OR     A,dp+X      14    2     4     A <- A OR (dp+X)         N......Z.
+  OR     A,labs      05    3     4     A <- A OR (abs)          N......Z.
+  OR     A,labs+X    15    3     5     A <- A OR (abs+X)        N......Z.
+  OR     A,labs+Y    16    3     5     A <- A OR (abs+Y)        N......Z.
+  OR     A,(dp+X)    07    2     6  A <- A OR ((dp+X+1)(dp+X))  N......Z.
+  OR     A,(dp)+Y    17    2     6   A <- A OR ((dp+1)(dp)+Y)   N......Z.
+  OR     (X),(Y)     19    1     5   (X) <- (X) OR (Y)          N......Z.
+  OR     dp(d),dp(s) 09    3     6 (dp(d))<-(dp(d)) OR (dp(s))  N......Z.
+  OR     dp,#inm     18    3     5  (dp) <- (dp) OR inm         N......Z.
+------------------------------------------------------------------------
+  EOR    A,#inm      48    2     2     A <- A EOR inm           N......Z.
+  EOR    A,(X)       46    1     3     A <- A EOR (X)           N......Z.
+  EOR    A,dp        44    2     3     A <- A EOR (dp)          N......Z.
+  EOR    A,dp+X      54    2     4     A <- A EOR (dp+X)        N......Z.
+  EOR    A,labs      45    3     4     A <- A EOR (abs)         N......Z.
+  EOR    A,labs+X    55    3     5     A <- A EOR (abs+X)       N......Z.
+  EOR    A,labs+Y    56    3     5     A <- A EOR (abs+Y)       N......Z.
+  EOR    A,(dp+X)    47    2     6  A <- A EOR ((dp+X+1)(dp+X)) N......Z.
+  EOR    A,(dp)+Y    57    2     6   A <- A EOR ((dp+1)(dp)+Y)  N......Z.
+  EOR    (X),(Y)     59    1     5   (X) <- (X) EOR (Y)         N......Z.
+  EOR    dp(d),dp(s) 49    3     6 (dp(d))<-(dp(d)) EOR (dp(s)) N......Z.
+  EOR    dp,#inm     58    3     5  (dp) <- (dp) EOR inm        N......Z.
+------------------------------------------------------------------------
+

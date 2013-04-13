@@ -1,0 +1,751 @@
+				;	#HiROM		
+
+			+	;	#Name	$00	INIDISP
+			+	;	#Name	$01	OBJSEL
+			+	;	#Name	$02	BGMODE
+			+	;	#Name	$03	MOSAIC
+			+	;	#Name	$04	BG1SC
+			+	;	#Name	$05	BG2SC
+			+	;	#Name	$06	BG3SC
+			+	;	#Name	$07	BG4SC
+			+	;	#Name	$08	BG12NBA
+			+	;	#Name	$09	BG34NBA
+			+	;	#Name	$0A	BG1HOFS
+			+	;	#Name	$0C	BG1VOFS
+			+	;	#Name	$0E	BG2HOFS
+			+	;	#Name	$10	BG2VOFS
+			+	;	#Name	$12	BG3HOFS
+			+	;	#Name	$14	BG3VOFS
+			+	;	#Name	$16	BG4HOFS
+			+	;	#Name	$18	BG4VOFS
+			+	;	#Name	$1A	M7SEL
+			+	;	#Name	$1B	M7A
+			+	;	#Name	$1D	M7B
+			+	;	#Name	$1F	M7C
+			+	;	#Name	$21	M7D
+			+	;	#Name	$23	M7X
+			+	;	#Name	$25	M7Y
+				;	#Name	$27	W12SEL
+				;	#Name	$28	W23SEL
+				;	#Name	$29	WOBJSEL
+				;	#Name	$2A	WH0
+				;	#Name	$2B	WH1
+				;	#Name	$2C	WH2
+				;	#Name	$2D	WH3
+				;	#Name	$2E	WBGLOG
+				;	#Name	$2F	WOBJLOG
+			+	;	#Name	$30	TM
+				;	#Name	$31	TS
+				;	#Name	$32	TMW_
+				;	#Name	$33	TSW_
+				;	#Name	$34	CGSWSEL
+				;	#Name	$35	CGADSUB
+				;	#Name	$36	COLDATA_blue
+				;	#Name	$37	COLDATA_green
+				;	#Name	$38	COLDATA_red
+				;	#Name	$39	SETINI
+			+	;	#Name	$80	Wait_For_NMI_F
+			+	;	#Name	$82	JOY1
+			+	;	#Name	$84	Trigger_1
+			+	;	#Name	$86	Register_Select
+			+	;	#Name	$88	Modification_Bit_Select
+			+	;	#Name	$8A	Modification_Byte
+			+	;	#Name	$8C	Bit_Select_Mask
+			+	;	#Name	$8E	Next_OAM_OS
+			+	;	#Name	$90	Next_OAM_II_Byte_OS
+			+	;	#Name	$92	Next_OAM_II_Bit_OS
+			+	;	#Name	$94	Draw_Sprite_X
+			+	;	#Name	$96	Draw_Sprite_Y
+			+	;	#Name	$98	Draw_Sprite_Data_P
+			+	;	#Name	$9A	Draw_Sprite_OBJ_Count
+
+			+	;	#Name	w	OAM_
+			+	;	#Name	$3000	OAM_II
+			+	;	#Name	$0100	OAM_X
+			+	;	#Name	$0101	OAM_Y
+			+	;	#Name	$0102	OAM_Char
+			+	;	#Name	$0103	OAM_Settings
+
+			+	;	#Name	$2100	INIDISP_R
+			+	;	#Name	$2101	OBJSEL_R
+			+	;	#Name	$2102	OAMADD_R
+			+	;	#Name	$2105	BGMODE_R
+			+	;	#Name	$2106	MOSAIC_R
+			+	;	#Name	$2107	BG1SC_R
+			+	;	#Name	$2108	BG2SC_R
+			+	;	#Name	$2109	BG3SC_R
+			+	;	#Name	$210A	BG4SC_R
+			+	;	#Name	$210B	BG12NBA_R
+			+	;	#Name	$210C	BG34NBA_R
+			+	;	#Name	$210D	BG1HOFS_R
+			+	;	#Name	$210E	BG1VOFS_R
+			+	;	#Name	$210F	BG2HOFS_R
+			+	;	#Name	$2110	BG2VOFS_R
+			+	;	#Name	$2111	BG3HOFS_R
+			+	;	#Name	$2112	BG3VOFS_R
+			+	;	#Name	$2113	BG4HOFS_R
+			+	;	#Name	$2114	BG4VOFS_R
+			+	;	#Name	$2115	VMAINC_R
+			+	;	#Name	$2116	VMADD_R
+			+	;	#Name	$211A	M7SEL_R
+			+	;	#Name	$211B	M7A_R
+			+	;	#Name	$211C	M7B_R
+			+	;	#Name	$211D	M7C_R
+			+	;	#Name	$211E	M7D_R
+			+	;	#Name	$211F	M7X_R
+			+	;	#Name	$2120	M7Y_R
+			+	;	#Name	$2121	CGADD_R
+			+	;	#Name	$2123	W12SEL_R
+			+	;	#Name	$2124	W23SEL_R
+			+	;	#Name	$2125	WOBJSEL_R
+			+	;	#Name	$2126	WH0_R
+			+	;	#Name	$2127	WH1_R
+			+	;	#Name	$2128	WH2_R
+			+	;	#Name	$2129	WH3_R
+			+	;	#Name	$212A	WBGLOG_R
+			+	;	#Name	$212B	WOBJLOG_R
+			+	;	#Name	$212C	TM_R
+			+	;	#Name	$212D	TS_R
+			+	;	#Name	$212E	TMW_R
+			+	;	#Name	$212F	TSW_R
+			+	;	#Name	$2130	CGSWSEL_R
+			+	;	#Name	$2131	CGADSUB_R
+			+	;	#Name	$2132	COLDATA_R
+			+	;	#Name	$2133	SETINI_R
+			+	;	#Name	$4200	NMITIMEN_R
+			+	;	#Name	$420B	MDMAEN_R
+			+	;	#Name	$420D	MEMSEL_R
+			+	;	#Name	$4210	RDNMI_R
+			+	;	#Name	$4212	HVBJOY_R
+			+	;	#Name	$4218	JOY1_R
+			+	;	#Name	$4300	DMAP0_R
+			+	;	#Name	$4301	DMAB0_R
+			+	;	#Name	$4302	DMAA0_R
+			+	;	#Name	$4305	DMAD0_R
+
+			+	;	#Name	$00	Register_Data
+			+	;	#Name	$00	Register_Array
+
+			+	;	#Code	w	RESET_Vector
+			+	;	#Code	w	NMI_Vector
+			+	;	#Code	l	Reset
+			+	;	#Code	w	Reset_II
+			+	;	#Code	w	Initiate_WRAM
+			+	;	#Code	w	Initiate_Hardware
+			+	;	#Code	w	Load_Graphics
+			+	;	#Code	w	Program_Loop
+			+	;	#Code	w	Refresh_Register_Select
+			+	;	#Code	w	Refresh_Modification_Byte
+			+	;	#Code	w	Modify_Register_Data
+			+	;	#Code	w	Clear_OAM
+			+	;	#Code	w	Draw_Interface
+			+	;	#Code	w	Wait_For_NMI
+			+	;	#Code	w	Draw_Sprite
+			+	;	#Code	l	Nmi
+			+	;	#Code	w	NMI_Refresh_Registers
+			+	;	#Code	w	NMI_Refresh_OAM
+			+	;	#Code	w	NMI_Refresh_CGRAM
+			+	;	#Code	w	NMI_Read_Joy
+
+			+	;	#Data	$80:8300	Register_Sprite_PT
+			+	;	#Data	$80:FFB0	ROM_Header
+			+	;	#Data	$80:FFE0	Vector_Table
+
+
+
+
+
+				;	#Code	w	{RESET_Vector}
+				;	SEI		
+				;	CLC		
+				;	XCE		
+				;	JML	Reset	
+
+				;	#Code	w	{NMI_Vector}
+				;	SEI		
+				;	JML	Nmi	
+
+				;	#Code	l	{Reset}
+				;	SEP	#$30	
+				;	PHK		
+				;	PLB		
+				;	LDY	#$80	
+				;	STY	INIDISP_R	
+				;	STZ	NMITIMEN_R	
+				;	REP	#$30	
+				;	JMP	Initiate_WRAM	
+
+		;#m	;#x	;	#Code	w	{Reset_II}
+				;	JSR	Initiate_Hardware	
+;	{GFX}			;	JSR	Load_Graphics	
+				;	CLI		
+				;	SEP	#$30	
+				;	LDA	#$81	
+				;	STA	NMITIMEN_R	
+				;	LDA	#$0F	
+				;	STA	INIDISP_R	
+				;	STA	INIDISP	
+				;	JMP	Program_Loop	
+
+		;#m	;#x	;	#Code	w	{Initiate_WRAM}
+				;	PEA	$7E00	
+				;	PLB		
+				;	PLB	
+				;	LDX	#$1FFE
+;	{-}			;	STZ	$0000,X
+				;	STZ	$2000,X
+				;	STZ	$4000,X
+				;	STZ	$6000,X
+				;	STZ	$8000,X
+				;	STZ	$A000,X
+				;	STZ	$C000,X
+				;	STZ	$E000,X
+				;	DEX	
+				;	DEX	
+				;	BPL	{-}
+				;	LDX	#$1FFF
+				;	TXS	
+				;	PHY	
+				;	PLB		
+				;	PLB		
+				;	JMP	{GFX}	
+
+				;	#Code	w	{Initiate_Hardware}
+				;	PHP		
+				;	SEP	#$20	
+				;	LDA	#$01	
+				;	STA	MEMSEL_R	
+				;	LDA	RDNMI_R	
+				;	LDA	#$10	
+				;	STA	TM_R	
+				;	STA	TM	
+				;	PLP		
+				;	RTS		
+
+				;	#Code	w	{Load_Graphics}
+				;	PHP		
+				;	SEP	#$20	
+				;	LDA	#$10	
+				;	STA	VMAINC_R	
+				;	REP	#$20	
+				;	STZ	VMADD_R	
+				;	LDA	#$1801	
+				;	STA	DMAP0_R	
+				;	LDA	#$80F0	
+				;	STA	DMAA0_R.h	
+				;	LDA	#$F000	
+				;	STA	DMAA0_R.l	
+				;	LDA	#$0A90	
+				;	STA	DMAD0_R	
+				;	SEP	#$20	
+				;	LDA	#$01	
+				;	STA	MDMAEN_R	
+				;	PLP		
+				;	RTS		
+
+				;	#Code	w	{Program_Loop}
+				;	REP	#$30	
+				;	PHK		
+				;	PLB		
+;	{-}			;	JSR	Refresh_Register_Select	
+				;	JSR	Refresh_Modification_Byte	
+				;	JSR	Modify_Register_Data	
+				;	JSR	Clear_OAM	
+				;	JSR	Draw_Interface	
+				;	JSR	Wait_For_NMI	
+				;	BRA	{-}	
+
+		;#m		;	#Code	w	{Refresh_Register_Select}
+				;	PHP		
+				;	LDA	Trigger_1	
+				;	AND	#$0800	
+				;	BEQ	{+}	
+				;	LDA	Register_Select	
+				;	INC	A	
+				;	CMP	#$003A	
+				;	BNE	{++}	
+				;	LDA	#$0000	
+				;	BRA	{++}	
+;	{+}			;	LDA	Trigger_1	
+				;	AND	#$0400	
+				;	BEQ	{+RTS}	
+				;	LDA	Register_Select	
+				;	DEC	A	
+				;	BPL	{++}	
+				;	LDA	#$0039	
+;	{++}			;	STA	Register_Select	
+;	{+RTS}			;	PLP		
+				;	RTS		
+
+				;	#Code	w	{Refresh_Modification_Byte}
+				;	PHP		
+				;	SEP	#$30	
+				;	LDA	Trigger_1.h	
+				;	AND	#$03	
+				;	BEQ	{+RTS}	
+				;	LDA	Trigger_1.l	
+				;	AND	#$02	
+				;	BEQ	{+}	
+				;	LDA	Modification_Bit_Select
+				;	DEC	A
+				;	BRA	{++}
+;	{+}			;	LDA	Modification_Bit_Select
+				;	INC	A
+;	{++}			;	AND	#$07
+				;	STA	Modification_Bit_Select
+				;	TAX	
+				;	LDA	#$00
+				;	SEC	
+;	{-}			;	ROR	A
+				;	DEX	
+				;	BPL	{-}
+				;	STA	Modification_Byte
+;	{+RTS}			;	PLP	
+				;	RTS	
+
+			;#x	;	#Code	w	{Modify_Register_Data}
+				;	PHP		
+				;	SEP	#$20	
+				;	LDA	Trigger_1.l	
+				;	AND	#$80	
+				;	BEQ	{+RTS}	
+				;	LDX	Register_Select	
+				;	LDA	Register_Data,X	
+				;	EOR	Modification_Byte	
+				;	STA	Register_Array,X	
+;	{+RTS}			;	PLP		
+				;	RTS		
+
+			;#x	;	#Code	w	{Clear_OAM}
+				;	PHP		
+				;	SEP	#$20
+				;	LDA	#$F0
+				;	LDX	#$007C
+;	{-}			;	STA	$0101,X
+				;	STA	$0181,X
+				;	STA	$0201,X
+				;	STA	$0281,X
+				;	DEX	
+				;	DEX	
+				;	DEX	
+				;	DEX	
+				;	BPL	{-}
+				;	REP	#$20
+				;	LDX	#$001E
+;	{-}			;	STZ	OAM_II,X
+				;	DEX	
+				;	BPL	{-}	
+				;	REP	#$20	
+				;	STZ	Next_OAM_OS	
+				;	STZ	Next_OAM_II_Byte_OS	
+				;	STZ	Next_OAM_II_Bit_OS	
+				;	PLP		
+				;	RTS		
+
+		;#m	;#x	;	#Code	w	{Draw_Interface}
+				;	PHP		
+				;	LDA	#$0010	
+				;	STA	Draw_Sprite_X	
+				;	STA	Draw_Sprite_Y	
+				;	LDA	Register_Select	
+				;	ASL	A	
+				;	TAX		
+				;	LDA	Register_Sprite_PT,X
+				;	STA	Draw_Sprite_Data_P
+				;	JSR	Draw_Sprite
+				;	LDA	#$0010
+				;	STA	Draw_Sprite_X
+				;	LDA	#$0030
+				;	STA	Draw_Sprite_Y
+				;	SEP	#$20
+				;	LDA	#$00
+				;	SEC	
+;	{-}			;	ROR	A
+				;	STA	Bit_Select_Mask
+				;	LDX	Register_Select
+				;	AND	Register_Data,X
+				;	BEQ	{+}
+				;	LDY	#$A007
+				;	STY	Draw_Sprite_Data_P
+				;	BRA	{++}
+;	{+}			;	LDY	#$A000
+				;	STY	Draw_Sprite_Data_P
+;	{++}			;	JSR	Draw_Sprite
+				;	LDA	Draw_Sprite_X
+				;	CLC	
+				;	ADC	#$08
+				;	STA	Draw_Sprite_X
+				;	CLC	
+				;	LDA	Bit_Select_Mask
+				;	CMP	#$01
+				;	CLC	
+				;	BNE	{-}
+				;	REP	#$20
+				;	LDX	Modification_Bit_Select
+				;	LDA	#$0008	
+;	{-}			;	CLC		
+				;	ADC	#$0008	
+				;	DEX		
+				;	BPL	{-}	
+				;	STA	Draw_Sprite_X	
+				;	LDA	#$0038	
+				;	STA	Draw_Sprite_Y	
+				;	LDA	#$A00C	
+				;	STA	Draw_Sprite_Data_P	
+				;	JSR	Draw_Sprite	
+				;	PLP		
+				;	RTS		
+
+				;	#Data	$80:8300	Register_Sprite_PT
+				{	$A012		
+					$A072
+					$A0CD
+					$A128
+					$A183
+					$A1D9
+					$A22F
+					$A285
+					$A2DB
+					$A33B
+					$A39B
+					$A400
+					$A465
+					$A4CA
+					$A52F
+					$A594
+					$A5F9
+					$A95E
+					$A9C3
+					$A728
+					$A78D
+					$A7F2
+					$A857
+					$A8BC
+					$A921
+					$A986
+					$A9EB
+					$AA41
+					$AA92
+					$AAE3
+					$AB34
+					$AB85
+					$ABD6
+					$AC27
+					$AC78
+					$ACC8
+					$AD1A
+					$AD6B
+					$ADBC
+					$AE0D
+					$AE68
+					$AEC3
+					$AF23
+					$AF6F
+					$AFBB
+					$B007
+					$B053
+					$B0AE
+					$B10E
+					$B155		
+					$B19C		
+					$B1E8		
+					$B234		
+					$B294		
+					$B2F4		
+					$B359		
+					$B3BE		
+					$B423		
+					$A000		
+					$A006		
+					$A00C	}	
+
+
+		;#m		;	#Code	w	{Wait_For_NMI}
+				;	PHP		
+				;	INC	Wait_For_NMI_F	
+;	{-}			;	LDA	Wait_For_NMI_F	
+				;	BNE	{-}	
+				;	PLP		
+				;	RTS		
+
+			;#x	;	#Code	w	{Draw_Sprite}
+				;	PHP		
+				;	SEP	#$20	
+				;	LDX	Draw_Sprite_Data_P	
+				;	LDY	Next_OAM_OS	
+				;	LDA	$0000,X	
+				;	INX		
+;	{--}			;	STA	Draw_Sprite_OBJ_Count	
+				;	LDA	$0000,X	
+				;	CLC		
+				;	ADC	Draw_Sprite_X
+				;	STA	OAM_X,Y
+				;	LDA	$0005,X
+				;	AND	#$03
+				;	BCC	{+}
+				;	EOR	#$01
+;	{+}			;	STY	Next_OAM_OS
+				;	STX	Draw_Sprite_Data_P
+				;	SEP	#$10
+				;	LDY	Next_OAM_II_Bit_OS
+;	{-}			;	BEQ	{+}
+				;	ASL	A
+				;	ASL	A
+				;	DEY	
+				;	DEY	
+				;	BRA	{-}
+;	{+}			;	LDY	Next_OAM_II_Bit_OS
+				;	INY	
+				;	INY	
+				;	BNE	{+}
+				;	INC	Next_OAM_II_Byte_OS
+;	{+}			;	STY	Next_OAM_II_Bit_OS
+				;	LDY	Next_OAM_II_Byte_OS
+				;	AND	OAM_II,Y
+				;	STA	OAM_II,Y
+				;	REP	#$10
+				;	LDX	Draw_Sprite_Data_P
+				;	LDY	Next_OAM_OS
+				;	LDA	$0001,X
+				;	CLC	
+				;	ADC	Draw_Sprite_Y
+				;	STA	OAM_Y,Y
+				;	LDA	$0002,X
+				;	STA	OAM_Char,Y
+				;	LDA	$0003,X
+				;	STA	OAM_Settings,Y
+				;	INY	
+				;	INY	
+				;	INY	
+				;	INY	
+				;	INX	
+				;	INX	
+				;	INX	
+				;	INX	
+				;	INX	
+				;	LDA	Draw_Sprite_OBJ_Count
+				;	SEC	
+				;	SBC	#$01
+				;	BPL	{--}	
+				;	STY	Next_OAM_OS	
+				;	PLP		
+				;	RTS		
+
+				;	#PC	$80:8500	
+				;	#Data w Pallet		{#Color_Data.dat}
+
+				;	#PC	$80:A000	
+				;	#Data w Spite_Data		{#Sprite_Data.dat}
+
+				;	#PC	$80:F000	
+				;	#Data w Gfx		{#Font_GFX.dat}
+
+				;	#Data	$80:FFB0	ROM_Header
+				{	$86 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00		
+					$53 $4E $45 $53 $20 $48 $61 $72 $64 $77 $61 $72 $65 $20 $44 $65		
+					$6D $6F $20 $20 $20 $30 $02 $0C $03 $00 $01 $00 $20 $07 $DF $F8 }		
+
+				;	#Data	$80:FFE0	Vector_Table
+				{	$00 $80 $00 $80 $00 $80 $00 $80 $00 $80 $07 $80 $00 $80 $00 $80		
+					$00 $80 $00 $80 $00 $80 $00 $80 $00 $80 $00 $80 $00 $80 $00 $80 }		
+
+
+
+				;	#PC	$81:8000	
+
+				;	#Code	l	{Nmi}
+				;	SEI		
+				;	REP	#$30	
+				;	PHK		
+				;	PLB		
+				;	JSR	NMI_Read_Joy	
+				;	JSR	NMI_Refresh_OAM	
+				;	JSR	NMI_Refresh_CGRAM	
+				;	JSR	NMI_Refresh_Registers	
+				;	STZ	Wait_For_NMI_F	
+				;	LDA	RDNMI_R	
+				;	CLI		
+				;	RTI		
+
+				;	#Code	w	{NMI_Refresh_Registers}
+				;	PHP		
+				;	SEP	#$20	
+				;	LDA	INIDISP	
+				;	STA	INIDISP_R	
+				;	LDA	OBJSEL	
+				;	STA	OBJSEL_R	
+				;	LDA	BGMODE
+				;	STA	BGMODE_R
+				;	AND	#$07
+				;	CMP	#$07
+				;	BNE	{+}
+				;	LDA	M7SEL
+				;	STA	M7SEL_R
+				;	LDA	M7A.l
+				;	STA	M7A_R
+				;	LDA	M7A.h
+				;	STA	M7A_R
+				;	LDA	M7B.l
+				;	STA	M7B_R
+				;	LDA	M7B.h
+				;	STA	M7B_R
+				;	LDA	M7C.l
+				;	STA	M7C_R
+				;	LDA	M7C.h
+				;	STA	M7C_R
+				;	LDA	M7D.l
+				;	STA	M7D_R
+				;	LDA	M7D.h
+				;	STA	M7D_R
+				;	LDA	M7X.l
+				;	STA	M7X_R
+				;	LDA	M7X.h
+				;	STA	M7X_R
+				;	LDA	M7Y.l
+				;	STA	M7Y_R
+				;	LDA	M7Y.h
+				;	STA	M7Y_R
+;	{+}			;	LDA	MOSAIC
+				;	STA	MOSAIC_R
+				;	LDA	BG1SC
+				;	STA	BG1SC_R
+				;	LDA	BG2SC
+				;	STA	BG2SC_R
+				;	LDA	BG3SC
+				;	STA	BG3SC_R
+				;	LDA	BG4SC
+				;	STA	BG4SC_R
+				;	LDA	BG12NBA
+				;	STA	BG12NBA_R
+				;	LDA	BG34NBA
+				;	STA	BG34NBA_R
+				;	LDA	BG1HOFS.l
+				;	STA	BG1HOFS_R
+				;	LDA	BG1HOFS.h
+				;	STA	BG1HOFS_R
+				;	LDA	BG1VOFS.l
+				;	STA	BG1VOFS_R
+				;	LDA	BG1VOFS.h
+				;	STA	BG1VOFS_R
+				;	LDA	BG2HOFS.l
+				;	STA	BG2HOFS_R
+				;	LDA	BG2HOFS.h
+				;	STA	BG2HOFS_R
+				;	LDA	BG2VOFS.l
+				;	STA	BG2VOFS_R
+				;	LDA	BG2VOFS.h
+				;	STA	BG2VOFS_R
+				;	LDA	BG3HOFS.l
+				;	STA	BG3HOFS_R
+				;	LDA	BG3HOFS.h
+				;	STA	BG3HOFS_R
+				;	LDA	BG3VOFS.l
+				;	STA	BG3VOFS_R
+				;	LDA	BG3VOFS.h
+				;	STA	BG3VOFS_R
+				;	LDA	BG4HOFS.l
+				;	STA	BG4HOFS_R
+				;	LDA	BG4HOFS.h
+				;	STA	BG4HOFS_R
+				;	LDA	BG4VOFS.l
+				;	STA	BG4VOFS_R
+				;	LDA	BG4VOFS.h
+				;	STA	BG4VOFS_R
+				;	LDA	W12SEL
+				;	STA	W12SEL_R
+				;	LDA	W23SEL
+				;	STA	W23SEL_R
+				;	LDA	WOBJSEL
+				;	STA	WOBJSEL_R
+				;	LDA	WH0
+				;	STA	WH0_R
+				;	LDA	WH1
+				;	STA	WH1_R
+				;	LDA	WH2
+				;	STA	WH2_R
+				;	LDA	WH3
+				;	STA	WH3_R
+				;	LDA	WBGLOG
+				;	STA	WBGLOG_R
+				;	LDA	WOBJLOG
+				;	STA	WOBJLOG_R
+				;	LDA	TM
+				;	STA	TM_R
+				;	LDA	TS
+				;	STA	TS_R
+				;	LDA	TMW_
+				;	STA	TMW_R
+				;	LDA	TSW_
+				;	STA	TSW_R
+				;	LDA	CGSWSEL
+				;	STA	CGSWSEL_R
+				;	LDA	CGADSUB
+				;	STA	CGADSUB_R
+				;	LDA	COLDATA_blue
+				;	STA	COLDATA_R
+				;	LDA	COLDATA_green
+				;	STA	COLDATA_R
+				;	LDA	COLDATA_red
+				;	STA	COLDATA_R	
+				;	LDA	SETINI	
+				;	STA	SETINI_R	
+				;	PLP		
+				;	RTS		
+
+		;#m		;	#Code	w	{NMI_Refresh_OAM}
+				;	PHP		
+				;	STZ	OAMADD_R	
+				;	LDA	#$0402	
+				;	STA	DMAP0_R	
+				;	LDA	#$7E01	
+				;	STA	DMAA0_R.h	
+				;	LDA	#$0100	
+				;	STA	DMAA0_R.l	
+				;	LDA	#$0220	
+				;	STA	DMAD0_R	
+				;	SEP	#$20	
+				;	LDA	#$01	
+				;	STA	MDMAEN_R	
+				;	PLP		
+				;	RTS		
+
+				;	#Code	w	{NMI_Refresh_CGRAM}
+				;	PHP		
+				;	SEP	#$20	
+				;	STZ	CGADD_R	
+				;	REP	#$20	
+				;	LDA	#$0422	
+				;	STA	DMAP0_R	
+				;	LDA	#$8085	
+				;	STA	DMAA0_R.h	
+				;	LDA	#$8500	
+				;	STA	DMAA0_R.l	
+				;	LDA	#$0200	
+				;	STA	DMAD0_R	
+				;	SEP	#$20	
+				;	LDA	#$01	
+				;	STA	MDMAEN_R	
+				;	PLP		
+				;	RTS		
+
+				;	#Code	w	{NMI_Read_Joy}
+				;	PHP		
+				;	SEP	#$20	
+;	{-}			;	LDA	HVBJOY_R	
+				;	AND	#$01	
+				;	BEQ	{-}	
+;	{-}			;	LDA	HVBJOY_R
+				;	AND	#$01
+				;	BNE	{-}
+				;	REP	#$30
+				;	LDX	JOY1
+				;	LDA	JOY1_R
+				;	STA	JOY1
+				;	TXA	
+				;	EOR	JOY1
+				;	AND	JOY1
+				;	STA	Trigger_1
+				;	PLP	
+				;	RTS	
+
+				;	#PC $81:FFFF, $00	

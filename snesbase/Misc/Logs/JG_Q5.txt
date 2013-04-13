@@ -1,0 +1,36 @@
+>Hehe.
+Okay, now I KNOW you're screwing with my mind!  I send a mail to DuncanThrax at odin@ccs.neu.edu... and get a response from your address, with your name!  ah, now thats a trick.  Split personality? heh? What's going on now, fess up.
+
+>Oh, well. You could always d/l some warez-ed VC5. It's a pretty cool
+>proggy. 8-)
+oh yeah, that should be really easy.  Especially on my 14.4 connection.
+
+>OK, this is also in the header, basically USA and Japan are NTSC,
+>everybody else is PAL... so look at the country code.
+Oh, no, no no! I meant, how does the GAME tell what kind of SNES it's running on?
+
+>Not the ".smc" crap, but from bytes 513 of a .smc file onward to the
+>end is ALL image, even the header info.
+That's WEIRD!  You mean...wow, weird...
+
+>you're essentially writing ugly tasking code... now ain'tcha?
+...never thought of it that way...
+
+>if (mutex_free) {
+>	mutex_free = 0;
+>	do_write();
+>	mutex_free = 1;
+>}
+>else {
+>	wait_for_mutex_free();
+>}
+>
+>OK, I know I did that wrong, should have used a do whie, but
+>hey... cope.
+This was where I was thinking the inefficiency was... plus it's a bit hard to debug... (isn't it?) and you always have to be sure and remember to put that mutex code in the right places...
+>
+>they're building the whole Win95 thing on speed.
+Though you wouldn't know that when you actually use the OS... :P
+>
+>Hehe. Patience.
+I hate being a programmer.

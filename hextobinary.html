@@ -1,0 +1,87 @@
+<html>
+	<head>
+		<title>hex to binary</title>
+		<link rel="stylesheet" type="text/css" href="./index.css" />
+		<style type="text/css">
+			table {
+				width: 80%;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			
+			#answer {
+				text-align: right;
+				font-size: 36px;
+			}
+
+			#info {
+				text-align: right;
+				font-size: 16px;
+				padding-top: 0px;
+				padding-bottom: 5px;
+				margin: 0px;
+			}
+
+			.enter_hex {
+				background-color: #eee;
+				border: medium solid #000;
+				border-radius: 5px;
+				font-size: 16px;
+				font-family: monospace;
+				padding: 5px;
+				width: 100%;
+			}
+		</style>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+		<script src="../ask_chewie/js/jquery.watermark.min.js"></script>
+		<script type="text/javascript">
+			function compute(e) {
+				if (e.keyCode == 13) {
+					var input_str = $(".enter_hex").val();
+					var input_len = input_str.length * 4;
+					var output_str = "";
+					var output_str_2 = "";
+					var a = parseInt(input_str, 16);
+					var b = a.toString(2);
+					var c = input_len - b.length;
+					for (var i=0; i<c; ++i) {
+						output_str += "0";
+					}
+					output_str += b;
+					for (var i=0; i<output_str.length; ++i) {
+						output_str_2 += output_str[i];
+						if ((i+1)%4==0) {
+							output_str_2 += ' ';
+						}
+					}
+					$("#answer").html(output_str_2);
+
+					var info_string = output_str.length + " bits<br />" +
+						(output_str.length / 8) + " bytes<br />";
+					$("#info").html(info_string);
+					$(".enter_hex").select();
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<table>
+			<tr>
+				<td>
+					<input type="text" class="enter_hex" name="enter_hex" onkeypress="compute(event)" />
+				</td>
+			</tr>
+			<tr>
+				<td id="answer"></td>
+			</tr>
+			<tr>
+				<td id="info"></td>
+			</tr>
+		</table>
+
+		<script type="text/javascript">
+			$(".enter_hex").watermark("enter hexadecimal to convert into binary and press enter");
+			$(".enter_hex").focus();
+		</script>
+	</body>
+</html>

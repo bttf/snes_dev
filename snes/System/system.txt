@@ -1,0 +1,1466 @@
+											
+							
+					System		
+							
+							
+				;	#LoROM		
+				;	#Name $00 _CLOCK_		// $00 = 2.68 MHz , $01 = 3.58 MHz
+
+
+				;	# ===================================		
+				;	# | SNES Registers                  |		
+				;	# ===================================		
+
+				;	#Name $2100 INIDISP.R		b
+				;	#Name $2101 OBJSEL.R		b
+				;	#Name $2102 OAMADD.R		w
+				;	#Name $2104 OAMDATA.R		b,LH
+				;	#Name $2105 BGMODE.R		b
+				;	#Name $2106 MOSAIC.R		b
+				;	#Name $2107 BG1SC.R		b
+				;	#Name $2108 BG2SC.R		b
+				;	#Name $2109 BG3SC.R		b
+				;	#Name $210A BG4SC.R		b
+				;	#Name $210B BG12NBA.R		b,LH
+				;	#Name $210C BG34NBA.R		b,LH
+				;	#Name $210D BG1HOFS.R		b,LH
+				;	#Name $210E BG1VOFS.R		b,LH
+				;	#Name $210F BG2HOFS.R		b,LH
+				;	#Name $2110 BG2VOFS.R		b,LH
+				;	#Name $2111 BG3HOFS.R		b,LH
+				;	#Name $2112 BG3VOFS.R		b,LH
+				;	#Name $2113 BG4HOFS.R		b,LH
+				;	#Name $2114 BG4VOFS.R		b,LH
+				;	#Name $2115 VMAINC.R		b
+				;	#Name $2116 VMADD.R		w
+				;	#Name $2118 VMDATA.R		w
+				;	#Name $211A M7SEL.R		b
+				;	#Name $211B M7A.R		b,LH
+				;	#Name $211C M7B.R		b,LH
+				;	#Name $211D M7C.R		b,LH
+				;	#Name $211E M7D.R		b,LH
+				;	#Name $211F M7X.R		b,LH
+				;	#Name $2120 M7Y.R		b,LH
+				;	#Name $2121 CGADD.R		b
+				;	#Name $2122 CGDATA.R		b,LH
+				;	#Name $2123 W12SEL.R		b
+				;	#Name $2124 W34SEL.R		b
+				;	#Name $2125 WOBJSEL.R		b
+				;	#Name $2126 WH0.R		b
+				;	#Name $2127 WH1.R		b
+				;	#Name $2128 WH2.R		b
+				;	#Name $2129 WH3.R		b
+				;	#Name $212A WBGLOG.R		b
+				;	#Name $212B WOBJLOG.R		b
+				;	#Name $212C TM.R		b
+				;	#Name $212D TS.R		b
+				;	#Name $212E TMW.R		b
+				;	#Name $212F TSW.R		b
+				;	#Name $2130 CGWSEL.R		b
+				;	#Name $2131 CGADSUB.R		b
+				;	#Name $2132 COLDATA.R		b
+				;	#Name $2133 SETINI.R		b
+				;	#Name $2134 .MPY.R		l
+				;	#Name $2137 .SLHV.R		b
+				;	#Name $2138 .OAMDATA.R		b,LH
+				;	#Name $2139 .VMDATA.R		w
+				;	#Name $213B .CGDATA.R		b,LH
+				;	#Name $213C .OPHCT.R		b,LH
+				;	#Name $213D .OPVCT.R		b,LH
+				;	#Name $213E .STAT77.R		b
+				;	#Name $213F .STAT78.R		b
+				;	#Name $2140 APUIO0.R		b
+				;	#Name $2141 APUIO1.R		b
+				;	#Name $2142 APUIO2.R		b
+				;	#Name $2143 APUIO3.R		b
+				;	#Name $2180 WMDATA.R		b
+				;	#Name $2181 WMADD.R		l
+				;	#Name $4016 JOYPORT1.R		b
+				;	#Name $4017 JOYPORT2.R		b
+				;	#Name $4200 NMITIMEN.R		b
+				;	#Name $4201 WRIO.R		b
+				;	#Name $4202 WRMPYA.R		b
+				;	#Name $4203 WRMPYB.R		b
+				;	#Name $4204 WRDIV.R		w
+				;	#Name $4206 WRDIVB.R		b
+				;	#Name $4207 HTIME.R		w
+				;	#Name $4209 VTIME.R		w
+				;	#Name $420B MDMAEN.R		b
+				;	#Name $420C HDMAEN.R		b
+				;	#Name $420D MEMSEL.R		b
+				;	#Name $4210 .RDNMI.R		b
+				;	#Name $4211 .TIMEUP.R		b
+				;	#Name $4212 .HVBJOY.R		b
+				;	#Name $4213 .RDIO.R		b
+				;	#Name $4214 .RDDIV.R		w
+				;	#Name $4216 .RDMPY.R		w
+				;	#Name $4218 JOY1.R		w
+				;	#Name $421A JOY2.R		w
+				;	#Name $421C JOY3.R		w
+				;	#Name $421E JOY4.R		w
+				;	#Name $4300 DMAP.R		b
+				;	#Name $4301 DMAB.R		b
+				;	#Name $4302 DMAA.R		l
+				;	#Name $4305 DMAD.R		l
+				;	#Name $4308 DMAT.R		W
+				;	#Name $430A DMAH.R		b
+				;	#Name $4300 DMAP0.R		b
+				;	#Name $4301 DMAB0.R		b
+				;	#Name $4302 DMAA0.R		l
+				;	#Name $4305 DMAD0.R		l
+				;	#Name $4308 DMAT0.R		W
+				;	#Name $430A DMAH0.R		b
+				;	#Name $4310 DMAP1.R		b
+				;	#Name $4311 DMAB1.R		b
+				;	#Name $4312 DMAA1.R		l
+				;	#Name $4315 DMAD1.R		l
+				;	#Name $4318 DMAT1.R		W
+				;	#Name $431A DMAH1.R		b
+				;	#Name $4320 DMAP2.R		b
+				;	#Name $4321 DMAB2.R		b
+				;	#Name $4322 DMAA2.R		l
+				;	#Name $4325 DMAD2.R		l
+				;	#Name $4328 DMAT2.R		W
+				;	#Name $432A DMAH2.R		b
+				;	#Name $4330 DMAP3.R		b
+				;	#Name $4331 DMAB3.R		b
+				;	#Name $4332 DMAA3.R		l
+				;	#Name $4335 DMAD3.R		l
+				;	#Name $4338 DMAT3.R		W
+				;	#Name $433A DMAH3.R		b
+				;	#Name $4340 DMAP4.R		b
+				;	#Name $4341 DMAB4.R		b
+				;	#Name $4342 DMAA4.R		l
+				;	#Name $4345 DMAD4.R		l
+				;	#Name $4348 DMAT4.R		W
+				;	#Name $434A DMAH4.R		b
+				;	#Name $4350 DMAP5.R		b
+				;	#Name $4351 DMAB5.R		b
+				;	#Name $4352 DMAA5.R		l
+				;	#Name $4355 DMAD5.R		l
+				;	#Name $4358 DMAT5.R		W
+				;	#Name $435A DMAH5.R		b
+				;	#Name $4360 DMAP6.R		b
+				;	#Name $4361 DMAB6.R		b
+				;	#Name $4362 DMAA6.R		l
+				;	#Name $4365 DMAD6.R		l
+				;	#Name $4368 DMAT6.R		W
+				;	#Name $436A DMAH6.R		b
+				;	#Name $4370 DMAP7.R		b
+				;	#Name $4371 DMAB7.R		b
+				;	#Name $4372 DMAA7.R		l
+				;	#Name $4375 DMAD7.R		l
+				;	#Name $4378 DMAT7.R		W
+				;	#Name $437A DMAH7.R		b
+
+
+				;	# ===================================		
+				;	# | WRAM $7E:0000 - $7E:00FF        |		
+				;	# ===================================		
+
+				;	#Name $00 scratch		$20
+
+				;	# Register Buffer ===================		
+				;	#Name $20 INIDISP.WR		b
+				;	#Name $21 OBJSEL.WR		b
+				;	#Name $22 OAMADD.WR		w
+				;	#Name $24 BGMODE.WR		b
+				;	#Name $25 MOSAIC.WR		b
+				;	#Name $26 BG1SC.WR		b
+				;	#Name $27 BG2SC.WR		b
+				;	#Name $28 BG3SC.WR		b
+				;	#Name $29 BG4SC.WR		b
+				;	#Name $2A BG12NBA.WR		w
+				;	#Name $2C BG34NBA.WR		w
+				;	#Name $2E BG1HOFS.WR		w
+				;	#Name $30 BG1VOFS.WR		w
+				;	#Name $32 BG2HOFS.WR		w
+				;	#Name $34 BG2VOFS.WR		w
+				;	#Name $36 BG3HOFS.WR		w
+				;	#Name $38 BG3VOFS.WR		w
+				;	#Name $3A BG4HOFS.WR		w
+				;	#Name $3C BG4VOFS.WR		w
+				;	#Name $3E VMAINC.WR		b
+				;	#Name $3F M7SEL.WR		b
+				;	#Name $40 M7A.WR		w
+				;	#Name $42 M7B.WR		w
+				;	#Name $44 M7C.WR		w
+				;	#Name $46 M7D.WR		w
+				;	#Name $48 M7X.WR		w
+				;	#Name $4A M7Y.WR		w
+				;	#Name $4C W12SEL.WR		b
+				;	#Name $4D W34SEL.WR		b
+				;	#Name $4E WOBJSEL.WR		b
+				;	#Name $4F WH0.WR		b
+				;	#Name $50 WH1.WR		b
+				;	#Name $51 WH2.WR		b
+				;	#Name $52 WH3.WR		b
+				;	#Name $53 WBGLOG.WR		b
+				;	#Name $54 WOBJLOG.WR		b
+				;	#Name $55 TM.WR		b
+				;	#Name $56 TS.WR		b
+				;	#Name $57 TMW.WR		b
+				;	#Name $58 TSW.WR		b
+				;	#Name $59 CGWSEL.WR		b
+				;	#Name $5A CGADSUB.WR		b
+				;	#Name $5B COLDATA.Blue.WR		b
+				;	#Name $5C COLDATA.Green.WR		b
+				;	#Name $5D COLDATA.Red.WR		b
+				;	#Name $5E SETINI.WR		b
+				;	#Name $5F .OPHCT.WR		w
+				;	#Name $61 .OPVCT.WR		w
+				;	#Name $63 .STAT77.WR		b
+				;	#Name $64 .STAT78.WR		b
+				;	#Name $65 APUIO0.WR		b
+				;	#Name $66 APUIO1.WR		b
+				;	#Name $67 APUIO2.WR		b
+				;	#Name $68 APUIO3.WR		b
+				;	#Name $69 JOYPORT1.WR		b
+				;	#Name $6A JOYPORT2.WR		b
+				;	#Name $6B NMITIMEN.WR		b
+				;	#Name $6C WRIO.WR		b
+				;	#Name $6D HTIME.WR		w
+				;	#Name $6F VTIME.WR		w
+				;	#Name $71 MDMAEN.WR		b
+				;	#Name $72 HDMAEN.WR		b
+				;	#Name $73 MEMSEL.WR		b
+				;	#Name $74 .RDNMI.WR		b
+				;	#Name $75 .TIMEUP.WR		b
+				;	#Name $76 .HVBJOY.WR		b
+				;	#Name $77 .RDIO.WR		b
+				;	#Name $0078 JOY.WR		$8
+				;	#Name $78 JOY1.WR		w
+				;	#Name $7A JOY2.WR		w
+				;	#Name $7C JOY3.WR		w
+				;	#Name $7E JOY4.WR		w
+
+				;	# Joy Analysis ======================		
+				;	#Name $0080 JOY.old		$8
+				;	#Name $80 JOY1.old		w
+				;	#Name $82 JOY2.old		w
+				;	#Name $84 JOY3.old		w
+				;	#Name $86 JOY4.old		w
+				;	#Name $0088 JOY.trigger		$8
+				;	#Name $88 JOY1.trigger		w
+				;	#Name $8A JOY2.trigger		w
+				;	#Name $8C JOY3.trigger		w
+				;	#Name $8E JOY4.trigger		w
+				;	#Name $0090 JOY.hold_timer		$4
+				;	#Name $90 JOY1.hold_timer		b
+				;	#Name $91 JOY2.hold_timer		b
+				;	#Name $92 JOY3.hold_timer		b
+				;	#Name $93 JOY4.hold_timer		b
+				;	#Name $0094 JOY.cool_timer		$4
+				;	#Name $94 JOY1.cool_timer		b
+				;	#Name $95 JOY2.cool_timer		b
+				;	#Name $96 JOY3.cool_timer		b
+				;	#Name $97 JOY4.cool_timer		b
+
+				;	# Program  ==========================		
+				;	#Name $98 Main.tick		w
+				;	#Name $9A Main.mode		w
+				;	#Name $9C Main.submode		w
+
+				;	#Name $9E NMI.tick		w
+				;	#Name $A0 NMI.ready		b
+				;	#Name $A1 NMI.HDMA.array		l
+				;	#Name $A4 NMI.VRAM_DMA.array		l
+				;	#Name $A7 NMI.VRAM_DMA.index		w
+				;	#Name $A9 NMI.VRAM_Write.array		l
+				;	#Name $AC NMI.VRAM_Write.index		w
+
+				;	#Name $AE IRQ.tick		w
+				;	#Name $B0 IRQ.mode		w
+
+				;	# Graphic ===========================		
+				;	#Name $B2 OAM.index		w
+				;	#Name $B4 OAM2.byte		b
+				;	#Name $B5 OAM2.bit		b
+
+				;	# Other =============================		
+				;	#Name $BC RNG.number		q
+
+				;	# $C0-$FF Application Defined		
+
+
+				;	# ===================================		
+				;	# | Scratch                         |		
+				;	# ===================================		
+
+				;	#Name $00 Multiply.multiplicand_1		w
+				;	#Name $02 Multiply.multiplicand_2		w
+				;	#Name $04 Multiply.product		w
+
+				;	#Name $00 Divide.dividend		w
+				;	#Name $02 Divide.divisor		w
+				;	#Name $04 Divide.quotient		w
+				;	#Name $08 Divide.remainder		w
+
+				;	#Name $00 Angle.x_sign		w
+				;	#Name $02 Angle.x		w
+				;	#Name $04 Angle.y_sign		w
+				;	#Name $06 Angle.y		w
+
+				;	#Name $00 Draw_Sprite.data		l
+				;	#Name $02 Draw_Sprite.bank		b
+				;	#Name $03 Draw_Sprite.objects		b
+				;	#Name $04 Draw_Sprite.x		b
+				;	#Name $05 Draw_Sprite.y		b
+				;	#Name $06 Draw_Sprite.char_array		w
+				;	#Name $08 Draw_Sprite.override		b
+
+
+				;	# ===================================		
+				;	# | WRAM $7E:0100 - $7E:1FFF        |		
+				;	# ===================================		
+
+				;	#Name $0100 OAM.WR		$200
+				;	#Name $0100 OAM.x.WR		b
+				;	#Name $0101 OAM.y.WR		b
+				;	#Name $0102 OAM.c.WR		b
+				;	#Name $0103 OAM.p.WR		b
+				;	#Name $0300 OAM2.WR		$20
+
+				;	#Name $0320 CGRAM.WR		$200
+
+
+				;	# ===================================		
+				;	# | Code Prototypes                 |		
+				;	# ===================================		
+
+				;	#Code w RESET_Vector		
+				;	#Code w NMI_Vector		
+				;	#Code w IRQ_Vector		
+							
+				;	#Code l Reset		
+				;	#Code w Reset.Registers		
+				;	#Code w Reset.VRAM	
+				;	#Code w Reset.OAM	
+				;	#Code w Reset.CGRAM	
+				;	#Code w Reset.ARAM	
+
+				;	#Code l Nmi	
+				;	#Code w NMI.Registers	
+				;	#Code w NMI.HDMA	
+				;	#Code w NMI.VRAM_DMA	
+				;	#Code w NMI.VRAM_Write	
+
+				;	#Code l Irq	
+				;	#Data w IRQ.array	
+
+				;	#Code l Main	
+				;	#Data w Main.array	
+				;	#Code w Initiate_System	
+						
+				;	#Code l DMA.Immediate	
+						
+				;	#Code l RNG.Iterate	
+				;	#Code l Multiply	
+				;	#Code l Divide	
+				;	#Code l Angle	
+				;	#Data w Angle.array	
+				;	#Data l Sine	
+				;	#Data l Cosine	
+
+				;	#Code l Analyze_Joy	
+				;	#Code l OAM.Open	
+				;	#Code l OAM.Close	
+				;	#Code l Draw_Sprite	
+
+				;	#Data l ROM_Header	
+				;	#Data l Vector_Table	
+
+
+
+
+				;	# ===================================	
+				;	# | Vectors                         |	
+				;	# ===================================	
+
+				;	#Code w {RESET_Vector}	
+				;	SEI	
+				;	CLC	
+				;	XCE	
+				;	JML	Reset
+
+				;	#Code w {NMI_Vector}		
+				;	JML	Nmi	
+
+				;	#Code w {IRQ_Vector}		
+				;	JML	Irq	
+
+
+
+
+				;	# ===================================		
+				;	# | Reset                           |		
+				;	# ===================================		
+							
+				;	#Code l {Reset}		
+				;	REP	#$39	// Clear interupts, carry
+				;	JSR	Reset.Registers	
+				;	JSR	Reset.VRAM	
+				;	JSR	Reset.OAM	
+				;	JSR	Reset.CGRAM	
+				;	JSR	Reset.ARAM	
+				;	PHK		// Reset.CPU
+				;	PLB		
+				;	LDA	#$0000	
+				;	TCD		
+				;	LDX	#$1FFF	
+				;	TXS		
+				;	LDA	#$0000	
+				;	TAY		
+				;	LDX	#$4000	// Reset.WRAM
+		;	{-}	;	DEX		
+				;	DEX		
+				;	STA	$7E:0000,X
+				;	STA	$7E:4000,X
+				;	STA	$7E:8000,X
+				;	STA	$7E:C000,X
+				;	STA	$7F:0000,X
+				;	STA	$7F:4000,X
+				;	STA	$7F:8000,X
+				;	STA	$7F:C000,X
+				;	BNE	{-}
+				;	JML	Main
+
+				;	#Code w {Reset.Registers}	
+				;	PHP	
+				;	SEP	#$20
+				;	LDA	#_CLOCK_
+				;	STA	MEMSEL.R
+				;	LDA	#$80
+				;	STA	INIDISP.R
+				;	STZ	OBJSEL.R
+				;	STZ	OAMADD.R.l
+				;	STZ	OAMADD.R.h
+				;	STZ	BGMODE.R
+				;	STZ	MOSAIC.R
+				;	STZ	BG1SC.R
+				;	STZ	BG2SC.R
+				;	STZ	BG3SC.R
+				;	STZ	BG4SC.R
+				;	STZ	BG12NBA.R
+				;	STZ	BG34NBA.R
+				;	STZ	BG1HOFS.R
+				;	STZ	BG1HOFS.R
+				;	STZ	BG1VOFS.R
+				;	STZ	BG1VOFS.R
+				;	STZ	BG2HOFS.R
+				;	STZ	BG2HOFS.R
+				;	STZ	BG2VOFS.R
+				;	STZ	BG2VOFS.R
+				;	STZ	BG3HOFS.R
+				;	STZ	BG3HOFS.R
+				;	STZ	BG3VOFS.R
+				;	STZ	BG3VOFS.R
+				;	STZ	BG4HOFS.R
+				;	STZ	BG4HOFS.R
+				;	STZ	BG4VOFS.R
+				;	STZ	BG4VOFS.R
+				;	STZ	VMAINC.R
+				;	STZ	M7SEL.R
+				;	STZ	M7A.R
+				;	STZ	M7A.R
+				;	STZ	M7B.R
+				;	STZ	M7B.R
+				;	STZ	M7C.R
+				;	STZ	M7C.R
+				;	STZ	M7D.R
+				;	STZ	M7D.R
+				;	STZ	M7X.R
+				;	STZ	M7X.R
+				;	STZ	M7Y.R
+				;	STZ	M7Y.R
+				;	STZ	W12SEL.R
+				;	STZ	W34SEL.R
+				;	STZ	WOBJSEL.R
+				;	STZ	WH0.R
+				;	STZ	WH1.R
+				;	STZ	WH2.R
+				;	STZ	WH3.R
+				;	STZ	WBGLOG.R
+				;	STZ	WOBJLOG.R
+				;	STZ	TM.R
+				;	STZ	TS.R
+				;	STZ	TMW.R
+				;	STZ	TSW.R
+				;	STZ	CGWSEL.R
+				;	STZ	CGADSUB.R
+				;	STZ	COLDATA.R
+				;	STZ	SETINI.R
+				;	LDA	.STAT78.R
+				;	STZ	NMITIMEN.R
+				;	STZ	WRIO.R
+				;	STZ	WRMPYA.R
+				;	STZ	WRMPYB.R
+				;	STZ	WRDIV.R.l
+				;	STZ	WRDIV.R.h
+				;	STZ	WRDIVB.R
+				;	STZ	HTIME.R.l
+				;	STZ	HTIME.R.h
+				;	STZ	VTIME.R.l
+				;	STZ	VTIME.R.h
+				;	STZ	MDMAEN.R
+				;	STZ	HDMAEN.R
+				;	LDA	.RDNMI.R
+				;	LDA	.TIMEUP.R
+				;	PLP	
+				;	RTS	
+
+				;	#Code w {Reset.VRAM}	
+				;	PHP	
+				;	SEP	#$20
+				;	LDA	#$80
+				;	STA	VMAINC.R
+				;	REP	#$20
+				;	STZ	VMADD.R
+				;	JSL	DMA.Immediate
+				;	#Data {$09 $18 $80:FFF0 $0000}	
+				;	PLP	
+				;	RTS	
+
+				;	#Code w {Reset.OAM}	
+				;	PHP	
+				;	REP	#$20
+				;	STZ	OAMADD.R
+				;	JSL	DMA.Immediate
+				;	#Data {$0A $04 $80:FFF0 $0220}	
+				;	PLP	
+				;	RTS	
+
+				;	#Code w {Reset.CGRAM}	
+				;	PHP	
+				;	SEP	#$20
+				;	STZ	CGADD.R
+				;	JSL	DMA.Immediate
+				;	#Data {$0A $22 $80:FFF0 $0200}	
+				;	PLP	
+				;	RTS	
+
+				;	#Code w {Reset.ARAM}	
+						
+				;	RTS	
+
+
+
+
+				;	# ===================================	
+				;	# | NMI                             |	
+				;	# ===================================	
+
+				;	#Code l {NMI.Wait}	
+				;	PHP	
+				;	SEP	#$20
+				;	LDA	#$FF
+				;	STA	NMI.ready
+		;	{Wait}	;	LDA	NMI.ready
+				;	BNE	{Wait}
+				;	PLP	
+				;	RTL	
+
+				;	#Code l {Nmi}	
+				;	SEI	
+				;	PHA	
+				;	PHX	
+				;	PHY	
+				;	PHP	
+				;	PHB	
+				;	PHK	
+				;	PLB	
+				;	SEP	#$20
+				;	LDA	NMI.ready
+				;	BEQ	{+}
+				;	STZ	CGADD.R
+				;	JSL	DMA.Immediate
+				;	#Data {$02 $22 $7E:0320 $0200}	
+				;	REP	#$20
+				;	LDA	#$8000
+				;	STA	OAMADD.R
+				;	JSL	DMA.Immediate
+				;	#Data {$02 $04 $7E:0100 $0220}	
+				;	JSR	NMI.Registers
+				;	JSR	NMI.HDMA
+				;	JSR	NMI.VRAM_DMA
+				;	JSR	NMI.VRAM_Write
+				;	INC	NMI.tick
+				;	SEP	#$20
+				;	STZ	NMI.ready
+		;	{+}	;	PLB	
+				;	PLP	
+				;	PLY	
+				;	PLX	
+				;	PLA	
+				;	CLI	
+				;	RTI	
+
+				;	#Code w {NMI.Registers}	
+				;	PHP	
+				;	SEP	#$20
+				;	LDA	INIDISP.WR
+				;	STA	INIDISP.R
+				;	LDA	OBJSEL.WR
+				;	STA	OBJSEL.R
+				;	LDA	BGMODE.WR
+				;	STA	BGMODE.R
+				;	LDA	MOSAIC.WR
+				;	STA	MOSAIC.R
+				;	LDA	BG1SC.WR
+				;	STA	BG1SC.R
+				;	LDA	BG2SC.WR
+				;	STA	BG2SC.R
+				;	LDA	BG3SC.WR
+				;	STA	BG3SC.R
+				;	LDA	BG4SC.WR
+				;	STA	BG4SC.R
+				;	LDA	BG12NBA.WR
+				;	STA	BG12NBA.R
+				;	LDA	BG34NBA.WR
+				;	STA	BG34NBA.R
+				;	LDA	BG1HOFS.WR.l
+				;	STA	BG1HOFS.R
+				;	LDA	BG1HOFS.WR.h
+				;	STA	BG1HOFS.R
+				;	LDA	BG1VOFS.WR.l
+				;	STA	BG1VOFS.R
+				;	LDA	BG1VOFS.WR.h
+				;	STA	BG1VOFS.R
+				;	LDA	BG2HOFS.WR.l
+				;	STA	BG2HOFS.R
+				;	LDA	BG2HOFS.WR.h
+				;	STA	BG2HOFS.R
+				;	LDA	BG2VOFS.WR.l
+				;	STA	BG2VOFS.R
+				;	LDA	BG2VOFS.WR.h
+				;	STA	BG2VOFS.R
+				;	LDA	BG3HOFS.WR.l
+				;	STA	BG3HOFS.R
+				;	LDA	BG3HOFS.WR.h
+				;	STA	BG3HOFS.R
+				;	LDA	BG3VOFS.WR.l
+				;	STA	BG3VOFS.R
+				;	LDA	BG3VOFS.WR.h
+				;	STA	BG3VOFS.R
+				;	LDA	BG4HOFS.WR.l
+				;	STA	BG4HOFS.R
+				;	LDA	BG4HOFS.WR.h
+				;	STA	BG4HOFS.R
+				;	LDA	BG4VOFS.WR.l
+				;	STA	BG4VOFS.R
+				;	LDA	BG4VOFS.WR.h
+				;	STA	BG4VOFS.R
+				;	LDA	VMAINC.WR
+				;	STA	VMAINC.R
+				;	LDA	M7SEL.WR
+				;	STA	M7SEL.R
+				;	LDA	M7A.WR.l
+				;	STA	M7A.R
+				;	LDA	M7A.WR.h
+				;	STA	M7A.R
+				;	LDA	M7B.WR.l
+				;	STA	M7B.R
+				;	LDA	M7B.WR.h
+				;	STA	M7B.R
+				;	LDA	M7C.WR.l
+				;	STA	M7C.R
+				;	LDA	M7C.WR.h
+				;	STA	M7C.R
+				;	LDA	M7D.WR.l
+				;	STA	M7D.R
+				;	LDA	M7D.WR.h
+				;	STA	M7D.R
+				;	LDA	M7X.WR.l
+				;	STA	M7X.R
+				;	LDA	M7X.WR.h
+				;	STA	M7X.R
+				;	LDA	M7Y.WR.l
+				;	STA	M7Y.R
+				;	LDA	M7Y.WR.h
+				;	STA	M7Y.R
+				;	LDA	W12SEL.WR
+				;	STA	W12SEL.R
+				;	LDA	W34SEL.WR
+				;	STA	W34SEL.R
+				;	LDA	WOBJSEL.WR
+				;	STA	WOBJSEL.R
+				;	LDA	WH0.WR
+				;	STA	WH0.R
+				;	LDA	WH1.WR
+				;	STA	WH1.R
+				;	LDA	WH2.WR
+				;	STA	WH2.R
+				;	LDA	WH3.WR
+				;	STA	WH3.R
+				;	LDA	WBGLOG.WR
+				;	STA	WBGLOG.R
+				;	LDA	WOBJLOG.WR
+				;	STA	WOBJLOG.R
+				;	LDA	TM.WR
+				;	STA	TM.R
+				;	LDA	TS.WR
+				;	STA	TS.R
+				;	LDA	TMW.WR
+				;	STA	TMW.R
+				;	LDA	TSW.WR
+				;	STA	TSW.R
+				;	LDA	CGWSEL.WR
+				;	STA	CGWSEL.R
+				;	LDA	CGADSUB.WR
+				;	STA	CGADSUB.R
+				;	LDA	COLDATA.Blue.WR
+				;	STA	COLDATA.R
+				;	LDA	COLDATA.Green.WR
+				;	STA	COLDATA.R
+				;	LDA	COLDATA.Red.WR
+				;	STA	COLDATA.R
+				;	LDA	SETINI.WR
+				;	STA	SETINI.R
+				;	LDA	.STAT77.WR
+				;	STA	.STAT77.R
+				;	LDA	.STAT78.WR
+				;	STA	.STAT78.R
+				;	LDA	NMITIMEN.WR
+				;	STA	NMITIMEN.R
+				;	LDA	WRIO.WR
+				;	STA	WRIO.R
+				;	LDA	HTIME.WR.l
+				;	STA	HTIME.R.l
+				;	LDA	HTIME.WR.h
+				;	STA	HTIME.R.h
+				;	LDA	VTIME.WR.l
+				;	STA	VTIME.R.l
+				;	LDA	VTIME.WR.h
+				;	STA	VTIME.R.h
+				;	LDA	MEMSEL.WR
+				;	STA	MEMSEL.R
+				;	LDA	.RDNMI.R
+				;	STA	.RDNMI.WR
+				;	LDA	.TIMEUP.R
+				;	STA	.TIMEUP.WR
+				;	LDA	.RDIO.R
+				;	STA	.RDIO.WR
+		;	{Wait}	;	LDA	.HVBJOY.R
+				;	STA	.HVBJOY.WR
+				;	AND	#$01
+				;	BNE	{Wait}
+				;	LDA	JOYPORT1.R
+				;	STA	JOYPORT1.WR
+				;	LDA	JOYPORT2.R
+				;	STA	JOYPORT2.WR
+				;	REP	#$20
+				;	LDA	JOY1.WR
+				;	STA	JOY1.old
+				;	LDA	JOY2.WR
+				;	STA	JOY2.old
+				;	LDA	JOY3.WR
+				;	STA	JOY3.old
+				;	LDA	JOY4.WR
+				;	STA	JOY4.old
+				;	LDA	JOY1.R
+				;	STA	JOY1.WR
+				;	LDA	JOY2.R
+				;	STA	JOY2.WR
+				;	LDA	JOY3.R
+				;	STA	JOY3.WR
+				;	LDA	JOY4.R
+				;	STA	JOY4.WR
+				;	PLP	
+				;	RTS	
+
+				;	#Code w {NMI.HDMA}	
+				;	PHP	
+				;	SEP	#$10
+				;	LDX	#$10
+				;	LDY	#$00
+		;	{-}	;	REP	#$20
+				;	LDA	[NMI.HDMA.array],Y
+				;	INY	
+				;	INY	
+				;	STA	DMAP.R,X
+				;	LDA	[NMI.HDMA.array],Y
+				;	INY	
+				;	INY	
+				;	STA	DMAA.R.l,X
+				;	LDA	[NMI.HDMA.array],Y
+				;	INY	
+				;	INY	
+				;	STA	DMAA.R.b,X
+				;	LDA	[NMI.HDMA.array],Y
+				;	INY	
+				;	INY	
+				;	STA	DMAD.R,X
+				;	SEP	#$20
+				;	TXA	
+				;	CLC	
+				;	ADC	#$10
+				;	CMP	#$80
+				;	BEQ	{+}
+				;	TAX	
+				;	BRA	{-}
+		;	{+}	;	LDA	HDMAEN.WR
+				;	STA	HDMAEN.R
+				;	PLP	
+				;	RTS	
+
+				;	#Code w {NMI.VRAM_DMA}	
+				;	PHP	
+		;	{-}	;	REP	#$30
+				;	LDY	NMI.VRAM_DMA.index
+				;	BEQ	{+}
+				;	DEY	
+				;	DEY	
+				;	LDA	[NMI.VRAM_DMA.array],Y
+				;	STA	DMAD.R
+				;	DEY	
+				;	DEY	
+				;	LDA	[NMI.VRAM_DMA.array],Y
+				;	STA	DMAA.R.h
+				;	DEY	
+				;	LDA	[NMI.VRAM_DMA.array],Y
+				;	STA	DMAA.R.l
+				;	DEY	
+				;	DEY	
+				;	LDA	[NMI.VRAM_DMA.array],Y
+				;	STA	DMAP.R
+				;	DEY	
+				;	DEY	
+				;	LDA	[NMI.VRAM_DMA.array],Y
+				;	STA	VMADD.R
+				;	SEP	#$20
+				;	DEY	
+				;	LDA	[NMI.VRAM_DMA.array],Y
+				;	STA	VMAINC.R
+				;	LDA	#$01
+				;	STA	MDMAEN.R
+				;	STY	NMI.VRAM_DMA.index
+				;	BRA	{-}
+		;	{+}	;	PLP	
+				;	RTS	
+
+				;	#Code w {NMI.VRAM_Write}	
+				;	PHP	
+				;	SEP	#$20
+				;	LDA	#$80
+				;	STA	VMAINC.R
+				;	REP	#$30
+		;	{-}	;	LDY	NMI.VRAM_Write.index
+				;	BEQ	{+}
+				;	DEY	
+				;	DEY	
+				;	LDA	[NMI.VRAM_Write.array],Y
+				;	STA	VMDATA.R
+				;	DEY	
+				;	DEY	
+				;	LDA	[NMI.VRAM_Write.array],Y
+				;	STA	VMADD.R
+				;	STY	NMI.VRAM_Write.index
+				;	BRA	{-}
+		;	{+}	;	PLP	
+				;	RTS	
+
+
+
+
+				;	# ===================================	
+				;	# | IRQ                             |	
+				;	# ===================================	
+
+				;	#Code l {Irq}	
+				;	SEI	
+				;	PHA	
+				;	PHX	
+				;	PHY	
+				;	PHP	
+				;	PHB	
+				;	PHK	
+				;	PLB	
+				;	REP	#$30
+				;	LDA	IRQ.mode
+				;	ASL	A
+				;	TAX	
+				;	JSR	(IRQ.array,X)
+				;	INC	NMI.tick
+				;	PLB	
+				;	PLP	
+				;	PLY	
+				;	PLX	
+				;	PLA	
+				;	CLI	
+				;	RTI	
+				;	#Data w IRQ.array	
+				{		
+
+				}		
+
+
+
+
+				;	# ===================================	
+				;	# | Main                            |	
+				;	# ===================================	
+
+				;	#Code l {Main}	
+				;	REP	#$30
+		;	{Loop}	;	LDA	Main.mode
+				;	ASL	A
+				;	TAX	
+				;	JSR	(Main.array,X)
+				;	INC	Main.tick
+				;	BRA	{Loop}
+				;	#Data w Main.array	
+				{		
+					Initiate_System	
+				}		
+
+				;	#Code w {Initiate_System}	
+				;	RTS	
+
+
+
+
+				;	# ===================================	
+				;	# | Memory                          |	
+				;	# ===================================	
+						
+				;	#Code l {DMA.Immediate}	
+				;	PHP	
+				;	PHB	
+				;	SEP	#$20
+				;	LDA	$05,S
+				;	PHA	
+				;	PLB	
+				;	REP	#$20
+				;	LDA	$03,S
+				;	INC	A
+				;	TAX	
+				;	LDA	$0000,X
+				;	STA	DMAP0.R
+				;	LDA	$0002,X
+				;	STA	DMAA0.R.l
+				;	LDA	$0004,X
+				;	STA	DMAA0.R.b
+				;	SEP	#$20
+				;	LDA	$0006,X
+				;	STA	DMAD.R.h
+				;	LDA	#$01
+				;	STA	MDMAEN.R
+				;	REP	#$20
+				;	TXA	
+				;	CLC	
+				;	ADC	#$0006
+				;	STA	$03,S
+				;	PLB	
+				;	PLP	
+				;	RTL	
+
+						
+						
+						
+				;	# ===================================	
+				;	# | Math                            |		
+				;	# ===================================		
+							
+				;	#Code l {RNG.Iterate}		
+				;	PHP		
+				;	REP	#$30	
+				;	INC	RNG.number	// Improve to high quality quad
+				;	PLP		
+				;	RTL		
+							
+				;	#Code l {Multiply}        // 16*16=16		
+				;	PHP		
+				;	REP	#$30	
+				;	LDA	#$0000	
+		;	{-}	;	LDX	Multiply.multiplicand_1	
+				;	BEQ	{+Return}	
+				;	LSR	Multiply.multiplicand_1
+				;	BCC	{+}
+				;	CLC	
+				;	ADC	Multiply.multiplicand_2
+		;	{+}	;	ASL	Multiply.multiplicand_2
+				;	BRA	{-}
+		;	{+Return}	;	STA	Multiply.product
+				;	PLP	
+				;	RTL	
+						
+				;	#Code l {Divide}          // 16/16=16	
+				;	PHP	
+				;	REP	#$30
+				;	STZ	Divide.quotient
+				;	LDA	Divide.divisor
+				;	LDX	Divide.dividend
+				;	LDY	#$0001
+		;	{-}	;	ASL	A
+				;	BCS	{+}
+				;	INY	
+				;	CPY	#$0011
+				;	BNE	{-}
+		;	{+}	;	ROR	A
+		;	{-}	;	PHA	
+				;	TXA	
+				;	SEC	
+				;	SBC	$01,S
+				;	BCC	{+}
+				;	TAX	
+		;	{+}	;	ROL	Divide.quotient
+				;	PLA	
+				;	LSR	A
+				;	DEY		
+				;	BNE	{-}	
+				;	LDA	Divide.quotient	
+				;	STX	Divide.remainder	
+				;	PLP		
+				;	RTL		
+							
+				;	#Code l {Angle}		
+				;	PHP		
+				;	REP	#$30	// Improve to 256 angle resolution
+				;			
+				;	STX	Angle.x	
+				;	STY	Angle.y	
+				;			
+				;	STZ	Angle.x_sign	
+				;	TXA		
+				;	BPL	{+}
+				;	LDA	#$FFFF
+				;	STA	Angle.x_sign
+				;	EOR	Angle.x
+				;	INC	A
+		;	{+}	;	STA	Angle.x
+				;		
+				;	STZ	Angle.y_sign
+				;	LDA	Angle.y
+				;	BPL	{+}
+				;	LDA	#$FFFF
+				;	STA	Angle.y_sign
+				;	EOR	Angle.y
+				;	INC	A
+		;	{+}	;	STA	Angle.y
+				;		
+		;	{-}	;	CMP	#$0008
+				;	BCC	{+}
+				;	LSR	Angle.x
+				;	LSR	A
+				;	BRA	{-}
+		;	{+}	;	STA	Angle.y
+				;		
+				;	LDA	Angle.x
+		;	{-}	;	CMP	#$0008
+				;	BCC	{+}
+				;	LSR	Angle.y
+				;	LSR	A
+				;	BRA	{-}
+		;	{+}	;	STA	Angle.x
+				;		
+				;	LDA	Angle.y
+				;	ASL	A
+				;	ASL	A
+				;	ASL	A
+				;	ADC	Angle.x
+				;	TAX	
+				;	LDA	#$0000
+				;	SEP	#$20
+				;	LDA	Angle.array,X
+				;	REP	#$20
+				;		
+				;	LDX	Angle.x_sign
+				;	BPL	{+}
+				;	LDX	Angle.y_sign
+				;	BPL	{++}
+				;	CLC	
+				;	ADC	#$0010
+				;	BRA	{+Return}		
+		;	{++}	;	EOR	#$FFFF		
+				;	INC	A		
+				;	CLC			
+				;	ADC	#$0010		
+				;	BRA	{+Return}		
+		;{+}		;	LDX	Angle.y_sign		
+				;	BPL	{+Return}		
+				;	EOR	#$FFFF		
+				;	INC	A		
+				;	CLC			
+				;	ADC	#$0020		
+				;	AND	#$001F		
+				;				
+		;	{+Return}	;	PLP			
+				;	RTL			
+								
+				;	#Data w Angle.array			
+				{	$FF $00 $00 $00 $00 $00 $00 $00			
+					$08 $04 $02 $02 $01 $01 $01 $01			
+					$08 $06 $04 $03 $02 $02 $02 $01			
+					$08 $06 $05 $04 $03 $03 $02 $02			
+					$08 $07 $06 $05 $04 $03 $03 $03			
+					$08 $07 $06 $05 $05 $04 $04 $03			
+					$08 $07 $06 $06 $05 $04 $04 $04			
+					$08 $07 $07 $06 $05 $05 $04 $04			
+				}				
+								
+				;	#Data l Sine			// Improve to 256 angle resolution
+				{	$0000			
+					$0032			
+					$0062			
+					$008E			
+					$00B5			
+					$00D5			
+					$00ED			
+					$00FB }			
+				;	#Data l Cosine			// Improve to 256 angle resolution
+				{	$0100			
+					$00FB			
+					$00ED			
+					$00D5			
+					$00B5			
+					$008E			
+					$0062			
+					$0032			
+					$0000			
+					$FFCE			
+					$FF9E
+					$FF72
+					$FF4B
+					$FF2B
+					$FF13
+					$FF05
+					$FF00
+					$FF05
+					$FF13
+					$FF2B
+					$FF4B
+					$FF72
+					$FF9E
+					$FFCE
+					$0000
+					$0032
+					$0062	
+					$008E	
+					$00B5	
+					$00D5	
+					$00ED	
+					$00FB	
+				}		
+
+
+
+						
+						
+				;	# General ===========================	
+						
+						
+				;	#Code l {Analyze_Joy}	
+				;	PHP	
+				;	REP	#$30
+				;		
+				;	LDX	#$0000
+		;	{-}	;	LDA	JOY.WR,X
+				;	BEQ	{Trigger}
+				;	CMP	#$3030
+				;	BNE	{+}
+				;	JMP	RESET_Vector
+		;	{+}	;	EOR	JOY.old,X
+				;	BNE	{++}
+				;	LDA	JOY.hold_timer,X
+				;	BEQ	{+}
+				;	DEC	JOY.hold_timer,X
+				;	LDA	#$0000
+				;	BRA	{Trigger}
+		;	{+}	;	SEC	
+				;	DEC	JOY.cool_timer,X
+				;	BEQ	{+}
+				;	LDA	#$0000
+				;	BRA	{Trigger}
+		;	{++}	;	LDA	#$000F
+				;	STA	JOY.hold_timer,X
+		;	{+}	;	LDA	#$000F
+				;	STA	JOY.cool_timer,X
+				;	LDA	JOY.WR,X
+				;	BCS	{Trigger}
+				;	EOR	JOY.old,X
+				;	AND	JOY.WR,X
+		;	{Trigger}	;	STA	JOY.trigger,X
+				;	INX	
+				;	INX	
+				;	CPX	#$0008
+				;	BCC	{-}
+				;		
+				;	PLP	
+				;	RTL	
+						
+
+				;	#Code l {OAM.Open}	
+				;	PHP	
+				;	PHB	
+				;	PEA	$7E00
+				;	PLB	
+				;	PLB	
+				;	REP	#$30
+				;	STZ	OAM.index
+				;	STZ	OAM2.byte
+				;	LDX	#$001E
+		;	{-}	;	STZ	OAM2.WR,X
+				;	DEX	
+				;	DEX	
+				;	BPL	{-}
+				;	PLB	
+				;	PLP	
+				;	RTL	
+						
+				;	#Code l {OAM.Close}	
+				;	PHP	
+				;	REP	#$20
+				;	LDA	OAM.index
+				;	CMP	#$0200
+				;	BMI	{+}
+				;	PLP	
+				;	RTL	
+		;	{+}	;	LSR	A
+				;	STA	$00
+				;	LSR	A
+				;	ADC	$00
+				;	STA	$00
+				;	CLC	
+				;	PER	$000C
+				;	PLA	
+				;	ADC	$00
+				;	STA	$00
+				;	SEP	#$20
+				;	LDA	#$F0
+				;	JMP	($0000)
+				;	STA	$0101
+				;	STA	$0105
+				;	STA	$0109
+				;	STA	$010D
+				;	STA	$0111
+				;	STA	$0115
+				;	STA	$0119
+				;	STA	$011D
+				;	STA	$0121
+				;	STA	$0125
+				;	STA	$0129
+				;	STA	$012D
+				;	STA	$0131
+				;	STA	$0135
+				;	STA	$0139
+				;	STA	$013D
+				;	STA	$0141
+				;	STA	$0145
+				;	STA	$0149
+				;	STA	$014D
+				;	STA	$0151
+				;	STA	$0155
+				;	STA	$0159
+				;	STA	$015D
+				;	STA	$0161
+				;	STA	$0165
+				;	STA	$0169
+				;	STA	$016D
+				;	STA	$0171
+				;	STA	$0175
+				;	STA	$0179
+				;	STA	$017D
+				;	STA	$0181
+				;	STA	$0185
+				;	STA	$0189
+				;	STA	$018D
+				;	STA	$0191
+				;	STA	$0195
+				;	STA	$0199
+				;	STA	$019D
+				;	STA	$01A1
+				;	STA	$01A5
+				;	STA	$01A9
+				;	STA	$01AD
+				;	STA	$01B1
+				;	STA	$01B5
+				;	STA	$01B9
+				;	STA	$01BD
+				;	STA	$01C1
+				;	STA	$01C5
+				;	STA	$01C9
+				;	STA	$01CD
+				;	STA	$01D1
+				;	STA	$01D5
+				;	STA	$01D9
+				;	STA	$01DD
+				;	STA	$01E1
+				;	STA	$01E5
+				;	STA	$01E9
+				;	STA	$01ED
+				;	STA	$01F1
+				;	STA	$01F5
+				;	STA	$01F9
+				;	STA	$01FD
+				;	STA	$0201
+				;	STA	$0205
+				;	STA	$0209
+				;	STA	$020D
+				;	STA	$0211
+				;	STA	$0215
+				;	STA	$0219
+				;	STA	$021D
+				;	STA	$0221
+				;	STA	$0225
+				;	STA	$0229
+				;	STA	$022D
+				;	STA	$0231
+				;	STA	$0235
+				;	STA	$0239
+				;	STA	$023D
+				;	STA	$0241
+				;	STA	$0245
+				;	STA	$0249
+				;	STA	$024D
+				;	STA	$0251
+				;	STA	$0255
+				;	STA	$0259
+				;	STA	$025D
+				;	STA	$0261
+				;	STA	$0265
+				;	STA	$0269
+				;	STA	$026D
+				;	STA	$0271
+				;	STA	$0275
+				;	STA	$0279
+				;	STA	$027D
+				;	STA	$0281
+				;	STA	$0285
+				;	STA	$0289
+				;	STA	$028D
+				;	STA	$0291
+				;	STA	$0295
+				;	STA	$0299
+				;	STA	$029D
+				;	STA	$02A1
+				;	STA	$02A5
+				;	STA	$02A9
+				;	STA	$02AD
+				;	STA	$02B1
+				;	STA	$02B5
+				;	STA	$02B9
+				;	STA	$02BD
+				;	STA	$02C1
+				;	STA	$02C5
+				;	STA	$02C9
+				;	STA	$02CD
+				;	STA	$02D1
+				;	STA	$02D5
+				;	STA	$02D9
+				;	STA	$02DD
+				;	STA	$02E1
+				;	STA	$02E5
+				;	STA	$02E9
+				;	STA	$02ED
+				;	STA	$02F1
+				;	STA	$02F5
+				;	STA	$02F9
+				;	STA	$02FD
+				;	PLP	
+				;	RTL	
+
+				;	#Code l {Draw_Sprite}		
+				;	PHP		
+				;	REP	#$10	
+				;	LDY	OAM.index	
+				;	CPY	#$0200	// OAM Overflow
+				;	BCC	{+}	
+				;	PLP		
+				;	RTL		
+		;	{+}	;	PHB		
+				;	SEP	#$20	
+				;	LDA	Draw_Sprite.bank	
+				;	PHA		
+				;	PLB		
+				;	LDX	Draw_Sprite.data	
+				;	LDA	$0000,X	// OBJ Count
+				;	BRA	{+}	
+		;	{--}	;	CPY	#$0200	// OAM Overflow
+				;	BCC	{++}	
+				;	BRL	{+Return}	
+		;	{++}	;	INX		
+				;	INX		
+				;	INX		
+				;	INX		
+		;	{+}	;	INX		
+				;	STA	Draw_Sprite.objects	
+				;	LDA	$0000,X	// OBJ X Position
+				;	PHX		
+				;	CLC		
+				;	ADC	Draw_Sprite.x	
+				;	STA	OAM.x.WR,Y	
+				;	LDA	$0004,X	// OBJ OAM II
+				;	AND	#$03
+				;	BCC	{+}
+				;	EOR	#$01
+		;	{+}	;	STY	OAM.index
+				;	SEP	#$10
+				;	LDY	OAM2.bit
+		;	{-}	;	BEQ	{+}
+				;	ASL	A
+				;	ASL	A
+				;	DEY	
+				;	DEY	
+				;	BRA	{-}
+		;	{+}	;	LDY	OAM2.byte
+				;	ORA	OAM2.WR,Y
+				;	STA	OAM2.WR,Y
+				;	LDY	OAM2.bit
+				;	INY		
+				;	INY		
+				;	CPY	#$08	
+				;	BCC	{+}	
+				;	LDY	#$00	
+				;	INC	OAM2.byte	
+		;	{+}	;	STY	OAM2.bit	
+				;	REP	#$10	
+				;	LDY	OAM.index	
+				;	PLX		
+				;	LDA	$0001,X	// OBJ Y Position
+				;	CLC		
+				;	ADC	Draw_Sprite.y	
+				;	STA	OAM.y.WR,Y	
+				;	REP	#$20	
+				;	LDA	$0002,X	// OBJ Character/Settings
+				;	AND	#$01FF
+				;	CLC	
+				;	ADC	Draw_Sprite.char_array
+				;	AND	#$01FF
+				;	SEP	#$20
+				;	STA	OAM.c.WR,Y
+				;	XBA	
+				;	EOR	$0003,X
+				;	PHA	
+				;	LDA	Draw_Sprite.override
+				;	BEQ	{+}
+				;	PLA	
+				;	AND	#$C1
+				;	EOR	Draw_Sprite.override
+				;	BRA	{++}
+		;	{+}	;	PLA	
+		;	{++}	;	STA	OAM.p.WR,Y	// Draw Sprite OBJ P
+				;	INY		
+				;	INY		
+				;	INY		
+				;	INY		
+				;	LDA	Draw_Sprite.objects	
+				;	DEC	A	
+				;	BMI	{+Return}	
+				;	BRL	{--}	
+		;	{+Return}	;	STY	OAM.index	
+				;	PLB		
+				;	PLP		
+				;	RTL		
+
+							
+
+
+
+				;	#Data $00:FFB0 ROM_Header						// Fix
+					{$52 $3A $50 $68 $6F $65 $00 $00 $00 $00 $00 $00 $00 $00 $00 $00						
+					 $52 $3A $50 $68 $6F $65 $6E $69 $78 $20 $20 $20 $20 $20 $20 $20						
+					 $20 $20 $20 $20 $20 $30 $00 $09 $00 $01 $33 $00 $00 $00 $00 $00 }						
+
+				;	#Data $00:FFE0 Vector_Table						
+					{$0000 $0000 $8000 $8000 $8000 $8007 $0000 $8000						
+					 $0000 $0000 $8000 $0000 $8000 $8000 $8000 $8000}						

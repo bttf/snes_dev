@@ -1,0 +1,64 @@
+
+(1) A REGISTER
+
+This register is used as an 8-bit accumulator.
+At times of 16-bit operation commands. it becomes a register for
+retaining low byte data in the 16-bit accumulator made up of this
+paired with the Y register. When operation commands are issued, it
+becomes the multiplier register and low byte data of the product is
+entered. When divison commands are issued, paired with the Y register
+it formulates the dividend and the resulting quotient is entered.
+
+(2) X REGISTER
+
+In addition to its role as a universal data register, it also
+functions as an index register when index addressing is being
+carried out. In addition, it is also used as a two-address command
+destination address register and X register indirect address register.
+In division commands, it vecomes the divisor register.
+
+
+(3) Y REGISTER
+
+In additon to its role as a universal data register, it also functions
+as an index register when index addressing is being carried out, In
+addition, it is also used as a two-address command source address
+register.
+When carrying out 16-bit operation commands, it becomes the register
+which retains the high byte data of the 16-bit accumulator which is
+made up of the pairing of this with the A register. When 
+multiplication commads are being carried out, it becomes the dividend
+register and the product high byte data is entered.
+When carrying out division commands, paired with the A register it
+formulates the dividend, and the resulting remained is entered.
+
+(4) PROGRAM COUNTER (PC)
+
+The program counter is made up of 16 bits and has an address region
+of 64K bytes. The upper level 8 bits are called PCH and the lower
+level 8 bits are referred to as PCL-
+Normally, it would have the address to be executed next and would
+be incremented only the number of bytes necessary fo the command
+fetched.
+When there is a branching commad in the oidst of the program the address
+of the branch destination would be stored in the program counter. When
+there is a reset (negative POR) input, reset vector which are in
+addresses FFFF and FFFE enter respectively PCH and PCL and branching
+takes place.
+
+
+(5) STACK POINTER (SP)
+
+The stack pointer is used to send data to RAM or to recover from
+RAM when subroutine call, push (PUSH), pop (POP), or return (RET)
+commands are being carried out. The address region indicated by
+the stack pointer is within page 1 (addresses 0100-01ff)
+
+
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+--------------------------------------
+ 0  0  0  0  0  0 0 1|   SP Values    |
+--------------------------------------
+ Fixed by Hardware     Determined by the Program.
+
+

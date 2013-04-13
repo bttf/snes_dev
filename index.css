@@ -1,0 +1,21 @@
+body {
+	background-color: #ccc;
+	font-family: courier;
+	font-size: 20px;
+	color: #000;
+}
+
+table {
+	background-color: #ddd;
+	margin: 25px 25px 25px 25px;
+	font-size: inherit;
+}
+
+td {
+	padding: 35px 35px 35px 35px;
+}
+
+a {
+	text-decoration: none;
+}
+
