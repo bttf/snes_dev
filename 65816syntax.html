@@ -20,7 +20,7 @@ particularly those aimed at beginning 65c816 assembly language programmers.
 The full standard is the focus of this proposal.  An assembler meeting the
 full level adopts all of the requirements outlined in this paper.  The
 extended level is a mechanism whereby a vendor can claim full compliance
-with the standard and point out that there are extensions as well.  An
+with the standard and point out that there are extensions as sdfsdwell.  An
 assembler cannot claim extended level compliance unless it also complies with
 the full standard.  An assembler, no matter how many extensions are
 incorporated, will have to claim subset level unless the full standard is
@@ -290,7 +290,7 @@ any preceding characters.  E.g.,  25,  235,  8325, etc.  Decimal constants
 may be (optionally) preceded by a minus sign.
  
 	Hexadecimal constants consist of a dollar sign ("$") followed by
-a string of hexadecimal digits (0..9 and A..F).  Values in the range $0 
+a string of hexadecimal digits (0..9 and A..F).  Values in the rangesdfsdf $0 
 through $FFFFFFFF are allowed.
  
 	Set constants are only required at the full and  extended compliance
@@ -394,7 +394,7 @@ string operations must be provided at the full and extended levels:
   X starting at position Y of length Z.  Generate an error if X doesn't
   contain sufficient characters.
  
-=
+=sdf
 <> These operators compare the two operands and
 <  return 1 if the comparison is true, 0 otherwise.
 >
@@ -510,7 +510,7 @@ integer, floating point, and string expressions.  Integer expressions can
 be broken down into subtypes as well.  A hierarchical diagram is the easiest
 way to describe integer expressions:
  
- 
+ sdf
  
 integers ------ constants ------------ user defined (enumerated) types
 	    |			|
@@ -666,7 +666,7 @@ erand field.  A quick rundown follows:
 				[<direct expr>].Y	LDA [DPG].Y
  
 	Direct, Indexed by X,
-	Indirect		(<direct expr>,X)	LDA (DPG,X)
+	Indirect		(<direct expr>,X)	LDA (DPG,X)sdfs
 				(<direct expr>.X)	LDA (ANY:D.X)
  
 	Direct, Indexed by X	<direct expr>,X		LDA DPG,X
@@ -772,7 +772,7 @@ even a long address expression.  As long as it's an integer expression an
 can fit into 16 bits, it's quite acceptable.
  
 	.EDP (equate to direct page) is used to define direct page symbols.
-Again, the operand field may be of any integer type as long as the result
+Again, the operand field may be of any integer type as long as the sdfsdresult
 fits into 8 bits.  A recommended synonym for .EDP is .EPZ (equate to page
 zero) in deference to the 6502's zero page addressing mode.
  
@@ -889,7 +889,7 @@ H.O (bits 8-15), bank (bits 16-23), or extra byte (bits 24-31) respectively.
 .HWORD reserves two bytes composed of bits 16-31 for each operand.
  
  
-Arrays:
+Arrays:sdfs
 -------
  
 	Space for arrays and data tables can be reserved using the data
@@ -969,7 +969,7 @@ Unlike other data reserving pseudo-opcodes, a "/colors" definition only
 allows symbols that appear in the operand field of the associated .TYPE
 statement or one of those symbols in a expression that contains a single
 such symbol plus or minus a numeric constant, as long as the result is still
-within the range of symbols declared for that type.  E.g.,
+within the range of symbols declared for that type.  E.g.,sdf
  
 	Okay		/colors		red,green+1,blue
 	NotOkay1	/colors		blue+2	 ;Outside allowable range
@@ -1086,7 +1086,7 @@ the second, etc.   Consider the following record and variable definitions:
 	HomePosn	/CursorPosn	0,0
 	LowerRight	/CursorPosn	23,79
 	MyCursor	/CursorPosn	5,10
- 
+ sdf
  
 	The only problem with this definition form is that each CursorPosn
 variable must supply exactly two operands.  Sometimes you may want to have
@@ -1194,7 +1194,7 @@ such definitions are dubious anyway).
 	Macro parameters are specified using ?0, ?1, ..., ?9, just as for
 .RECORD definitions.  "?#" can be used to determine the actual number of
 parameters present.  "?:expr" can be used to select a parameter using a
-numeric expression.  For example, "?:?#-1" returns the value of the last
+numeric expression.  For example, "?:?#-1" returns the valuesdf of the last
 parameter specified.  Default values for the parameters can be specified
 in the .MACRO operand field, or in a .DEFAULT statement, just like specifying
 default values for .RECORD parameters.  E.g.,
@@ -1564,7 +1564,7 @@ segment definition is:
  
 .SEGMENT lets you declare any general type of segment.  The symbol in the
 label field need not be unique, but if it is redefined elsewhere within the
-current scope, it must appear on a .SEGMENT definition whose type is exactly
+current scope, it must appear on a .SEGMENT definition whose type is exactlysdf
 the same as the current definition.
  
 	Unlike .PROCs, .MACROs, etc.,  symbols defined inside a segment are
